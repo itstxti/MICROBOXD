@@ -215,7 +215,9 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .stb{display:flex;align-items:center;gap:10px;margin:8px 14px;font-size:13px}.stb span{width:84px;flex:none;color:var(--tx)}.stb i{display:block;height:10px;border-radius:5px;background:var(--g)}.stb em{font-style:normal;color:var(--mute);font-size:12px}
 .gate{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;color:var(--mute)}.gate h2{font-family:inherit;font-size:32px;font-weight:800;margin:0}.gate p{max-width:300px;margin:0;font-size:15px}.gate svg{width:56px;height:56px}
 .gb{display:flex;align-items:center;gap:10px;background:#fff;color:#14181c;border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}.gb b{font-size:20px;background:linear-gradient(90deg,#4285f4 25%,#ea4335 25% 50%,#fbbc05 50% 75%,#34a853 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.gerr{color:var(--o);font-size:13px;max-width:300px}
+.gerr{color:var(--o);font-size:13px;max-width:300px}.gok{color:#4ddc6f;font-size:13px;max-width:300px}
+.gf{display:flex;flex-direction:column;gap:10px;width:min(320px,100%)}.gf input{margin:0;padding:13px;border-radius:10px;font-size:16px}.gf .gb{justify-content:center;background:var(--g);color:#fff}.gf .gb:disabled{opacity:.6}
+.glk{background:none;border:0;color:var(--b);font:inherit;font-size:14px;cursor:pointer;padding:6px}
 .qa2 .qa{border:0}.qa2 .qa button{padding:4px 0 10px}
 </style>
 </head>
@@ -600,9 +602,19 @@ async function legacy(){const mk="microboxd:mig:"+U.id;
    const lp=LEG.prof||{};["name","fam","loc","web","pron","bio"].forEach(k=>{if(!prof[k]&&lp[k])prof[k]=lp[k]});
    prof.fav=(prof.fav&&prof.fav.length)?prof.fav:(lp.fav||[]).map(x=>map[x]).filter(Boolean);
    localStorage.setItem(mk,"1");sched();toast("Hemos importado tus datos locales a tu cuenta")}catch(e){console.error(e)}}
+let gm="in";
+const trErr=e=>{const m=String(e&&e.message||e);return /Invalid login/i.test(m)?"Correo o contraseña incorrectos.":/not confirmed/i.test(m)?"Confirma tu correo antes de entrar (revisa tu bandeja de entrada).":/rate limit|too many/i.test(m)?"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.":/already registered/i.test(m)?"Ese correo ya está registrado.":/password/i.test(m)?"La contraseña debe tener al menos 8 caracteres.":m};
 function gate(msg,busy,retry){const g=$("gate");g.style.display="flex";
-  g.innerHTML=LOGO+`<h2>Microboxd</h2><p>Tu diario de microseries: puntúa, reseña y comparte lo que ves.</p>`+(busy?`<p>${msg||"Cargando…"}</p>`:`${msg?`<div class="gerr">${esc(msg)}</div>`:""}<button class="gb" onclick="${retry?"location.reload()":"login()"}"><b>G</b>${retry?"Reintentar":"Continuar con Google"}</button>`)}
-async function login(){try{const r=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}});if(r.error)throw r.error}catch(e){gate("No se pudo iniciar sesión con Google: "+(e.message||e))}}
+  if(busy||retry){g.innerHTML=LOGO+`<h2>Microboxd</h2>`+(busy?`<p>${msg||"Cargando…"}</p>`:`<div class="gerr">${esc(msg||"")}</div><button class="gb" onclick="location.reload()">Reintentar</button>`);return}
+  const up=gm==="up";
+  g.innerHTML=LOGO+`<h2>Microboxd</h2><p>Tu diario de microseries: puntúa, reseña y comparte lo que ves.</p><form class="gf" onsubmit="auth(event);return false"><input id="ge" type="email" autocomplete="email" placeholder="Correo electrónico" required><input id="gp" type="password" autocomplete="${up?"new-password":"current-password"}" placeholder="Contraseña${up?" (mín. 8 caracteres)":""}" minlength="8" required>${msg?`<div class="${msg.ok?"gok":"gerr"}">${esc(msg.t||msg)}</div>`:""}<button class="gb" type="submit">${up?"Crear cuenta":"Iniciar sesión"}</button></form><button class="glk" onclick="gm='${up?"in":"up"}';gate()">${up?"¿Ya tienes cuenta? Inicia sesión":"¿No tienes cuenta? Créala"}</button>`}
+async function auth(ev){const em=$("ge").value.trim(),pw=$("gp").value,b=ev.target.querySelector("button");b.disabled=true;
+  try{if(gm==="up"){const r=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(r.error)throw r.error;
+     if(r.data.session){location.reload();return}
+     if(r.data.user&&r.data.user.identities&&!r.data.user.identities.length)throw new Error("already registered");
+     gm="in";gate({t:"Te hemos enviado un correo para confirmar tu cuenta. Confírmalo y vuelve aquí para iniciar sesión.",ok:1});$("ge").value=em;return}
+    const r=await sb.auth.signInWithPassword({email:em,password:pw});if(r.error)throw r.error;location.reload()}
+  catch(e){gate(trErr(e));$("ge").value=em}}
 async function logout(){try{await sb.auth.signOut()}catch(e){}location.reload()}
 async function boot(){
   if(!window.supabase){gate("No se pudo cargar el servicio. Revisa tu conexión.",0,1);return}
