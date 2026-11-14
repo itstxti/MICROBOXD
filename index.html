@@ -75,7 +75,8 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
 .sgrp{background:var(--pan)}.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 16px;min-height:46px;border-bottom:1px solid var(--line);color:var(--tx);font-size:16px;cursor:text}
 .srow input{flex:1;min-width:0;width:auto;margin:0;padding:0;background:none;border:0;border-radius:0;outline:0;text-align:right;color:var(--mute)}
 .sbio{padding:12px 16px;color:var(--tx);font-size:16px}.sbio textarea{margin:8px 0 0;padding:10px;background:var(--bg);border-radius:8px;resize:none;line-height:1.4}
-.fvs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 16px}.fvp{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.fvp .poster{pointer-events:none}.fvp .pb{display:none}
+.fvs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 16px}.fvq{position:relative;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.fvq.drag{z-index:6;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:none}
+.fvp{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.fvp .poster{pointer-events:none}.fvp .pb{display:none}
 .fvx{position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;border:0;background:#fff;color:#14181c;font-size:18px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
 .fve{aspect-ratio:2/3;border:1px dashed var(--mute);border-radius:4px;color:var(--mute);font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .fvp.drag{z-index:6;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:none}
@@ -424,7 +425,7 @@ function render(){
       const yr=new Date().getFullYear(),thisYr=a=>a.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,dn=items.filter(i=>i.status==="done");
       const row=(l,n,a)=>`<div class="link r" onclick="${a}">${l}<span>${n} ›</span></div>`;
       h=`<div class="av big">${ini()}</div>${profInfo()}<div class="stats"><div><b>${items.length}</b>Series</div><div><b>${items.reduce((a,i)=>a+i.watched,0)}</b>Episodios</div><div><b>${r}</b>Nota media</div></div>
-      <div class="lbl">Favoritas</div><div class="grid">${fav.map(cell).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-fav.length)}</div><div class="lbl">Actividad reciente</div>${grid(rec)}
+      <div class="lbl">Favoritas</div><div class="grid" onpointerdown="pfDrag(event)">${fav.map((i,k)=>`<div class="fvq" data-k="${k}">${cell(i)}</div>`).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-fav.length)}</div><div class="lbl">Actividad reciente</div>${grid(rec)}
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
       <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Pendientes",items.filter(i=>i.status==="want").length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Estadísticas","","openStats()")}</div>`;
@@ -471,6 +472,14 @@ function drawSet(){const R=(l,k,ph,t)=>`<label class="srow"><span>${l}</span><in
   <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Arrastra los pósters para reordenar.</div>${instH()}<div class="slb">Cuenta</div><div class="sgrp"><div class="srow" style="cursor:default"><span>${esc(U?U.email:"")}</span></div><button class="oi d" onclick="logout()">Cerrar sesión</button></div>`}
 function sdAv(el){const f=el.files[0];if(!f)return;const im=new Image();im.onload=()=>{const n=256,c=document.createElement("canvas");c.width=c.height=n;const m=Math.min(im.width,im.height),x=(im.width-m)/2,y=(im.height-m)/2;c.getContext("2d").drawImage(im,x,y,m,m,0,0,n,n);sd.avd=c.toDataURL("image/jpeg",.85);drawSet()};im.src=URL.createObjectURL(f)}
 function sdRm(k){sd.fav.splice(k,1);drawSet()}
+let pfOn=false;addEventListener("touchmove",e=>{if(pfOn&&e.cancelable)e.preventDefault()},{passive:false});
+function pfDrag(e){const el=e.target.closest(".fvq");if(!el)return;const box=el.parentNode,k0=+el.dataset.k,x0=e.clientX,y0=e.clientY;let drag=false;
+  const t=setTimeout(()=>{drag=true;pfOn=true;el.classList.add("drag");try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}},300);
+  const mv=ev=>{const dx=ev.clientX-x0;if(!drag){if(Math.abs(dx)>8||Math.abs(ev.clientY-y0)>8)clearTimeout(t);return}ev.preventDefault();el.style.transform=`translateX(${dx}px)`};
+  const up=ev=>{clearTimeout(t);removeEventListener("pointermove",mv);removeEventListener("pointerup",up);removeEventListener("pointercancel",up);if(!drag)return;pfOn=false;sdSwallow=true;setTimeout(()=>sdSwallow=false,0);
+   const n=box.querySelectorAll(".fvq").length,r=box.getBoundingClientRect(),k1=Math.max(0,Math.min(n-1,Math.floor((ev.clientX-r.left)/(r.width/4))));
+   if(ev.type==="pointerup"&&k1!==k0){const ids=(prof.fav||[]).filter(id=>get(id)).slice(0,4),[m]=ids.splice(k0,1);ids.splice(k1,0,m);prof.fav=ids;save()}render()};
+  addEventListener("pointermove",mv,{passive:false});addEventListener("pointerup",up);addEventListener("pointercancel",up)}
 let sdD=0;function favAdd(){sd=JSON.parse(JSON.stringify(prof));sd.fav=(sd.fav||[]).filter(id=>get(id)).slice(0,4);sdAdd(1)}
 function sdAdd(d){sdD=d?1:0;$("fp").innerHTML=`<div class="lef"><div class="leh"><button onclick="$('fp').classList.remove('open')">Cancelar</button><b>Seleccionar una serie</b><div class="av" style="width:34px;height:34px;font-size:14px;justify-self:end${avs(sd.avd||sd.av)}">${ini()}</div></div><div class="lpb"><div class="lps">${svg(IC.search,20)}<input id="fpi" autocomplete="off" oninput="$('fpx').style.display=this.value?'':'none';fpl()"><button class="sbx" id="fpx" aria-label="Borrar" style="display:none" onclick="$('fpi').value='';this.style.display='none';fpl();$('fpi').focus()">×</button></div></div><div class="lpd"></div><div id="fpr"></div></div>`;$("fp").classList.add("open");$("fp").scrollTop=0;setTimeout(()=>{try{$("fpi").focus()}catch(e){}},60)}
 function fpl(){const n=norm($("fpi").value),el=$("fpr");if(!n){el.innerHTML="";return}const r=catAll().filter(i=>!sd.fav.includes(i.id)&&norm(i.title+i.app+i.tropes.join("")).includes(n)).slice(0,30);
