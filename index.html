@@ -270,6 +270,31 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .lsh b{color:var(--tx);font-size:19px;line-height:1.25;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .lsh .rvu{flex:none;max-width:45%;font-size:14px}
 .lsd{margin:14px 0 0;color:var(--mute);font-size:16px;line-height:1.45;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+#le{top:calc(env(safe-area-inset-top,0px) + 10px);height:calc(var(--H,100%) - env(safe-area-inset-top,0px) - 10px);padding-top:0;padding-bottom:0;border-radius:14px 14px 0 0;background:var(--pan)}
+#le::before{content:"";position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 10px);background:var(--hd);z-index:-1}
+#le .ar{border-bottom:0}
+.lef{display:flex;flex-direction:column;min-height:100%}
+.lef input,.lef textarea{width:100%;background:none;border:0;border-radius:0;margin:0;outline:0;font:inherit;color:var(--tx);resize:none}
+.leh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:20px 16px 16px;border-bottom:1px solid rgba(0,0,0,.28)}
+.leh button{background:none;border:0;font:inherit;font-size:19px;color:var(--mute);cursor:pointer;padding:0;justify-self:start}
+.leh b{color:var(--tx);font-size:19px}.leh .sv{justify-self:end;color:#4ddc6f;font-weight:700}.leh .sv.off{opacity:.35}
+.leh .bk{display:flex;align-items:center;gap:6px;color:#4ddc6f}.leh .bk .rvch{font-size:32px;line-height:.8;margin-top:-3px}
+.lel{padding:14px 16px 0;color:var(--mute);font-size:14px;letter-spacing:.5px}
+.lei{margin-left:16px;border-bottom:1px solid rgba(0,0,0,.28)}
+.lei .len{font-size:19px;font-weight:700;padding:10px 16px 14px 0}
+.lei textarea{font-size:19px;padding:14px 16px 8px 0;min-height:118px;line-height:1.35}
+.len::placeholder,.lei textarea::placeholder{color:var(--mute);opacity:.75}.len::placeholder{font-weight:700}
+.lea{background:none;border:0;color:var(--b);font:inherit;font-size:20px;text-align:left;padding:16px;cursor:pointer}
+.lee{flex:1}
+.lex{display:flex;align-items:center;gap:12px;padding:7px 16px}.lex .poster{width:100%}.lex .pb{display:none}
+.lex .lxt{flex:1;min-width:0;color:var(--tx);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lex .lxt small{display:block;color:var(--mute);font-size:12px}
+.lex .lxn{width:22px;color:var(--mute);text-align:center;font-size:13px}
+.lex button{background:none;border:0;color:var(--mute);font-size:20px;padding:4px 8px;cursor:pointer}
+.leb{display:flex;justify-content:space-around;border-top:1px solid rgba(0,0,0,.28);padding:22px 8px calc(22px + env(safe-area-inset-bottom,0px))}
+.leb button{background:none;border:0;color:var(--mute);font:inherit;font-size:16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;width:46%}.leb button.on{color:var(--tx)}
+.lps{margin:6px 16px 14px;display:flex;align-items:center;gap:10px;background:#9aabb9;border-radius:12px;padding:0 12px;color:#5d6b7a}
+.lef .lps input{flex:1;width:auto;color:#14181c;font-size:18px;padding:11px 0}.lps input::placeholder{color:#5d6b7a}
+.lpd{border-top:1px solid rgba(0,0,0,.28)}.lck{color:var(--mute);font-size:20px;padding:0 4px}
 </style>
 </head>
 <body>
@@ -574,10 +599,26 @@ function openList(id){const l=lists.find(x=>x.id===id);if(!l)return;const its=l.
 function listOpts(id){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${esc(lists.find(x=>x.id===id).name)}</b><span>Lista</span></div><button class="oi" onclick="closeOv();editList(${id})">Editar lista</button><button class="oi d" onclick="closeOv();delList(${id})">Eliminar lista</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 let le={};
 function editList(id){const l=lists.find(x=>x.id===id);le=l?{id,name:l.name,desc:l.desc,rank:!!l.rank,ids:[...l.ids]}:{id:0,name:"",desc:"",rank:false,ids:[]};drawLe();$("le").classList.add("open")}
-function drawLe(){$("le").innerHTML=`<div class="in"><div class="lh" style="padding:0 0 10px"><button onclick="$('le').classList.remove('open')">Cancelar</button><b>${le.id?"Editar lista":"Nueva lista"}</b><button class="sv" onclick="saveList()">Guardar</button></div>
-  <input placeholder="Nombre de la lista" value="${esc(le.name)}" oninput="le.name=this.value"><textarea rows="3" placeholder="Descripción" oninput="le.desc=this.value">${esc(le.desc)}</textarea>
-  <div class="tg" style="padding:6px 0"><button class="${le.rank?"on":""}" onclick="le.rank=!le.rank;drawLe()">${le.rank?"Con ranking":"Sin ranking"}</button></div>
-  <div class="pl">Series (${le.ids.length})</div>${items.map(i=>`<div class="br" onclick="tgl(${i.id})"><span style="color:var(--tx)">${esc(short(i.title))}</span><span>${le.ids.includes(i.id)?"✓":"＋"}</span></div>`).join("")}</div>`}
+const GLOBE='<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',TROPHY='<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>';
+const leRow=(i,k)=>`<div class="lex">${le.rank?`<span class="lxn">${k+1}</span>`:""}<div style="width:30px;flex:none">${nop(i)}</div><div class="lxt">${esc(short(i.title))}<small>${esc(i.app)}</small></div>${le.rank?`<button aria-label="Subir" onclick="lMv(${k},-1)">▲</button><button aria-label="Bajar" onclick="lMv(${k},1)">▼</button>`:""}<button aria-label="Quitar" onclick="tglP(${i.id})">×</button></div>`;
+function leForm(){const ok=!!(le.name||"").trim(),ent=le.ids.map(get).filter(Boolean);
+  return `<div class="lef"><div class="leh"><button onclick="$('le').classList.remove('open')">Cancelar</button><b>${le.id?"Editar lista":"Nueva lista"}</b><button id="lesv" class="sv ${ok?"":"off"}" onclick="saveList()">Guardar</button></div>
+  <div class="lel">NOMBRE DE LA LISTA</div>
+  <div class="lei"><input class="len" placeholder="Añadir nombre de la lista…" autocomplete="off" value="${esc(le.name)}" oninput="le.name=this.value;$('lesv').classList.toggle('off',!this.value.trim())"></div>
+  <div class="lei"><textarea rows="4" placeholder="Añadir descripción…" oninput="le.desc=this.value">${esc(le.desc)}</textarea></div>
+  <button class="lea" onclick="lePg('p')">Añadir series…</button>
+  <div class="lee">${ent.map(leRow).join("")}</div>
+  <div class="leb"><button onclick="toast('Las listas son públicas')">${svg(GLOBE,38)}<span>Pública</span></button><button class="${le.rank?"on":""}" onclick="le.rank=!le.rank;drawLe()">${svg(TROPHY,38)}<span>${le.rank?"Con ranking":"Sin ranking"}</span></button></div></div>`}
+function lePick(){return `<div class="lef"><div class="leh"><button class="bk" onclick="lePg('f')"><span class="rvch">‹</span> ${le.id?"Editar lista":"Nueva lista"}</button><b>Series</b><span></span></div>
+  <div class="lps">${svg(IC.search,20)}<input id="lpi" placeholder="Añadir una serie" autocomplete="off" value="${esc(le.q||"")}" oninput="le.q=this.value;lpl()"></div><div class="lpd"></div><div id="lpr"></div></div>`}
+function lpl(){const el=$("lpr");if(!el)return;const n=norm(le.q||"");
+  if(!n){const ent=le.ids.map(get).filter(Boolean);el.innerHTML=ent.length?ent.map(leRow).join(""):'<div class="empty">Busca una serie para añadirla a la lista.</div>';return}
+  const r=catAll().filter(i=>norm(i.title+i.app+i.tropes.join("")).includes(n)).slice(0,30);
+  el.innerHTML=r.length?r.map(i=>`<div class="ar" style="padding:8px 16px" onclick="tglP(${i.id})">${nop(i)}<div style="flex:1;min-width:0"><b>${esc(short(i.title))}</b><small>${esc(i.app)}</small></div><span class="lck">${le.ids.includes(i.id)?"✓":"＋"}</span></div>`).join(""):'<div class="empty">Sin resultados en tu catálogo.</div>'}
+function drawLe(){$("le").innerHTML=(le.page==="p")?lePick():leForm();if(le.page==="p")lpl()}
+function lePg(p){le.page=p;le.q="";drawLe();$("le").scrollTop=0;if(p==="p")setTimeout(()=>{try{$("lpi").focus()}catch(e){}},60)}
+function tglP(id){const k=le.ids.indexOf(id);if(k<0){if(!get(id)){const it=catAll().find(x=>x.id===id);if(it)cache[id]=it}le.ids.push(id)}else le.ids.splice(k,1);le.page==="p"?lpl():drawLe()}
+function lMv(k,d){const t=k+d;if(t<0||t>=le.ids.length)return;[le.ids[k],le.ids[t]]=[le.ids[t],le.ids[k]];le.page==="p"?lpl():drawLe()}
 function tgl(id){const k=le.ids.indexOf(id);k<0?le.ids.push(id):le.ids.splice(k,1);drawLe()}
 function saveList(){if(!le.name.trim())return;const ex=lists.find(x=>x.id===le.id),sid=ex?ex.sid:crypto.randomUUID(),o={id:ex?ex.id:idOf(sid),sid,name:le.name.trim(),desc:le.desc.trim(),rank:le.rank,ids:le.ids,ts:Date.now()},k=lists.findIndex(x=>x.id===o.id);k<0?lists.unshift(o):lists[k]=o;save();$("le").classList.remove("open");if($("lst").classList.contains("open"))openList(o.id);render()}
 function delList(id){lists=lists.filter(x=>x.id!==id);save();$("lst").classList.remove("open");render()}
