@@ -62,7 +62,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 .lmeta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:13px;padding:14px 0}.lw{display:flex;align-items:center;gap:6px;color:var(--b);font-weight:700}
 .lrk{width:18px;height:18px;border-radius:50%;background:var(--pan);color:var(--mute);font-size:10px;display:flex;align-items:center;justify-content:center;margin:5px auto 0}
 .lrw{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}.lrn{width:22px;text-align:center;color:var(--mute);font-size:13px;flex:none}.lpo{width:38px;flex:none}.lpo .pb{display:none}
-#det,#lst{bottom:var(--nh,0px);padding-bottom:0}
+#det,#lst,#sub{height:auto;bottom:var(--nh,0px);padding-bottom:0}
 .sbw{position:sticky;top:0;z-index:2;background:var(--hd);padding:2px 0 10px}.sbw .sb{margin:0 14px}
 .sbx{background:none;border:0;color:var(--mute);font-size:22px;line-height:1;padding:4px 8px;cursor:pointer}
 nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
@@ -526,12 +526,12 @@ const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv
   return `<div class="tiles"><div class="tile g" onclick="openMem(${i.id})" style="cursor:pointer">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m" onclick="openRevs(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl" onclick="openLsts(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
 const wbSec=i=>{
   const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
-  const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" onclick="event.stopPropagation();openReview('${x.id}')"><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (W.length?`<div class="wbs"><div class="wbh" onclick="openWb(${i.id})" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
+  const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" onclick="event.stopPropagation();openReview('${x.id}')"><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (W.length?`<div class="wbs"><div class="wbh" onclick="openMem(${i.id},'fr')" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
   const ps=[],oth=[...(com[key(i)]||[])];
   if(i.rating){const x=oth.indexOf(i.rating);if(x>=0)oth.splice(x,1)}
   if(i.status==="done"||i.rating)ps.push(`<div class="wbp"><div class="av2 me">${ini()}${i.review?'<span class="wbb">☰</span>':""}</div><small>${i.rating?S(i.rating):""}</small></div>`);
   oth.slice(0,12).forEach((r,k)=>ps.push(`<div class="wbp"><div class="av2">${svg(IC.me,30)}</div><small>${S(r)}</small></div>`));
-  return (ps.length?`<div class="wbs"><div class="wbh" onclick="openWb(${i.id})" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
+  return (ps.length?`<div class="wbs"><div class="wbh" onclick="openMem(${i.id},'fr')" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg d">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${k==="pop"?"on":""}" disabled>${t}</button>`).join("")}</div><div class="rvlb">Reseñas populares</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:25px;height:25px;font-size:12px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(i.review)}</p>`}</div></div>`};
 const EYE='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',HEART='<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',CLOCK='<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',WARN='<path d="M12 3L2 20h20z"/><path d="M12 10v5M12 18v.5"/>';
 const lt=i=>{const h=i.liked?" ♥":"";if(i.rating)return `Le has dado un rating de <span style="color:var(--mute);letter-spacing:1px">${S(i.rating)}${h}</span>`;if(i.status==="done")return (i.watchedOn?`Registrada el ${fsh(i.watchedOn)}`:"Vista")+h;if(i.status==="want")return "Está en tus pendientes";return i.liked?"Te gusta ♥":"Puntúa, registra, reseña, añade a una lista + más"};
@@ -833,7 +833,7 @@ function drawMem(iid,re){const i=get(iid),d=MB[i.sid];let body;
   const h=pgH("mem"+iid,"Miembros de "+short(i.title),[["all","Todos"],["lk","Likes"],["fan","Fans"],["fr","Amigos"]],memTab,"memGo",iid,body);
   re?subRe(h):subOpen(h)}
 function memGo(k,iid){memTab=k;drawMem(iid,1)}
-async function openMem(iid){const i=get(iid);if(!i)return;memTab="all";
+async function openMem(iid,tab){const i=get(iid);if(!i)return;memTab=tab||"all";
   if(!sb||!i.sid){subOpen(pgH("mem"+iid,"Miembros de "+short(i.title),[["all","Todos"]],"all","memGo",iid,'<div class="empty">Esta serie aún no está sincronizada.</div>'));return}
   drawMem(iid,0);
   try{await loadMem(i);if(pgLive("mem"+iid))drawMem(iid,1)}
