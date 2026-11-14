@@ -14,7 +14,7 @@
 --bg:#14181c;--hd:#000;--pan:#2c3440;--tab:#445566;--tx:#fff;--mute:#9ab;--line:#2c3440;--g:#ff4d8d;--o:#ffb020;--b:#40bcf4;--st:#7b8b9b}
 @media (display-mode:standalone){:root{--H:100lvh}}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f2f4f5;--hd:#fff;--pan:#e4e8eb;--tab:#d3dae0;--tx:#14181c;--mute:#5b6773;--line:#d6dbe0;--g:#d6246e;--o:#c47a00;--b:#1b8fc4;--st:#7b8b9b}}
-html{position:fixed;top:0;left:0;width:100%;height:var(--H,100%);overflow:hidden;overscroll-behavior:none}body{height:100%;overscroll-behavior:none}html,body{margin:0}
+html{height:var(--H,100%);overscroll-behavior:none}body{height:100%;overscroll-behavior:none}html,body{margin:0}
 *,*:before,*:after{box-sizing:inherit}
 body{background:var(--bg);color:var(--mute);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4;display:flex;flex-direction:column;overflow:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hd);z-index:30}
@@ -787,6 +787,9 @@ $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
   ["f-title","f-syn","f-tropes","f-eps","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
   $("form").classList.remove("open");$("ad").classList.remove("open");save();render();show(it.id)};
 boot();
+(function(){const sc=el=>{while(el&&el!==document.body&&el!==document.documentElement){if(el.scrollHeight>el.clientHeight+1){const o=getComputedStyle(el).overflowY;if(o==="auto"||o==="scroll")return true}el=el.parentElement}return false};
+addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
+addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
 (function(){let n=0,t=0;document.addEventListener("click",e=>{if(!e.target.closest("#hd"))return;const now=Date.now();n=now-t<1500?n+1:1;t=now;if(n<5)return;n=0;
   const m=(css)=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:0;top:0;visibility:hidden;"+css;document.body.appendChild(d);const r=d.getBoundingClientRect();d.remove();return Math.round(r.height)};
