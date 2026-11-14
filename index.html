@@ -332,7 +332,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 <div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="sub"></div><div class="sheet" id="le"></div><div class="sheet" id="fp"></div><div class="sheet" id="set"></div>
 <div class="sheet" id="lgs"></div><div class="gate" id="gate"></div><div class="toast" id="toast"></div><div class="ov" id="ov" onclick="if(event.target===this)closeOv()"></div>
 <div class="sheet" id="form"><div class="in fm">
-  <div class="lh"><button id="cancel">Cancelar</button><b>Nueva serie</b><span></span></div>
+  <div class="lh"><button id="cancel">Cancelar</button><b id="ftl">Nueva serie</b><span></span></div>
   <div class="fr">
     <label class="cv" for="f-img"><span><i>＋</i>Portada</span><img class="prev" id="prev" alt=""></label>
     <input id="f-img" type="file" accept="image/*" hidden>
@@ -352,7 +352,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
   <div class="fcg"><div id="fcl"></div><button type="button" class="fca" id="fca">＋ Añadir personaje</button></div>
   <label class="fl" for="f-eps">Episodios</label>
   <input id="f-eps" type="number" min="1" inputmode="numeric" placeholder="60">
-  <div class="fs"><button class="btn p" id="save">Guardar serie</button></div>
+  <div class="fs"><button class="btn p" id="save">Guardar serie</button><button class="btn d" id="fdel" style="display:none;margin-top:6px" onclick="askDel(editId)">Eliminar serie</button></div>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -368,7 +368,7 @@ const $=id=>document.getElementById(id);
 let rs=[],drafts={},tT=0;try{rs=JSON.parse(localStorage.getItem("microboxd:rs")||"[]");drafts=JSON.parse(localStorage.getItem("microboxd:drafts")||"{}")}catch(e){}
 const pers=()=>{try{localStorage.setItem("microboxd:rs",JSON.stringify(rs));localStorage.setItem("microboxd:drafts",JSON.stringify(drafts))}catch(e){}};
 function toast(m){const t=$("toast");t.innerHTML=m;t.classList.add("on");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("on"),2600)}
-let pendS=[];const save=()=>{adopt();sched()};
+let pendS=[],pendU=[];const save=()=>{adopt();sched()};
 const uname=()=>(prof.name||"").trim()||"tú",ini=()=>'<i class="mav"></i>';
 const setMe=()=>{const u=prof.avd||(prof.av?cvr(prof.av):"");document.documentElement.style.setProperty("--meav",u?`url("${u}")`:"none")};
 const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -532,7 +532,7 @@ const lstSec=i=>{const ls=lists.filter(l=>l.ids.includes(i.id));return ls.length
 function show(id,keep){
   const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
   const bg=i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`;
-  d.innerHTML=`<div class="top"><button class="rb" aria-label="Volver" onclick="closeDet()"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 6 13l10 10"/></svg></button><span class="tpt">${esc(short(i.title))}</span><button class="rb" aria-label="Más" onclick="opts(${i.id})"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg></button></div>
+  d.innerHTML=`<div class="top"><button class="rb" aria-label="Volver" onclick="closeDet()"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 6 13l10 10"/></svg></button><span class="tpt">${esc(short(i.title))}</span><div style="display:flex">${canEdit(i)?`<button class="rb" aria-label="Editar serie" onclick="fmEdit(${i.id})"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>`:""}<button class="rb" aria-label="Más" onclick="opts(${i.id})"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg></button></div></div>
   <div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div></div>${poster(i).replace(/onclick="[^"]*"/,"")}</div>
   <p class="syn">${esc(i.syn)||"Sin sinopsis todavía."}</p>
   <div>${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>
@@ -690,7 +690,7 @@ function delList(id){lists=lists.filter(x=>x.id!==id);save();$("lst").classList.
 function pickList(id){$("ov").innerHTML=`<div class="card"><div class="ot"><b>Añadir a lista</b></div>${lists.map(l=>`<button class="oi" onclick="inList(${l.id},${id})">${esc(l.name)} ${l.ids.includes(id)?"✓":""}</button>`).join("")}<button class="oi" onclick="closeOv();editList();le.ids=[${id}];drawLe()">＋ Nueva lista</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 function inList(lid,id){const l=lists.find(x=>x.id===lid),k=l.ids.indexOf(id);k<0?l.ids.push(id):l.ids.splice(k,1);save();pickList(id);refresh(id)}
 function openAdd(){adq="";$("ad").innerHTML=`<div class="in"><div class="lh" style="padding:0 0 10px"><button onclick="$('ad').classList.remove('open')">Cancelar</button><b>Añadir una serie</b><span style="width:60px"></span></div><div class="sb" style="margin:0 0 8px">${svg(IC.search,20)}<input id="adi" placeholder="Nombre de la serie" autocomplete="off" oninput="adq=this.value;$('adx').style.display=adq?'':'none';adl()"><button class="sbx" id="adx" aria-label="Borrar" style="display:none" onclick="adq='';$('adi').value='';this.style.display='none';adl();$('adi').focus()">×</button></div><div id="adr"></div></div>`;adl();$("ad").classList.add("open");setTimeout(()=>{try{$("adi").focus()}catch(e){}},60)}
-const mk=`<div class="link" style="margin-top:14px" onclick="$('f-title').value=adq;$('form').classList.add('open')">Crear una serie nueva <span>＋</span></div>`;
+const mk=`<div class="link" style="margin-top:14px" onclick="fmNew(adq)">Crear una serie nueva <span>＋</span></div>`;
 function adl(){const n=norm(adq),el=$("adr");
   if(!n){el.innerHTML=(rs.length?`<div class="rs">Búsquedas recientes</div>`+rs.map(x=>`<div class="br" data-q="${esc(x)}" onclick="adS(this.dataset.q)"><span style="color:var(--tx)">${esc(x)}</span></div>`).join(""):"")+mk;return}
   const r=catAll().filter(i=>norm(i.title+i.app+i.tropes.join("")).includes(n)).slice(0,20);
@@ -741,12 +741,18 @@ async function pull(){
   shadow={};items.forEach(i=>shadow[i.id]={st:iState(i),sid:i.sid});shadowL={};lists.forEach(l=>shadowL[l.id]={st:l.dx?"":listState(l),sid:l.sid});shadowP=profState();if(!P.display_name){prof.name=P.username.replace(/_[0-9a-f]{6}$/,"");sched()}
   if(items.length){const r=await sb.from("series_stats").select("*").in("series_id",items.map(i=>i.sid));if(!r.error)r.data.forEach(applyStat)}
 }
-async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));i.cp=path;i.cover=cvr(path)}
-async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.cast[k];if(!c.ph||!c.ph.startsWith("data:"))continue;const bl=await (await fetch(c.ph)).blob(),path=uid+"/"+i.sid+"/c"+k+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));c.pp=path;c.ph=cvr(path)}}
+async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+(i.cp?"-"+Date.now().toString(36):"")+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));i.cp=path;i.cover=cvr(path)}
+async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.cast[k];if(!c.ph||!c.ph.startsWith("data:"))continue;const bl=await (await fetch(c.ph)).blob(),path=uid+"/"+i.sid+"/c"+k+"-"+Math.random().toString(36).slice(2,7)+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));c.pp=path;c.ph=cvr(path)}}
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
    pendS=pendS.filter(x=>x.fresh);for(const i of [...new Set([...items.filter(x=>x.fresh),...pendS])]){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
+   for(const i of [...pendU]){if(i.fresh){pendU=pendU.filter(x=>x!==i);continue}
+    const oc=i.cp,ocv=cvr(oc);try{await up(i,uid)}catch(e){console.error(e);i.cover=ocv;i.cp=oc;toast("No se pudo subir la portada")}
+    try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}
+    const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
+    pendU=pendU.filter(x=>x!==i);if(!r.data||!r.data.length)throw new Error("No tienes permiso para editar esta serie");
+    if(oc&&oc!==i.cp)try{await sb.storage.from("covers").remove([oc])}catch(e){}}
    const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked}})}
    if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>shadow[r.i.id]={st:r.st,sid:r.i.sid})}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
@@ -968,14 +974,43 @@ function drawFc(){$("fcl").innerHTML=fc.map((r,k)=>`<div class="fcr"><label clas
 function fcPh(k,inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const W=120,H=150,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2,w,h);fc[k].img=c.toDataURL("image/jpeg",.8);URL.revokeObjectURL(im.src);drawFc()};im.src=URL.createObjectURL(f)}
 $("fca").onclick=()=>{if(fc.length<20){fc.push({n:"",r:"",img:""});drawFc();const i=$("fcl").querySelectorAll(".fcn input");if(i.length>=2)i[i.length-2].focus()}};
 drawFc();
+/* ===== Editar / eliminar serie (reutiliza el formulario de creación) ===== */
+let editId=null;
+const canEdit=i=>!!i&&(!!i.fresh||(!!U&&i.created_by===U.id));
+function fmReset(){["f-title","f-syn","f-tropes","f-eps","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none"}
+function fmMode(ed){$("ftl").textContent=ed?"Editar serie":"Nueva serie";$("save").textContent=ed?"Guardar cambios":"Guardar serie";$("fdel").style.display=ed?"":"none";$("form").style.zIndex="35";$("form").scrollTop=0;$("form").classList.add("open")}
+function fmNew(t){editId=null;fmReset();$("f-title").value=t||"";fmMode(false)}
+function fmEdit(id){const i=get(id);if(!canEdit(i)){toast("Solo puedes editar las series que has creado");return}
+  editId=id;fmReset();
+  if(![...$("f-app").options].some(o=>o.value===i.app))$("f-app").add(new Option(i.app,i.app));
+  $("f-title").value=i.title;$("f-app").value=i.app;$("f-syn").value=i.syn||"";$("f-tropes").value=(i.tropes||[]).join(", ");$("f-eps").value=i.eps||"";
+  fc=(i.cast||[]).map(c=>({n:c.a,r:c.p||"",img:c.ph||"",pp:c.pp||""}));drawFc();
+  if(i.cover){$("prev").src=i.cover;$("prev").style.display="block"}
+  fmMode(true)}
+function askDel(id){const i=get(id);if(!i)return;
+  $("ov").innerHTML=`<div class="card"><div class="ot"><b>¿Eliminar “${esc(short(i.title))}”?</b></div><div style="padding:0 18px 16px;color:var(--mute);font-size:15px;line-height:1.4;text-align:center">Se borrará del catálogo y también de las reseñas, diarios y listas de todos los usuarios. No se puede deshacer.</div><button class="oi d" onclick="doDel(${id})">Eliminar serie</button></div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
+async function doDel(id){const i=get(id);closeOv();if(!i)return;
+  try{if(sb&&!i.fresh){const r=await ck(sb.from("series").delete().eq("id",i.sid).select("id"));if(!r.data||!r.data.length)throw new Error("sin permiso");
+    try{const ps=[i.cp,...(i.cast||[]).map(c=>c.pp)].filter(Boolean);if(ps.length)await sb.storage.from("covers").remove(ps)}catch(e){}}}
+  catch(e){console.error(e);toast("No se pudo eliminar la serie");return}
+  items=items.filter(x=>x.id!==id);pendS=pendS.filter(x=>x!==i);pendU=pendU.filter(x=>x!==i);delete cache[id];CAT=CAT.filter(x=>x.id!==id);delete shadow[id];
+  lists.forEach(l=>{l.ids=l.ids.filter(x=>x!==id)});prof.fav=(prof.fav||[]).filter(x=>x!==id);dq=dq.filter(e=>e.series!==i);log=log.filter(x=>x.id!==id);
+  editId=null;curDet=0;$("form").classList.remove("open");$("det").classList.remove("open");save();render();toast("Serie eliminada")}
 $("cancel").onclick=()=>$("form").classList.remove("open");
-let dupT=0;$("f-title").oninput=()=>{clearTimeout(dupT);const v=$("f-title").value.trim();if(v.length<4){$("dup").style.display="none";return}
+let dupT=0;$("f-title").oninput=()=>{clearTimeout(dupT);if(editId){$("dup").style.display="none";return}const v=$("f-title").value.trim();if(v.length<4){$("dup").style.display="none";return}
   dupT=setTimeout(async()=>{try{const{data}=await sb.rpc("similar_series",{q:v}),d=data&&data[0];$("dup").style.display=d?"block":"none";if(d)$("dup").textContent="¿Es la misma que “"+d.title+"” ("+d.app+")? Una serie puede tener nombres distintos según la app o el país."}catch(e){}},300)};
 $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
   const im=new Image();im.onload=()=>{const w=240,h=Math.round(w*im.height/im.width),c=document.createElement("canvas");c.width=w;c.height=h;
    c.getContext("2d").drawImage(im,0,0,w,h);cover=c.toDataURL("image/jpeg",.75);$("prev").src=cover;$("prev").style.display="block"};
   im.src=URL.createObjectURL(f)};
 $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
+  if(editId){const i=get(editId);if(!canEdit(i)){$("form").classList.remove("open");return}
+   const cs=fc.filter(r=>r.n.trim());
+   Object.assign(i,{title,app:$("f-app").value,syn:$("f-syn").value.trim(),tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),
+    cast:cs.map(r=>({a:r.n.trim(),p:r.r.trim(),ph:r.img||"",pp:r.img&&!r.img.startsWith("data:")?(r.pp||""):""})),
+    castTxt:cs.map(r=>r.n.trim()+(r.r.trim()?" ("+r.r.trim()+")":"")).join(", "),eps:Math.max(1,parseInt($("f-eps").value)||1)});
+   if(cover)i.cover=cover;if(!i.fresh&&!pendU.includes(i))pendU.push(i);
+   const id=i.id;editId=null;cover="";$("form").classList.remove("open");save();render();show(id,true);toast("Serie actualizada");return}
   const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title,app:$("f-app").value,syn:$("f-syn").value.trim(),
    tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),cast:fc.filter(r=>r.n.trim()).map(r=>({a:r.n.trim(),p:r.r.trim(),ph:r.img||"",pp:""})),castTxt:fc.filter(r=>r.n.trim()).map(r=>r.n.trim()+(r.r.trim()?" ("+r.r.trim()+")":"")).join(", "),eps:Math.max(1,parseInt($("f-eps").value)||1),
    watched:0,rating:0,review:"",status:"",cover,added:Date.now()};
@@ -992,7 +1027,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794688109";
+const BUILD="1794790000";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
