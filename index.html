@@ -224,9 +224,16 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .gf{display:flex;flex-direction:column;gap:10px;width:min(320px,100%)}.gf input{margin:0;padding:13px;border-radius:10px;font-size:16px}.gf .gb{justify-content:center;background:var(--g);color:#fff}.gf .gb:disabled{opacity:.6}
 .glk{background:none;border:0;color:var(--b);font:inherit;font-size:14px;cursor:pointer;padding:6px}
 .rvl{color:var(--mute);font-size:13px;margin-top:8px}.rvi:active{opacity:.7}.pinfo .btn{border-radius:8px}
-.fcr{display:flex;gap:10px;align-items:center;margin-bottom:10px}.fcr .cph{position:relative;width:48px;height:60px;flex:none;border:1.5px dashed var(--st);border-radius:6px;background:var(--pan) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--g);font-size:20px;cursor:pointer;overflow:hidden}.fcr .cph.has{border-style:solid;border-color:transparent;color:transparent}
-.fcr .fcn{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}.fcr .fcn input{padding:9px 12px}.fcx{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:var(--tab);color:var(--tx);font-size:18px;line-height:1;cursor:pointer}
-.fca{width:100%;margin-top:2px;background:none;border:1px dashed var(--st);color:var(--mute)}
+.fcg{background:var(--pan);border-radius:12px;overflow:hidden}
+.fcr{display:flex;gap:12px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.fcr .cph{position:relative;width:46px;height:46px;flex:none;border-radius:50%;background:var(--bg) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--st);cursor:pointer;overflow:hidden}
+.fcr .cph.has{box-shadow:0 0 0 2px var(--g)}.fcr .cph svg{width:22px;height:22px}
+.fcr .fcn{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.fm .fcg input{background:none;border:0;border-radius:0;padding:0;margin:0;color:var(--tx);font-size:16px;font-weight:600;min-width:0}
+.fm .fcg .fcn input+input{font-size:13px;font-weight:400;color:var(--mute)}
+.fm .fcg input::placeholder{color:var(--st);font-weight:400}.fm .fcg input:focus{border:0}
+.fcx{flex:none;width:28px;height:28px;border:0;background:none;color:var(--st);font-size:20px;line-height:1;cursor:pointer;border-radius:50%}.fcx:active{background:var(--bg)}
+.fca{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:46px;border:0;background:none;color:var(--g);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
 .qa2 .qa{border:0}.qa2 .qa button{padding:4px 0 10px}
 </style>
 </head>
@@ -254,8 +261,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
   <label class="fl" for="f-tropes">Tropos</label>
   <input id="f-tropes" placeholder="venganza, CEO, hombre lobo…">
   <label class="fl">Personajes</label>
-  <div id="fcl"></div>
-  <button type="button" class="btn fca" id="fca">＋ Añadir personaje</button>
+  <div class="fcg"><div id="fcl"></div><button type="button" class="fca" id="fca">＋ Añadir personaje</button></div>
   <label class="fl" for="f-eps">Episodios</label>
   <input id="f-eps" type="number" min="1" inputmode="numeric" placeholder="60">
   <div class="fs"><button class="btn p" id="save">Guardar serie</button></div>
@@ -712,7 +718,7 @@ function memSearch(){clearTimeout(memT);memT=setTimeout(async()=>{const t=q.trim
   try{const{data,error}=await sb.from("profiles").select("id,username,display_name").or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).neq("id",U.id).limit(20);if(error)throw error;if(k!==mq)return;MEM=data;const e=$("mem");if(e)e.innerHTML=memHtml()}catch(e){console.error(e)}},250)}
 /* ===== Formulario: personajes con foto ===== */
 let fc=[];
-function drawFc(){$("fcl").innerHTML=fc.map((r,k)=>`<div class="fcr"><label class="cph ${r.img?"has":""}" ${r.img?`style="background-image:url(${r.img})"`:""}>${r.img?"":"＋"}<input type="file" accept="image/*" hidden onchange="fcPh(${k},this)"></label><div class="fcn"><input placeholder="Nombre del personaje" maxlength="60" value="${esc(r.n)}" oninput="fc[${k}].n=this.value"><input placeholder="Actor/actriz o rol (opcional)" maxlength="60" value="${esc(r.r)}" oninput="fc[${k}].r=this.value"></div><button type="button" class="fcx" aria-label="Quitar" onclick="fc.splice(${k},1);drawFc()">×</button></div>`).join("");$("fca").style.display=fc.length>=20?"none":""}
+function drawFc(){$("fcl").innerHTML=fc.map((r,k)=>`<div class="fcr"><label class="cph ${r.img?"has":""}" ${r.img?`style="background-image:url(${r.img})"`:""}>${r.img?"":svg(IC.me,22)}<input type="file" accept="image/*" hidden onchange="fcPh(${k},this)"></label><div class="fcn"><input placeholder="Nombre del personaje" maxlength="60" value="${esc(r.n)}" oninput="fc[${k}].n=this.value"><input placeholder="Actor o actriz (opcional)" maxlength="60" value="${esc(r.r)}" oninput="fc[${k}].r=this.value"></div><button type="button" class="fcx" aria-label="Quitar" onclick="fc.splice(${k},1);drawFc()">×</button></div>`).join("");$("fca").style.display=fc.length>=20?"none":""}
 function fcPh(k,inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const W=120,H=150,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2,w,h);fc[k].img=c.toDataURL("image/jpeg",.8);URL.revokeObjectURL(im.src);drawFc()};im.src=URL.createObjectURL(f)}
 $("fca").onclick=()=>{if(fc.length<20){fc.push({n:"",r:"",img:""});drawFc();const i=$("fcl").querySelectorAll(".fcn input");if(i.length>=2)i[i.length-2].focus()}};
 drawFc();
