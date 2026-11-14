@@ -1,4 +1,4 @@
-const V = "mbx-v1";
+const V = "mbx-v2";
 const CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
 const SHELL = ["/", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
@@ -24,6 +24,8 @@ self.addEventListener("fetch", e => {
   const u = new URL(r.url);
   // API, auth y Storage de Supabase: siempre red (nunca caché)
   if (u.hostname.endsWith("supabase.co")) return;
+  // Comprobación de versión: siempre red
+  if (u.searchParams.has("__v")) return;
   // Navegación: red primero, caché si no hay conexión
   if (r.mode === "navigate") {
     e.respondWith(
