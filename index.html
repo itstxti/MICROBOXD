@@ -786,6 +786,11 @@ $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
   ["f-title","f-syn","f-tropes","f-eps","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
   $("form").classList.remove("open");$("ad").classList.remove("open");save();render();show(it.id)};
 boot();
+
+(function(){let n=0,t=0;document.addEventListener("click",e=>{if(!e.target.closest("#hd"))return;const now=Date.now();n=now-t<1500?n+1:1;t=now;if(n<5)return;n=0;
+  const m=(css)=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:0;top:0;visibility:hidden;"+css;document.body.appendChild(d);const r=d.getBoundingClientRect();d.remove();return Math.round(r.height)};
+  const nv=document.querySelector("nav").getBoundingClientRect();
+  alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 </script>
 </body>
 </html>
