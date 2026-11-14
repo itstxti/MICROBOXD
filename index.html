@@ -84,7 +84,7 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
 .wbr{display:flex;gap:14px;overflow-x:auto;padding:0 0 14px;scrollbar-width:none}.wbr::-webkit-scrollbar{display:none}
 .wbp{flex:none;width:60px;text-align:center}.av2{position:relative;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9)}
 .av2.me{font-weight:800;font-size:24px}
-.av,.av2{background:#3c4858 url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%233c4858'/><ellipse cx='48.5' cy='34' rx='16.5' ry='21.3' fill='%236a7788'/><path d='M13 96V77.5C13 67 30 62.5 38.5 61.5q1.5-.2 2.5.8l6.800 6.600q.7.600 1.400.1l7-6.700q1-1 2.500-.8C67 62.500 84 67 84 77.500V96Z' fill='%236a7788'/></svg>") center/cover no-repeat!important;color:transparent!important}.av2>svg{display:none}.av2 .wbb{color:#fff}
+.av,.av2{position:relative;background:#3c4858 url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%233c4858'/><ellipse cx='48.5' cy='34' rx='16.5' ry='21.3' fill='%236a7788'/><path d='M13 96V77.5C13 67 30 62.5 38.5 61.5q1.5-.2 2.5.8l6.800 6.600q.7.600 1.400.1l7-6.700q1-1 2.500-.8C67 62.500 84 67 84 77.500V96Z' fill='%236a7788'/></svg>") center/cover no-repeat;color:transparent}.av2>svg{display:none}.av2 .wbb{color:#fff}.mav{position:absolute;inset:0;border-radius:50%;background:center/cover var(--meav,none)}.avs{display:flex;align-items:center;gap:16px;padding:16px}.avs .av{width:72px;height:72px;flex:none}.avs .btn{min-width:0}
 .wbp small{display:block;color:var(--st);font-size:11px;letter-spacing:1px;margin-top:6px;min-height:14px;white-space:nowrap}
 .wbb{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--tab);border:2px solid var(--bg);font-size:11px;font-weight:400;display:flex;align-items:center;justify-content:center;color:#fff}
 #lgs .w{display:flex;flex-direction:column;min-height:100%}#lgs .lh{padding-top:14px}
@@ -291,7 +291,8 @@ let rs=[],drafts={},tT=0;try{rs=JSON.parse(localStorage.getItem("microboxd:rs")|
 const pers=()=>{try{localStorage.setItem("microboxd:rs",JSON.stringify(rs));localStorage.setItem("microboxd:drafts",JSON.stringify(drafts))}catch(e){}};
 function toast(m){const t=$("toast");t.innerHTML=m;t.classList.add("on");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("on"),2600)}
 let pendS=[];const save=()=>{adopt();sched()};
-const uname=()=>(prof.name||"").trim()||"tú",ini=()=>esc(uname().charAt(0).toUpperCase());
+const uname=()=>(prof.name||"").trim()||"tú",ini=()=>'<i class="mav"></i>';
+const setMe=()=>{const u=prof.avd||(prof.av?cvr(prof.av):"");document.documentElement.style.setProperty("--meav",u?`url("${u}")`:"none")};
 const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
 const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
@@ -392,8 +393,10 @@ function openSet(){sd=JSON.parse(JSON.stringify(prof));sd.fav=(sd.fav||[]).filte
 function drawSet(){const R=(l,k,ph,t)=>`<label class="srow"><span>${l}</span><input type="${t||"text"}" maxlength="80" placeholder="${ph||""}" value="${esc(sd[k])}" oninput="sd.${k}=this.value"></label>`;
   const slots=[0,1,2,3].map(k=>{const it=get(sd.fav[k]);return it?`<div class="fvp" data-k="${k}">${nop(it)}<button class="fvx" aria-label="Quitar" onclick="sdRm(${k})">×</button></div>`:`<div class="fvp fve" onclick="sdAdd()">＋</div>`}).join("");
   $("set").innerHTML=`<div class="slh"><button onclick="$('set').classList.remove('open')">Cancelar</button><b>Ajustes</b><button class="sv" onclick="saveSet()">Guardar</button></div>
+  <div class="slb">Foto de perfil</div><div class="sgrp"><div class="avs"><div class="av" style="width:72px;height:72px${avs(sd.avd||sd.av)}" onclick="$('av-f').click()"></div><button class="btn" onclick="$('av-f').click()">${sd.avd||sd.av?"Cambiar foto":"Subir foto"}</button>${sd.avd||sd.av?'<button class="btn" onclick="sd.av=\'\';sd.avd=\'\';drawSet()">Quitar</button>':""}<input type="file" id="av-f" accept="image/*" hidden onchange="sdAv(this)"></div></div>
   <div class="slb">Perfil</div><div class="sgrp">${R("Nombre","name")}${R("Apellidos","fam")}${R("Correo electrónico","email","","email")}${R("Ubicación","loc","Ciudad, país")}${R("Web","web","tusitio.com","url")}${R("Pronombres","pron")}<div class="sbio"><span>Bio</span><textarea rows="4" maxlength="400" placeholder="Cuenta algo sobre ti…" oninput="sd.bio=this.value">${esc(sd.bio)}</textarea></div></div>
   <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Mantén y arrastra los pósters para reordenar.</div>${instH()}<div class="slb">Cuenta</div><div class="sgrp"><div class="srow" style="cursor:default"><span>${esc(U?U.email:"")}</span></div><button class="oi d" onclick="logout()">Cerrar sesión</button></div>`}
+function sdAv(el){const f=el.files[0];if(!f)return;const im=new Image();im.onload=()=>{const n=256,c=document.createElement("canvas");c.width=c.height=n;const m=Math.min(im.width,im.height),x=(im.width-m)/2,y=(im.height-m)/2;c.getContext("2d").drawImage(im,x,y,m,m,0,0,n,n);sd.avd=c.toDataURL("image/jpeg",.85);drawSet()};im.src=URL.createObjectURL(f)}
 function sdRm(k){sd.fav.splice(k,1);drawSet()}
 function sdAdd(){const l=items.filter(i=>!sd.fav.includes(i.id));$("ov").innerHTML=`<div class="card"><div class="ot"><b>Añadir favorita</b></div>${l.length?l.map(i=>`<button class="oi" onclick="sdPick(${i.id})">${esc(short(i.title))}</button>`).join(""):'<div class="empty">No hay más series en tu catálogo.</div>'}</div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
 function sdPick(id){if(sd.fav.length<4&&!sd.fav.includes(id))sd.fav.push(id);closeOv();drawSet()}
@@ -403,7 +406,7 @@ function fvDrag(e){const el=e.target.closest(".fvp[data-k]");if(!el||e.target.cl
   const up=ev=>{clearTimeout(t);el.removeEventListener("pointermove",mv);el.removeEventListener("pointerup",up);el.removeEventListener("pointercancel",up);if(!drag)return;
    const r=box.getBoundingClientRect(),k1=Math.max(0,Math.min(sd.fav.length-1,Math.floor((ev.clientX-r.left)/(r.width/4))));const[m]=sd.fav.splice(k0,1);sd.fav.splice(k1,0,m);drawSet()};
   el.addEventListener("pointermove",mv);el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up)}
-function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>prof[k]=(sd[k]||"").trim());prof.fav=sd.fav.filter(id=>get(id));save();$("set").classList.remove("open");render()}
+function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>prof[k]=(sd[k]||"").trim());prof.fav=sd.fav.filter(id=>get(id));prof.av=sd.av||"";prof.avd=sd.avd||"";setMe();save();$("set").classList.remove("open");render()}
 const myHist=()=>{const b=Array(10).fill(0);items.forEach(i=>{if(i.rating){const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++}});const m=Math.max(1,...b);return `<div class="lbl">Valoraciones</div><div class="mh"><span>★</span><div class="bars">${b.map(n=>`<u title="${n}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><span>★★★★★</span></div>`};
 const setNh=()=>document.documentElement.style.setProperty("--nh",Math.max(0,innerHeight-$("tb").getBoundingClientRect().top)+"px");addEventListener("resize",setNh);
 function setSeg(k){seg[tab]=k;FEED=INC=HR=null;render();$("mn").scrollTop=0}
@@ -457,7 +460,7 @@ const wbSec=i=>{
   const ps=[],oth=[...(com[key(i)]||[])];
   if(i.rating){const x=oth.indexOf(i.rating);if(x>=0)oth.splice(x,1)}
   if(i.status==="done"||i.rating)ps.push(`<div class="wbp"><div class="av2 me">${ini()}${i.review?'<span class="wbb">☰</span>':""}</div><small>${i.rating?S(i.rating):""}</small></div>`);
-  oth.slice(0,12).forEach((r,k)=>ps.push(`<div class="wbp"><div class="av2" style="background:hsl(${(k*67+150)%360},55%,62%)">${svg(IC.me,30)}</div><small>${S(r)}</small></div>`));
+  oth.slice(0,12).forEach((r,k)=>ps.push(`<div class="wbp"><div class="av2">${svg(IC.me,30)}</div><small>${S(r)}</small></div>`));
   const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   return (ps.length?`<div class="wbs"><div class="wbh"><span>Visto por</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg d">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${k==="pop"?"on":""}" disabled>${t}</button>`).join("")}</div><div class="rvlb">Reseñas populares</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:25px;height:25px;font-size:12px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(i.review)}</p>`}</div></div>`};
@@ -572,7 +575,7 @@ const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
 const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
 function catAll(){const m=new Map();[...CAT,...items].forEach(i=>m.set(i.id,i));return [...m.values()]}
 const listState=l=>JSON.stringify([l.name,l.desc||"",!!l.rank,l.ids.map(sidOf)]);
-const profState=()=>JSON.stringify([prof.name,prof.fam,prof.loc,prof.web,prof.pron,prof.bio,(prof.fav||[]).map(sidOf)]);
+const profState=()=>JSON.stringify([prof.name,prof.fam,prof.loc,prof.web,prof.pron,prof.bio,prof.av,!!prof.avd,(prof.fav||[]).map(sidOf)]);
 const ck=async p=>{const r=await p;if(r.error)throw r.error;return r};
 function adopt(){for(const k in cache){const i=cache[k];if(iState(i)!==i._b){items.unshift(i);delete cache[k]}}}
 function sched(){dirty=true;clearTimeout(pushT);pushT=setTimeout(push,500)}
@@ -593,7 +596,7 @@ async function pull(){
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
   const miss=[...need].filter(u=>!get(idOf(u)));if(miss.length){const r=await sb.from("series").select("*").in("id",miss);if(!r.error)r.data.forEach(x=>{cache[idOf(x.id)]=mapS(x)})}
   lists=c.data.map(l=>({id:idOf(l.id),sid:l.id,name:l.name,desc:l.description,rank:l.ranked,ids:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>idOf(x.series_id)),ts:Date.parse(l.created_at)}));
-  const P=d.data;prof={name:P.display_name,fam:P.family_name,email:U.email,loc:P.location,web:P.website,pron:P.pronouns,bio:P.bio,fav:(P.favorites||[]).map(idOf)};
+  const P=d.data;prof={name:P.display_name,fam:P.family_name,email:U.email,loc:P.location,web:P.website,pron:P.pronouns,bio:P.bio,av:P.avatar_path||"",fav:(P.favorites||[]).map(idOf)};setMe();
   log=[];b.data.forEach(x=>{const i=get(idOf(x.series_id));if(!i)return;const ts=Date.parse(x.watched_on+"T12:00:00");log.push({t:"done",id:i.id,title:i.title,r:+x.rating||0,ts});if(x.rating)log.push({t:"rate",id:i.id,title:i.title,r:+x.rating,ts})});
   items.forEach(i=>{if(i.created_by===uid)log.push({t:"add",id:i.id,title:i.title,ts:i.added})});
   log.sort((p,q)=>q.ts-p.ts);log=log.slice(0,100);
@@ -618,7 +621,8 @@ async function push(){
     const r=l.ids.map((id,k)=>({list_id:l.sid,series_id:sidOf(id),position:k})).filter(x=>x.series_id);if(r.length)await ck(sb.from("list_items").insert(r));shadowL[l.id]={st,sid:l.sid}}
    const lg_=Object.keys(shadowL).filter(k=>!lists.some(l=>String(l.id)===k));
    for(const k of lg_){await ck(sb.from("lists").delete().eq("id",shadowL[k].sid));delete shadowL[k]}
-   const ps=profState();if(ps!==shadowP){await ck(sb.from("profiles").update({display_name:prof.name||"",family_name:prof.fam||"",location:prof.loc||"",website:prof.web||"",pronouns:prof.pron||"",bio:prof.bio||"",favorites:(prof.fav||[]).map(sidOf).filter(Boolean)}).eq("id",uid));shadowP=ps}
+   if(prof.avd){const bl=await (await fetch(prof.avd)).blob(),path=uid+"/avatar-"+Date.now()+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{contentType:"image/jpeg"}));prof.av=path;prof.avd="";setMe()}
+   const ps=profState();if(ps!==shadowP){await ck(sb.from("profiles").update({avatar_path:prof.av||null,display_name:prof.name||"",family_name:prof.fam||"",location:prof.loc||"",website:prof.web||"",pronouns:prof.pron||"",bio:prof.bio||"",favorites:(prof.fav||[]).map(sidOf).filter(Boolean)}).eq("id",uid));shadowP=ps}
   }catch(e){console.error(e);fails++;toast("No se pudo sincronizar: "+((e&&e.message)||e));dirty=true}
   finally{pushing=false;if(!dirty)fails=0;else setTimeout(sched,Math.min(60000,4000*2**Math.min(fails,4)))}}
 async function legacy(){const mk="microboxd:mig:"+U.id;
@@ -676,16 +680,17 @@ async function instApp(){if(!IP)return;IP.prompt();try{await IP.userChoice}catch
 if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 /* ===== Social: reseñas, perfiles, seguir ===== */
 let RV={},RVt={},RX={},FW=new Set(),rvTab="pop",rsTab="all",FEED=null,INC=null,HR=null,MEM=[],mq=0,memT=0,subH=[];
-const RSEL="id,user_id,series_id,watched_on,rating,liked,rewatch,review,spoilers,created_at,profiles(username,display_name),review_likes(user_id)";
+const RSEL="id,user_id,series_id,watched_on,rating,liked,rewatch,review,spoilers,created_at,profiles(username,display_name,avatar_path),review_likes(user_id)";
 const pname=p=>p?(p.display_name||p.username):"usuario";
-const nrm=x=>{const r={id:x.id,uid:x.user_id,sid:x.series_id,u:pname(x.profiles),r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers,ts:Date.parse(x.created_at),wd:x.watched_on,lk:(x.review_likes||[]).length,me:(x.review_likes||[]).some(l=>l.user_id===U.id)};RX[r.id]=r;return r};
-const av2=(n,s)=>`<div class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.44)}px">${esc((n||"?").charAt(0).toUpperCase())}</div>`;
+const nrm=x=>{const r={id:x.id,uid:x.user_id,sid:x.series_id,u:pname(x.profiles),ap:x.user_id===U.id?(prof.avd||prof.av||(x.profiles&&x.profiles.avatar_path)):(x.profiles&&x.profiles.avatar_path),r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers,ts:Date.parse(x.created_at),wd:x.watched_on,lk:(x.review_likes||[]).length,me:(x.review_likes||[]).some(l=>l.user_id===U.id)};RX[r.id]=r;return r};
+const avu=p=>!p?"":p.startsWith("data:")?p:cvr(p),avs=p=>p?`;background-image:url(${avu(p)})`:"";
+const av2=(n,s,p)=>`<div class="av" style="width:${s}px;height:${s}px${avs(p)}"></div>`;
 const sCache=r=>{const id=idOf(r.id);return get(id)||(cache[id]=mapS(r))};
 const subBar=(t)=>`<div class="lbar"><button onclick="subX()">‹ Atrás</button><b>${t}</b><span style="min-width:44px"></span></div>`;
 function subOpen(h){const s=$("sub");if(s.classList.contains("open"))subH.push(s.innerHTML);else subH=[];$("det").style.zIndex="";s.innerHTML=h;s.classList.add("open");s.scrollTop=0}
 const subRe=h=>{$("sub").innerHTML=h};
 function subX(){const s=$("sub");if(subH.length)s.innerHTML=subH.pop();else s.classList.remove("open")}
-const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rvh"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" ${r.uid===U.id?"":`onclick="event.stopPropagation();openUser('${r.uid}')"`}>${esc(r.u)}${av2(r.u,32)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
+const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rvh"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" ${r.uid===U.id?"":`onclick="event.stopPropagation();openUser('${r.uid}')"`}>${esc(r.u)}${av2(r.u,32,r.ap)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
 async function loadRevs(i,force){if(!sb||!i.sid)return;if(!force&&Date.now()-(RVt[i.sid]||0)<30000)return;RVt[i.sid]=Date.now();
   try{const{data,error}=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).neq("review","").order("created_at",{ascending:false}).limit(100);if(error)throw error;
    const o=JSON.stringify(RV[i.sid]);RV[i.sid]=data.map(nrm);if(o!==JSON.stringify(RV[i.sid])&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}}
@@ -693,7 +698,7 @@ const revsSec=i=>{const a=RV[i.sid];if(!a)return revSec(i);if(!a.length)return""
   const l=rvTab==="fr"?a.filter(r=>FW.has(r.uid)):[...a].sort((x,y)=>y.lk-x.lk||y.ts-x.ts);
   return `<div class="rvs"><div class="seg d" style="margin:6px 0 4px">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${rvTab===k?"on":""}" onclick="rvTab='${k}';show(${i.id},true)">${t}</button>`).join("")}</div><div class="rvlb">${rvTab==="fr"?"Reseñas de amigos":"Reseñas populares"}</div>${l.length?l.slice(0,4).map(rvItem).join(""):'<div class="chint">Nadie a quien sigues ha reseñado esta serie.</div>'}<div class="rvall" onclick="openRevs(${i.id})">Todas las reseñas <span>›</span></div></div>`};
 function openReview(id,re){const r=RX[id];if(!r)return;const i=get(idOf(r.sid)),mine=r.uid===U.id;
-  const h=subBar("Reseña")+`<div class="in"><div class="lown" ${mine?"":`onclick="openUser('${r.uid}')" style="cursor:pointer"`}>${av2(r.u,28)}<span>${esc(r.u)}</span></div>
+  const h=subBar("Reseña")+`<div class="in"><div class="lown" ${mine?"":`onclick="openUser('${r.uid}')" style="cursor:pointer"`}>${av2(r.u,28,r.ap)}<span>${esc(r.u)}</span></div>
   <div style="display:flex;gap:14px;margin-top:12px"><div style="flex:1;min-width:0"><h2 ${i?`onclick="subX();show(${i.id})" style="cursor:pointer"`:""}>${esc(i?short(i.title):"")}</h2><div style="font-size:20px;color:var(--g);margin:6px 0">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</div><div class="meta">Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</div></div>${i?`<div style="width:90px;flex:none">${nop(i)}</div>`:""}</div>
   <p class="syn" style="white-space:pre-wrap;opacity:1;margin:18px 0">${esc(r.t)}</p>
   <div class="ctl" style="justify-content:space-between">${mine?`<span>${r.lk} ${r.lk===1?"like":"likes"}</span>${i?`<button class="btn" onclick="openLog(${i.id})">Editar</button>`:""}`:`<button class="hb2 ${r.me?"on":""}" aria-label="Me gusta" onclick="likeRev('${r.id}')" style="display:flex;align-items:center;gap:8px">${svg(HEART,28)}<span style="color:var(--tx)">${r.me?"Te gusta":"¿Te gusta?"}</span></button><span>${r.lk} ${r.lk===1?"like":"likes"}</span>`}</div></div>`;
@@ -713,7 +718,7 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    R.forEach(r=>{if(r.error)throw r.error});const[p,d,fo,fg,dn]=R,P=p.data,nm=pname(P),seen=new Set(),ps=[];
    d.data.forEach(x=>{if(!seen.has(x.series_id)&&ps.length<8){seen.add(x.series_id);ps.push(sCache(x.series))}});
    const rv=d.data.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:P}))),isF=FW.has(uid);
-   subRe(subBar(esc(nm))+`<div class="av big">${esc(nm.charAt(0).toUpperCase())}</div><div class="pinfo"><div class="pnm">${esc(nm)}</div><div class="ploc">@${esc(P.username)}</div>${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}<button class="btn ${isF?"":"p"}" style="margin-top:12px;min-width:140px" id="fbtn" onclick="toggleFollow('${uid}')">${isF?"Siguiendo":"Seguir"}</button></div>
+   subRe(subBar(esc(nm))+`<div class="av big" style="${avs(P.avatar_path).slice(1)}"></div><div class="pinfo"><div class="pnm">${esc(nm)}</div><div class="ploc">@${esc(P.username)}</div>${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}<button class="btn ${isF?"":"p"}" style="margin-top:12px;min-width:140px" id="fbtn" onclick="toggleFollow('${uid}')">${isF?"Siguiendo":"Seguir"}</button></div>
    <div class="stats"><div><b>${dn.count||0}</b>Vistas</div><div><b>${fg.count||0}</b>Siguiendo</div><div><b>${fo.count||0}</b>Seguidores</div></div>
    ${ps.length?`<div class="lbl">Actividad reciente</div>${grid(ps)}`:""}${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.slice(0,10).map(rvItem).join("")}</div>`:""}`)}
   catch(e){console.error(e);subRe(subBar("Perfil")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
@@ -722,23 +727,23 @@ async function toggleFollow(uid){const on=!FW.has(uid);on?FW.add(uid):FW.delete(
   catch(e){on?FW.delete(uid):FW.add(uid);paint(!on);toast("No se pudo actualizar")}}
 const loadingH='<div class="empty">Cargando…</div>';
 async function loadFeed(){if(!FW.size){FEED=[];if(tab==="act")render();return}
-  try{const{data,error}=await sb.from("diary_entries").select("*,series(*),profiles(username,display_name)").in("user_id",[...FW]).order("created_at",{ascending:false}).limit(40);if(error)throw error;FEED=data}catch(e){console.error(e);FEED=[]}if(tab==="act")render()}
+  try{const{data,error}=await sb.from("diary_entries").select("*,series(*),profiles(username,display_name,avatar_path)").in("user_id",[...FW]).order("created_at",{ascending:false}).limit(40);if(error)throw error;FEED=data}catch(e){console.error(e);FEED=[]}if(tab==="act")render()}
 const feedH=()=>{if(FEED===null){FEED=0;loadFeed()}if(FEED===0)return loadingH;
   if(!FEED.length)return `<div class="empty">${FW.size?"Las personas que sigues aún no han registrado nada.":"Sigue a otros miembros desde Buscar → Miembros para ver aquí lo que ven."}</div>`;
-  return FEED.map(x=>{const it=sCache(x.series),n=pname(x.profiles);return `<div class="act" onclick="show(${it.id})" style="cursor:pointer">${av2(n,36)}<div><b>${esc(n)}</b> ${x.rating?"puntuó":"vio"} <b>${esc(short(it.title))}</b>${x.rating?" "+S(+x.rating):""}</div><span class="t">${rel(Date.parse(x.created_at))}</span></div>`}).join("")};
+  return FEED.map(x=>{const it=sCache(x.series),n=pname(x.profiles);return `<div class="act" onclick="show(${it.id})" style="cursor:pointer">${av2(n,36,x.profiles&&x.profiles.avatar_path)}<div><b>${esc(n)}</b> ${x.rating?"puntuó":"vio"} <b>${esc(short(it.title))}</b>${x.rating?" "+S(+x.rating):""}</div><span class="t">${rel(Date.parse(x.created_at))}</span></div>`}).join("")};
 async function loadInc(){try{
-  const[f,m]=await Promise.all([sb.from("follows").select("follower_id,created_at,profiles!follows_follower_id_fkey(username,display_name)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select("id,series(title)").eq("user_id",U.id).neq("review","").limit(100)]);
-  if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:"f",uid:x.follower_id,n:pname(x.profiles),ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>tt[x.id]=x.series&&x.series.title);
-  if(m.data.length){const l=await sb.from("review_likes").select("entry_id,user_id,created_at,profiles(username,display_name)").in("entry_id",m.data.map(x=>x.id)).order("created_at",{ascending:false}).limit(30);if(!l.error)l.data.forEach(x=>out.push({k:"l",uid:x.user_id,n:pname(x.profiles),ts:Date.parse(x.created_at),t:tt[x.entry_id]||""}))}
+  const[f,m]=await Promise.all([sb.from("follows").select("follower_id,created_at,profiles!follows_follower_id_fkey(username,display_name,avatar_path)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select("id,series(title)").eq("user_id",U.id).neq("review","").limit(100)]);
+  if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:"f",uid:x.follower_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>tt[x.id]=x.series&&x.series.title);
+  if(m.data.length){const l=await sb.from("review_likes").select("entry_id,user_id,created_at,profiles(username,display_name,avatar_path)").in("entry_id",m.data.map(x=>x.id)).order("created_at",{ascending:false}).limit(30);if(!l.error)l.data.forEach(x=>out.push({k:"l",uid:x.user_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at),t:tt[x.entry_id]||""}))}
   INC=out.sort((a,b)=>b.ts-a.ts)}catch(e){console.error(e);INC=[]}if(tab==="act")render()}
 const incH=()=>{if(INC===null){INC=0;loadInc()}if(INC===0)return loadingH;if(!INC.length)return '<div class="empty">Sin actividad entrante.</div>';
-  return INC.map(x=>`<div class="act" onclick="openUser('${x.uid}')" style="cursor:pointer">${av2(x.n,36)}<div><b>${esc(x.n)}</b> ${x.k==="f"?"empezó a seguirte":`le dio like a tu reseña de <b>${esc(short(x.t))}</b>`}</div><span class="t">${rel(x.ts)}</span></div>`).join("")};
+  return INC.map(x=>`<div class="act" onclick="openUser('${x.uid}')" style="cursor:pointer">${av2(x.n,36,x.ap)}<div><b>${esc(x.n)}</b> ${x.k==="f"?"empezó a seguirte":`le dio like a tu reseña de <b>${esc(short(x.t))}</b>`}</div><span class="t">${rel(x.ts)}</span></div>`).join("")};
 async function loadHR(){try{const{data,error}=await sb.from("diary_entries").select(RSEL+",series(*)").in("user_id",[U.id,...FW]).neq("review","").order("created_at",{ascending:false}).limit(30);if(error)throw error;HR=data}catch(e){console.error(e);HR=[]}if(tab==="home"&&seg.home==="rev")render()}
 const hrH=()=>{if(HR===null){HR=0;loadHR()}if(HR===0)return loadingH;if(!HR.length)return '<div class="empty">Aún no hay reseñas. Escribe una desde la ficha de una serie o sigue a otros miembros.</div>';
   return HR.map(x=>{const r=nrm(x),it=sCache(x.series);return `<div class="row" onclick="openReview('${r.id}')" style="cursor:pointer">${nop(it)}<div><b>${esc(short(it.title))}</b><div class="ss">${r.r?S(r.r):""}${r.hl?" ♥":""} <span>${esc(r.u)}</span></div>${r.sp?"<i>⚠ Esta reseña puede contener spoilers</i>":esc(r.t.slice(0,300))}</div></div>`}).join("")};
-const memHtml=()=>q.trim()?(MEM.length?MEM.map(m=>`<div class="ar" style="padding:10px 14px" onclick="openUser('${m.id}')">${av2(pname(m),40)}<div style="flex:1"><b>${esc(pname(m))}</b><small>@${esc(m.username)}</small></div>${FW.has(m.id)?"<small>Siguiendo</small>":""}</div>`).join(""):'<div class="empty">Sin resultados.</div>'):'<div class="empty">Escribe un nombre para buscar miembros.</div>';
+const memHtml=()=>q.trim()?(MEM.length?MEM.map(m=>`<div class="ar" style="padding:10px 14px" onclick="openUser('${m.id}')">${av2(pname(m),40,m.avatar_path)}<div style="flex:1"><b>${esc(pname(m))}</b><small>@${esc(m.username)}</small></div>${FW.has(m.id)?"<small>Siguiendo</small>":""}</div>`).join(""):'<div class="empty">Sin resultados.</div>'):'<div class="empty">Escribe un nombre para buscar miembros.</div>';
 function memSearch(){clearTimeout(memT);memT=setTimeout(async()=>{const t=q.trim().replace(/[%,()*]/g," ").trim();if(!t){MEM=[];return}const k=++mq;
-  try{const{data,error}=await sb.from("profiles").select("id,username,display_name").or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).neq("id",U.id).limit(20);if(error)throw error;if(k!==mq)return;MEM=data;const e=$("mem");if(e)e.innerHTML=memHtml()}catch(e){console.error(e)}},250)}
+  try{const{data,error}=await sb.from("profiles").select("id,username,display_name,avatar_path").or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).neq("id",U.id).limit(20);if(error)throw error;if(k!==mq)return;MEM=data;const e=$("mem");if(e)e.innerHTML=memHtml()}catch(e){console.error(e)}},250)}
 /* ===== Formulario: personajes con foto ===== */
 let fc=[];
 function drawFc(){$("fcl").innerHTML=fc.map((r,k)=>`<div class="fcr"><label class="cph ${r.img?"has":""}" ${r.img?`style="background-image:url(${r.img})"`:""}>${r.img?"":svg(IC.me,22)}<input type="file" accept="image/*" hidden onchange="fcPh(${k},this)"></label><div class="fcn"><input placeholder="Nombre del personaje" maxlength="60" value="${esc(r.n)}" oninput="fc[${k}].n=this.value"><input placeholder="Actor o actriz (opcional)" maxlength="60" value="${esc(r.r)}" oninput="fc[${k}].r=this.value"></div><button type="button" class="fcx" aria-label="Quitar" onclick="fc.splice(${k},1);drawFc()">×</button></div>`).join("");$("fca").style.display=fc.length>=20?"none":""}
