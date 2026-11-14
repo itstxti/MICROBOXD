@@ -133,7 +133,7 @@ h2{color:var(--tx);font-family:Georgia,serif;font-size:22px;margin:0 0 4px;line-
 .fm .fs{position:sticky;bottom:0;padding:18px 0 6px;margin-top:8px;background:linear-gradient(transparent,var(--bg) 40%)}.fm .fs .btn{width:100%;height:48px;font-size:16px;border-radius:10px}
 
 #det{padding-top:0}
-.top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:6px 10px 6px;pointer-events:none}
+.top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:calc(6px + env(safe-area-inset-top,0px)) 10px 6px;pointer-events:none}
 .top>*{pointer-events:auto}
 .rb{width:44px;height:44px;border:0;background:none;color:var(--mute);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .mnu{display:none;position:absolute;right:14px;top:calc(60px + env(safe-area-inset-top,0px));background:var(--pan);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
@@ -289,7 +289,7 @@ const $=id=>document.getElementById(id);
 let rs=[],drafts={},tT=0;try{rs=JSON.parse(localStorage.getItem("microboxd:rs")||"[]");drafts=JSON.parse(localStorage.getItem("microboxd:drafts")||"{}")}catch(e){}
 const pers=()=>{try{localStorage.setItem("microboxd:rs",JSON.stringify(rs));localStorage.setItem("microboxd:drafts",JSON.stringify(drafts))}catch(e){}};
 function toast(m){const t=$("toast");t.innerHTML=m;t.classList.add("on");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("on"),2600)}
-const save=()=>{adopt();sched()};
+let pendS=[];const save=()=>{adopt();sched()};
 const uname=()=>(prof.name||"").trim()||"tú",ini=()=>esc(uname().charAt(0).toUpperCase());
 const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
@@ -604,7 +604,7 @@ async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.ca
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
-   for(const i of items.filter(x=>x.fresh)){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
+   pendS=pendS.filter(x=>x.fresh);for(const i of [...new Set([...items.filter(x=>x.fresh),...pendS])]){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
    const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked}})}
    if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>shadow[r.i.id]={st:r.st,sid:r.i.sid})}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
@@ -754,10 +754,10 @@ $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
 $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
   const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title,app:$("f-app").value,syn:$("f-syn").value.trim(),
    tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),cast:fc.filter(r=>r.n.trim()).map(r=>({a:r.n.trim(),p:r.r.trim(),ph:r.img||"",pp:""})),castTxt:fc.filter(r=>r.n.trim()).map(r=>r.n.trim()+(r.r.trim()?" ("+r.r.trim()+")":"")).join(", "),eps:Math.max(1,parseInt($("f-eps").value)||1),
-   watched:0,rating:0,review:"",status:"want",cover,added:Date.now()};
-  items.unshift(it);addLog("add",it);
+   watched:0,rating:0,review:"",status:"",cover,added:Date.now()};
+  it._b=iState(it);cache[it.id]=it;pendS.push(it);addLog("add",it);
   ["f-title","f-syn","f-tropes","f-eps","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
-  $("form").classList.remove("open");$("ad").classList.remove("open");save();render()};
+  $("form").classList.remove("open");$("ad").classList.remove("open");save();render();show(it.id)};
 boot();
 </script>
 </body>
