@@ -550,7 +550,7 @@ function adl(){const n=norm(adq),el=$("adr");
 function adS(v){adq=v;$("adi").value=v;$("adx").style.display="";adl()}
 function adP(id){const t=adq.trim();if(t){rs=[t,...rs.filter(x=>x!==t)].slice(0,12);pers()}openLog(id,true)}
 const SB_URL="https://xmfpzbzctgnzqoidtqhs.supabase.co",SB_KEY="sb_publishable_PpbxqcCOPmTqqZPCnA1JSg_qAtziTjn";
-let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},shadowL={},shadowP="",dq=[],pushT=0,pushing=false,dirty=false,statAt={};
+let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},shadowL={},shadowP="",dq=[],pushT=0,pushing=false,dirty=false,fails=0,statAt={};
 const key=i=>norm(short(i.title));
 function castSet(id,v){get(id).castTxt=v;save();show(id,true)}
 const idOf=u=>parseInt(String(u).replace(/-/g,"").slice(0,12),16);
@@ -593,7 +593,7 @@ async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.ca
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
-   for(const i of items.filter(x=>x.fresh)){await up(i,uid);await upCast(i,uid);await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
+   for(const i of items.filter(x=>x.fresh)){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
    const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked}})}
    if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>shadow[r.i.id]={st:r.st,sid:r.i.sid})}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
@@ -607,8 +607,8 @@ async function push(){
    const lg_=Object.keys(shadowL).filter(k=>!lists.some(l=>String(l.id)===k));
    for(const k of lg_){await ck(sb.from("lists").delete().eq("id",shadowL[k].sid));delete shadowL[k]}
    const ps=profState();if(ps!==shadowP){await ck(sb.from("profiles").update({display_name:prof.name||"",family_name:prof.fam||"",location:prof.loc||"",website:prof.web||"",pronouns:prof.pron||"",bio:prof.bio||"",favorites:(prof.fav||[]).map(sidOf).filter(Boolean)}).eq("id",uid));shadowP=ps}
-  }catch(e){console.error(e);toast("No se pudo sincronizar. Reintentando…");dirty=true}
-  finally{pushing=false;if(dirty)setTimeout(sched,4000)}}
+  }catch(e){console.error(e);fails++;toast("No se pudo sincronizar: "+((e&&e.message)||e));dirty=true}
+  finally{pushing=false;if(!dirty)fails=0;else setTimeout(sched,Math.min(60000,4000*2**Math.min(fails,4)))}}
 async function legacy(){const mk="microboxd:mig:"+U.id;
   try{if(!LEG||localStorage.getItem(mk))return;const old=(LEG.items||[]).filter(i=>i&&i.title&&!/^Ejemplo:/.test(i.title));
    if(!old.length||items.length){localStorage.setItem(mk,"1");return}
