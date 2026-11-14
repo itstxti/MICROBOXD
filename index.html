@@ -657,7 +657,7 @@ function lpl(){const el=$("lpr");if(!el)return;const n=norm(le.q||""),f=$("lpw")
   const r=catAll().filter(i=>norm(i.title+i.app+i.tropes.join("")).includes(n)).slice(0,30);
   el.innerHTML=r.length?r.map(i=>`<div class="ar" style="padding:8px 16px" onclick="enOpen(${i.id})">${nop(i)}<div style="flex:1;min-width:0"><b>${esc(short(i.title))}</b><small>${esc(i.app)}</small></div>${le.ids.includes(i.id)?'<span class="lck">✓</span>':""}</div>`).join(""):'<div class="empty">Sin resultados en tu catálogo.</div>'}
 function drawLe(){$("le").innerHTML=le.page==="p"?lePick():le.page==="e"?leEntry():leForm();if(le.page==="p")lpl()}
-function lePg(p){le.page=p;le.q="";drawLe();$("le").scrollTop=0;if(p==="p")setTimeout(()=>{try{$("lpi").focus()}catch(e){}},60)}
+function lePg(p){le.page=p;le.q="";drawLe();$("le").scrollTop=0;}
 function tglP(id){const k=le.ids.indexOf(id);if(k<0){if(!get(id)){const it=catAll().find(x=>x.id===id);if(it)cache[id]=it}le.ids.push(id)}else le.ids.splice(k,1);le.page==="p"?lpl():drawLe()}
 function lMv(k,d){const t=k+d;if(t<0||t>=le.ids.length)return;[le.ids[k],le.ids[t]]=[le.ids[t],le.ids[k]];le.page==="p"?lpl():drawLe()}
 function tgl(id){const k=le.ids.indexOf(id);k<0?le.ids.push(id):le.ids.splice(k,1);drawLe()}
