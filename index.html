@@ -280,7 +280,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const APPS=["DramaBox","ReelShort","ShortMax","GoodShort","FlexTV","Otra"];
-const ST={want:"Quiero ver",watching:"Viendo",done:"Vista"};
+const ST={want:"Quiero ver",done:"Vista"};
 const KEY="microboxd:v1",LK="microboxd:log";
 let prof={name:"",fam:"",email:"",loc:"",web:"",bio:"",pron:"",fav:[]},items=[],log=[],lists=[],sq="s",adq="",tab="home",q="",cover="";
 const seg={home:"series",act:"me",me:"perfil"};
@@ -327,7 +327,7 @@ function render(){
   let h="";
   if(tab==="home"){
     if(seg.home==="series"){
-      h=hrow("Seguir viendo",items.filter(i=>i.status==="watching"))+hrow("Añadidas recientemente",items.slice(0,10))+hrow("Mejor valoradas",items.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10));
+      h=hrow("Añadidas recientemente",items.slice(0,10))+hrow("Mejor valoradas",items.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10));
       if(!items.length)h='<div class="empty">Añade tu primera serie con el botón +</div>';
     }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=lv();
     }else{
@@ -442,7 +442,6 @@ function show(id,keep){
   <div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div></div>${poster(i).replace(/onclick="[^"]*"/,"")}</div>
   <p class="syn">${esc(i.syn)||"Sin sinopsis todavía."}</p>
   <div>${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>
-  ${prog(i)}
   ${hist(i)}
   <div class="lgw"><div class="logrow" onclick="opts(${i.id})"><div class="av" style="width:32px;height:32px;font-size:14px;flex:none">${ini()}</div><span>${lt(i)}</span><span class="more">•••</span></div></div>
   ${wbSec(i)}${wwSec(i)}
@@ -454,8 +453,7 @@ function show(id,keep){
 const detSc=()=>{const t=document.querySelector('#det .top');if(t)t.classList.toggle('sc',$('det').scrollTop>150)};$('det').addEventListener('scroll',detSc);
 const setDt=(k,id)=>{dtab=k;show(id,true)};
 const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv=i._rv!=null?i._rv:(i.review?1:0),ls=i._ls!=null?i._ls:lists.filter(l=>l.ids.includes(i.id)).length;
-  return `<div class="ww" style="border-top:1px solid var(--line)">Dónde ver<span><i class="ab" style="background:hsl(${h},55%,42%);font-style:normal">${esc(i.app.charAt(0))}</i>›</span></div>
-  <div class="tiles"><div class="tile g">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
+  return `<div class="tiles"><div class="tile g">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
 const wbSec=i=>{
   const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" onclick="event.stopPropagation();openReview('${x.id}')"><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (W.length?`<div class="wbs"><div class="wbh" onclick="openWb(${i.id})" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
@@ -466,7 +464,7 @@ const wbSec=i=>{
   return (ps.length?`<div class="wbs"><div class="wbh" onclick="openWb(${i.id})" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg d">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${k==="pop"?"on":""}" disabled>${t}</button>`).join("")}</div><div class="rvlb">Reseñas populares</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:25px;height:25px;font-size:12px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(i.review)}</p>`}</div></div>`};
 const EYE='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',HEART='<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',CLOCK='<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',WARN='<path d="M12 3L2 20h20z"/><path d="M12 10v5M12 18v.5"/>';
-const lt=i=>{const h=i.liked?" ♥":"";if(i.rating)return `Puntuada <span style="color:var(--mute);letter-spacing:1px">${S(i.rating)}${h}</span>`;if(i.status==="done")return (i.watchedOn?`Registrada el ${fsh(i.watchedOn)}`:"Vista")+h;if(i.status==="want")return "Está en tus pendientes";if(i.status==="watching")return `Viendo · ep. ${i.watched} de ${i.eps}`;return i.liked?"Te gusta ♥":"Puntúa, registra, reseña, añade a una lista + más"};
+const lt=i=>{const h=i.liked?" ♥":"";if(i.rating)return `Le has dado un rating de <span style="color:var(--mute);letter-spacing:1px">${S(i.rating)}${h}</span>`;if(i.status==="done")return (i.watchedOn?`Registrada el ${fsh(i.watchedOn)}`:"Vista")+h;if(i.status==="want")return "Está en tus pendientes";return i.liked?"Te gusta ♥":"Puntúa, registra, reseña, añade a una lista + más"};
 const sx=(r,cb)=>[1,2,3,4,5].map(n=>`<span class="sx"><b style="width:${r>=n?100:r>=n-.5?50:0}%">★</b>★<button class="hl" onclick="${cb(n-.5)}"></button><button class="hr" onclick="${cb(n)}"></button></span>`).join("");
 const refresh=id=>{if($("det").classList.contains("open"))show(id,true)};
 const closeOv=()=>$("ov").classList.remove("open");
@@ -477,10 +475,12 @@ function opts(id){const i=get(id),dn=i.status==="done",log_=!!(i.rating||i.watch
   <div class="rt" style="border-top:1px solid var(--bg)"><div class="pl">${i.rating?"Puntuada":"Puntúa"}</div><div class="sr big5" data-s="qr:${id}" style="justify-content:center">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
   ${i.rating||dn?`<button class="oi" onclick="closeOv();$('det').classList.remove('open');seg.act='me';go('act')">Mostrar tu actividad</button>`:""}
   <button class="oi" onclick="openLog(${id})">${log_?"Reseñar o registrar otra vez":"Reseñar o registrar"}</button><button class="oi" onclick="pickList(${id})">Añadir a listas</button><button class="oi" onclick="shr(${id})">Compartir</button>${i.status?`<button class="oi d" onclick="del(${id});closeOv()">Quitar de mi biblioteca</button>`:""}</div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
+const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
+function drop(id){const d=get(id);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
 function qv(id,k,sl){const i=get(id);
   if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i)}
-  else if(k==="v"){if(i.status==="done")i.status=i.watched>0?"watching":"want";else{i.status="done";i.watched=i.eps;addLog("done",i)}}
-  else i.status=i.status==="want"?(i.watched>0?"watching":"want"):"want";
+  else if(k==="v"){if(i.status==="done"){if(lk(i)){toast("No puedes quitar «Vista»: la serie tiene actividad");return}drop(id)}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="done";i.watched=i.eps;addLog("done",i)}}
+  else{if(i.status==="want")drop(id);else if(i.status==="done"&&lk(i)){toast("Está marcada como vista y tiene actividad");return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
   save();if(!sl)opts(id);refresh(id)}
 const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
 function setR(i,v){i.rating=v;if(v){mark(i);addLog("rate",i)}}
@@ -591,7 +591,7 @@ async function pull(){
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
    sb.from("follows").select("followee_id").eq("follower_id",uid)]);
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));b.data.forEach(x=>{if(!de[x.series_id])de[x.series_id]=x});
-  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
+  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?"want":r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
