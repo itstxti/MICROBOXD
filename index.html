@@ -155,7 +155,7 @@ button.tag{background:none;font:inherit;font-size:11px;text-transform:uppercase;
 .rn{margin-left:auto;color:var(--tx);font-size:24px;font-weight:300}
 .bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-bottom:12px}.bar i{display:block;height:100%;background:var(--g)}
 .ctl .btn{min-width:46px;height:44px;font-size:20px}
-.hist{display:flex;align-items:flex-end;gap:12px}
+.hist.e .bars{height:14px}.hist.e .avg{font-size:20px;line-height:14px;height:14px;margin-top:0;color:var(--mute)}.hist{display:flex;align-items:flex-end;gap:12px}
 .bars{flex:1;display:flex;align-items:flex-end;gap:3px;height:52px}
 .bars u{flex:1;background:var(--tab);border-radius:2px 2px 0 0;text-decoration:none}.bars u.me{background:var(--g)}
 .avg{text-align:center;color:var(--tx);font-size:32px;font-weight:300;line-height:1}
@@ -418,7 +418,7 @@ const pc=i=>Math.round(i.watched/i.eps*100);
 const stars=i=>[1,2,3,4,5].map(n=>`<span class="sx"><b style="width:${i.rating>=n?100:i.rating>=n-.5?50:0}%">★</b>★<button class="hl" aria-label="${n-.5}" onclick="rate(${i.id},${n-.5})"></button><button class="hr" aria-label="${n}" onclick="rate(${i.id},${n})"></button></span>`).join("");
 function hist(i){const v=com[key(i)]||(i.rating?[i.rating]:[]),b=Array(10).fill(0);v.forEach(x=>{const j=Math.round(x*2)-1;if(j>=0&&j<10)b[j]++});
   const m=Math.max(1,...b),k=i.rating?Math.round(i.rating*2)-1:-1,avg=v.length?(v.reduce((a,x)=>a+x,0)/v.length).toFixed(1):"–";
-  return `<div class="panel"><div class="pl">Valoraciones de la comunidad</div><div class="hist"><div style="flex:1"><div class="bars">${b.map((n,j)=>`<u title="${n}" class="${j===k?"me":""}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><div class="hl2"><span>★</span></div></div><div class="avc"><div class="avg">${avg}</div><div class="hl2" style="justify-content:flex-end" title="${v.length} ${v.length===1?"nota":"notas"}"><span>★★★★★</span></div></div></div></div>`}
+  return `<div class="panel"><div class="pl">Valoraciones de la comunidad</div><div class="hist${v.length?"":" e"}"><div style="flex:1"><div class="bars">${b.map((n,j)=>`<u title="${n}" class="${j===k?"me":""}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><div class="hl2"><span>★</span></div></div><div class="avc"><div class="avg">${avg}</div><div class="hl2" style="justify-content:flex-end" title="${v.length} ${v.length===1?"nota":"notas"}"><span>★★★★★</span></div></div></div></div>`}
 const prog=i=>{const p=pc(i),left=i.eps-i.watched;
 if(!left)return "";
 return `<div class="panel pgp"><div class="pgh"><div class="pl">Progreso</div><span class="pgpct">${p}%</span></div><div class="pgt">Episodio <b>${i.watched}</b> de ${i.eps}</div><div class="pgb"><i style="width:${p}%"></i></div><div class="row2"><button class="btn" aria-label="Quitar episodio" ${i.watched?"":"disabled"} onclick="ep(${i.id},-1)">−</button><button class="btn p" onclick="ep(${i.id},1)">${i.watched?"Siguiente":"Empezar"} · ep. ${i.watched+1}</button></div></div>`};
