@@ -417,12 +417,12 @@ function render(){
   }else{
     const done=items.filter(i=>i.rating),r=done.length?(done.reduce((a,i)=>a+i.rating,0)/done.length).toFixed(1):"–";
     if(seg.me==="perfil"){
-      const pf=(prof.fav||[]).map(get).filter(Boolean),fav=pf.length?pf:[...done].sort((a,b)=>b.rating-a.rating).slice(0,4);
+      const pf=(prof.fav||[]).map(get).filter(Boolean),fav=pf.slice(0,4);
       const rec=[...new Set(log.map(e=>e.id))].map(get).filter(Boolean).slice(0,4);
       const yr=new Date().getFullYear(),thisYr=a=>a.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,dn=items.filter(i=>i.status==="done");
       const row=(l,n,a)=>`<div class="link r" onclick="${a}">${l}<span>${n} ›</span></div>`;
       h=`<div class="av big">${ini()}</div>${profInfo()}<div class="stats"><div><b>${items.length}</b>Series</div><div><b>${items.reduce((a,i)=>a+i.watched,0)}</b>Episodios</div><div><b>${r}</b>Nota media</div></div>
-      <div class="lbl">Favoritas</div>${grid(fav)}<div class="lbl">Actividad reciente</div>${grid(rec)}
+      <div class="lbl">Favoritas</div>${fav.length?grid(fav):'<div class="link" style="margin-top:0" onclick="openSet()">Elige tus 4 series favoritas en Ajustes <span>›</span></div>'}<div class="lbl">Actividad reciente</div>${grid(rec)}
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
       <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Pendientes",items.filter(i=>i.status==="want").length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Estadísticas","","openStats()")}</div>`;
@@ -912,10 +912,10 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    const R=await Promise.all([sb.from("profiles").select("*").eq("id",uid).single(),sb.from("diary_entries").select("*,series(*),review_likes(user_id)").eq("user_id",uid).order("created_at",{ascending:false}).limit(40),cnt("follows","followee_id",uid),cnt("follows","follower_id",uid),sb.from("user_series").select("*",{count:"exact",head:true}).eq("user_id",uid).eq("status","done")]);
    R.forEach(r=>{if(r.error)throw r.error});const[p,d,fo,fg,dn]=R,P=p.data,nm=pname(P),seen=new Set(),ps=[];
    d.data.forEach(x=>{if(!seen.has(x.series_id)&&ps.length<8){seen.add(x.series_id);ps.push(sCache(x.series))}});
-   const rv=d.data.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:P}))),isF=FW.has(uid);
+   const rv=d.data.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:P}))),isF=FW.has(uid),fids=(P.favorites||[]).slice(0,4);let fv=[];if(fids.length){const q=await sb.from("series").select("*").in("id",fids);if(!q.error)fv=fids.map(id=>(q.data||[]).find(x=>x.id===id)).filter(Boolean).map(sCache)}
    subRe(subBar(esc(nm))+`<div class="av big" style="${avs(P.avatar_path).slice(1)}"></div><div class="pinfo"><div class="pnm">${esc(nm)}</div><div class="ploc">@${esc(P.username)}</div>${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}<button class="btn ${isF?"":"p"}" style="margin-top:12px;min-width:140px" id="fbtn" onclick="toggleFollow('${uid}')">${isF?"Siguiendo":"Seguir"}</button></div>
    <div class="stats"><div><b>${dn.count||0}</b>Vistas</div><div><b>${fg.count||0}</b>Siguiendo</div><div><b>${fo.count||0}</b>Seguidores</div></div>
-   ${ps.length?`<div class="lbl">Actividad reciente</div>${grid(ps)}`:""}${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.slice(0,10).map(rvItem).join("")}</div>`:""}`)}
+   ${fv.length?`<div class="lbl">Favoritas</div>${grid(fv)}`:""}${ps.length?`<div class="lbl">Actividad reciente</div>${grid(ps)}`:""}${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.slice(0,10).map(rvItem).join("")}</div>`:""}`)}
   catch(e){console.error(e);subRe(subBar("Perfil")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
 async function toggleFollow(uid){const on=!FW.has(uid);on?FW.add(uid):FW.delete(uid);const b=$("fbtn"),paint=v=>{if(b){b.textContent=v?"Siguiendo":"Seguir";b.classList.toggle("p",!v)}};paint(on);FEED=null;HR=null;
   try{if(on)await ck(sb.from("follows").insert({follower_id:U.id,followee_id:uid}));else await ck(sb.from("follows").delete().eq("follower_id",U.id).eq("followee_id",uid))}
