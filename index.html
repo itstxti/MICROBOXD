@@ -85,7 +85,7 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
 .wbp{flex:none;width:60px;text-align:center}.av2{position:relative;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.9)}
 .av2.me{font-weight:800;font-size:24px}
 .av,.av2{position:relative;background:#3c4858 url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%233c4858'/><ellipse cx='48.5' cy='34' rx='16.5' ry='21.3' fill='%236a7788'/><path d='M13 96V77.5C13 67 30 62.5 38.5 61.5q1.5-.2 2.5.8l6.800 6.600q.7.600 1.400.1l7-6.700q1-1 2.500-.8C67 62.500 84 67 84 77.500V96Z' fill='%236a7788'/></svg>") center/cover no-repeat;color:transparent}.av2>svg{display:none}.av2 .wbb{color:#fff}.mav{position:absolute;inset:0;border-radius:50%;background:center/cover var(--meav,none)}.avs{display:flex;align-items:center;gap:16px;padding:16px}.avs .av{width:72px;height:72px;flex:none}.avs .btn{min-width:0}
-.wbp small{display:block;color:var(--st);font-size:11px;letter-spacing:1px;margin-top:6px;min-height:14px;white-space:nowrap}
+.wbc{color:var(--mute);font-size:24px;line-height:1;letter-spacing:0}.wbl{color:var(--g);font-size:14px;letter-spacing:1px;white-space:nowrap}.wbi{color:var(--mute);font-style:normal}.wbp small{display:block;color:var(--st);font-size:11px;letter-spacing:1px;margin-top:6px;min-height:14px;white-space:nowrap}
 .wbb{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--tab);border:2px solid var(--bg);font-size:11px;font-weight:400;display:flex;align-items:center;justify-content:center;color:#fff}
 #lgs .w{display:flex;flex-direction:column;min-height:100%}#lgs .lh{padding-top:14px}
 .lt{padding:10px 16px;font-size:17px}.lt .ltp{width:32px;flex:none}.lt .ltp .pb{display:none}.lt small{color:var(--mute);font-weight:400;font-size:13px;margin-top:2px}
@@ -449,7 +449,7 @@ function show(id,keep){
   ${revsSec(i)}
   <div class="seg d">${[["cast","Reparto"],["inf","Detalles"],["trp","Tropos"]].map(([k,l])=>`<button class="${dtab===k?"on":""}" onclick="setDt('${k}',${i.id})">${l}</button>`).join("")}</div>
   ${dt(i)}${simSec(i)}${lstSec(i)}</div>`;
-  d.classList.add("open");d.scrollTop=keep?y:0;detSc();loadStat(i);loadRevs(i);
+  d.classList.add("open");d.scrollTop=keep?y:0;detSc();loadStat(i);loadRevs(i);loadWb(i);
 }
 const detSc=()=>{const t=document.querySelector('#det .top');if(t)t.classList.toggle('sc',$('det').scrollTop>150)};$('det').addEventListener('scroll',detSc);
 const setDt=(k,id)=>{dtab=k;show(id,true)};
@@ -457,11 +457,12 @@ const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv
   return `<div class="ww" style="border-top:1px solid var(--line)">Dónde ver<span><i class="ab" style="background:hsl(${h},55%,42%);font-style:normal">${esc(i.app.charAt(0))}</i>›</span></div>
   <div class="tiles"><div class="tile g">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
 const wbSec=i=>{
+  const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
+  const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp"><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (W.length?`<div class="wbs" onclick="openWb(${i.id})" style="cursor:pointer"><div class="wbh"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
   const ps=[],oth=[...(com[key(i)]||[])];
   if(i.rating){const x=oth.indexOf(i.rating);if(x>=0)oth.splice(x,1)}
   if(i.status==="done"||i.rating)ps.push(`<div class="wbp"><div class="av2 me">${ini()}${i.review?'<span class="wbb">☰</span>':""}</div><small>${i.rating?S(i.rating):""}</small></div>`);
   oth.slice(0,12).forEach((r,k)=>ps.push(`<div class="wbp"><div class="av2">${svg(IC.me,30)}</div><small>${S(r)}</small></div>`));
-  const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   return (ps.length?`<div class="wbs"><div class="wbh"><span>Visto por</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg d">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${k==="pop"?"on":""}" disabled>${t}</button>`).join("")}</div><div class="rvlb">Reseñas populares</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:25px;height:25px;font-size:12px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(i.review)}</p>`}</div></div>`};
 const EYE='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',HEART='<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',CLOCK='<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',WARN='<path d="M12 3L2 20h20z"/><path d="M12 10v5M12 18v.5"/>';
@@ -614,7 +615,7 @@ async function push(){
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
    if(gone.length){await ck(sb.from("user_series").delete().eq("user_id",uid).in("series_id",gone.map(k=>shadow[k].sid)));gone.forEach(k=>delete shadow[k])}
    let dsent=0;while(dq.length){const e=dq[0];await ck(sb.from("diary_entries").upsert(Object.assign({id:e.id,user_id:uid,series_id:e.series.sid},e.row)));dq.shift();dsent=1}
-   if(dsent){RV={};RVt={};HR=null;statAt={};if($("det").classList.contains("open")&&curDet){const c=get(curDet);if(c){loadRevs(c,true);loadStat(c)}}}
+   if(dsent){RV={};RVt={};WB={};WBt={};HR=null;statAt={};if($("det").classList.contains("open")&&curDet){const c=get(curDet);if(c){loadRevs(c,true);loadWb(c,true);loadStat(c)}}}
    for(const l of lists){const st=listState(l);if(shadowL[l.id]&&shadowL[l.id].st===st)continue;
     await ck(sb.from("lists").upsert({id:l.sid,user_id:uid,name:l.name,description:l.desc||"",ranked:!!l.rank}));
     await ck(sb.from("list_items").delete().eq("list_id",l.sid));
@@ -691,6 +692,13 @@ function subOpen(h){const s=$("sub");if(s.classList.contains("open"))subH.push(s
 const subRe=h=>{$("sub").innerHTML=h};
 function subX(){const s=$("sub");if(subH.length)s.innerHTML=subH.pop();else s.classList.remove("open")}
 const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rvh"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" ${r.uid===U.id?"":`onclick="event.stopPropagation();openUser('${r.uid}')"`}>${esc(r.u)}${av2(r.u,32,r.ap)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
+let WB={},WBt={};
+async function loadWb(i,force){if(!sb||!i.sid)return;if(!force&&Date.now()-(WBt[i.sid]||0)<30000)return;WBt[i.sid]=Date.now();
+  try{const{data,error}=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).order("created_at",{ascending:false}).limit(100);if(error)throw error;
+   const o=JSON.stringify(WB[i.sid]);WB[i.sid]=data.map(nrm);if(o!==JSON.stringify(WB[i.sid])&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}}
+function openWb(iid){const i=get(iid),a=WB[i.sid]||[];
+  const h=subBar("Visto por")+`<div class="in"><h2 style="font-size:20px;margin:6px 0 12px">${esc(short(i.title))}</h2>${a.length?a.map(x=>`<div class="ar" style="padding:12px 0" onclick="openReview('${x.id}')">${av2(x.u,40,x.ap)}<div style="flex:1;min-width:0"><b>${esc(x.u)}</b><small>${x.wd?"Visto el "+fsh(Date.parse(x.wd+"T12:00:00")):""}${x.rw?" · otra vez":""}</small></div><span class="wbl">${x.r?S(x.r):""}${x.hl?' <i class="rvhe">♥</i>':""}${x.t||x.sp?' <i class="wbi">☰</i>':""}</span><span class="wbc">›</span></div>`).join(""):'<div class="empty">Nadie ha registrado esta serie todavía.</div>'}</div>`;
+  subOpen(h)}
 async function loadRevs(i,force){if(!sb||!i.sid)return;if(!force&&Date.now()-(RVt[i.sid]||0)<30000)return;RVt[i.sid]=Date.now();
   try{const{data,error}=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).neq("review","").order("created_at",{ascending:false}).limit(100);if(error)throw error;
    const o=JSON.stringify(RV[i.sid]);RV[i.sid]=data.map(nrm);if(o!==JSON.stringify(RV[i.sid])&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}}
