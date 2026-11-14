@@ -273,7 +273,9 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .lsd{margin:14px 0 0;color:var(--mute);font-size:16px;line-height:1.45;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 #le{top:calc(env(safe-area-inset-top,0px) + 10px);height:calc(var(--H,100%) - env(safe-area-inset-top,0px) - 10px);padding-top:0;padding-bottom:0;border-radius:14px 14px 0 0;background:var(--pan)}
 #le::before{content:"";position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 10px);background:var(--hd);z-index:-1}
-#le .ar{border-bottom:0}
+#le .ar,#fp .ar{border-bottom:0}
+#fp{z-index:31;top:calc(env(safe-area-inset-top,0px) + 10px);height:calc(var(--H,100%) - env(safe-area-inset-top,0px) - 10px);padding-top:0;padding-bottom:0;border-radius:14px 14px 0 0;background:var(--pan)}
+#fp::before{content:"";position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 10px);background:var(--hd);z-index:-1}
 .lef{display:flex;flex-direction:column;min-height:100%}
 .lef input,.lef textarea{width:100%;background:none;border:0;border-radius:0;margin:0;outline:0;font:inherit;color:var(--tx);resize:none}
 .leh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:20px 16px 16px;border-bottom:1px solid rgba(0,0,0,.28)}
@@ -322,7 +324,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 <header id="hd"></header>
 <main id="mn"></main>
 <nav id="tb"></nav>
-<div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="sub"></div><div class="sheet" id="le"></div><div class="sheet" id="set"></div>
+<div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="sub"></div><div class="sheet" id="le"></div><div class="sheet" id="fp"></div><div class="sheet" id="set"></div>
 <div class="sheet" id="lgs"></div><div class="gate" id="gate"></div><div class="toast" id="toast"></div><div class="ov" id="ov" onclick="if(event.target===this)closeOv()"></div>
 <div class="sheet" id="form"><div class="in fm">
   <div class="lh"><button id="cancel">Cancelar</button><b>Nueva serie</b><span></span></div>
@@ -469,8 +471,10 @@ function drawSet(){const R=(l,k,ph,t)=>`<label class="srow"><span>${l}</span><in
   <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Mantén y arrastra los pósters para reordenar.</div>${instH()}<div class="slb">Cuenta</div><div class="sgrp"><div class="srow" style="cursor:default"><span>${esc(U?U.email:"")}</span></div><button class="oi d" onclick="logout()">Cerrar sesión</button></div>`}
 function sdAv(el){const f=el.files[0];if(!f)return;const im=new Image();im.onload=()=>{const n=256,c=document.createElement("canvas");c.width=c.height=n;const m=Math.min(im.width,im.height),x=(im.width-m)/2,y=(im.height-m)/2;c.getContext("2d").drawImage(im,x,y,m,m,0,0,n,n);sd.avd=c.toDataURL("image/jpeg",.85);drawSet()};im.src=URL.createObjectURL(f)}
 function sdRm(k){sd.fav.splice(k,1);drawSet()}
-function sdAdd(){const l=items.filter(i=>!sd.fav.includes(i.id));$("ov").innerHTML=`<div class="card"><div class="ot"><b>Añadir favorita</b></div>${l.length?l.map(i=>`<button class="oi" onclick="sdPick(${i.id})">${esc(short(i.title))}</button>`).join(""):'<div class="empty">No hay más series en tu catálogo.</div>'}</div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
-function sdPick(id){if(sd.fav.length<4&&!sd.fav.includes(id))sd.fav.push(id);closeOv();drawSet()}
+function sdAdd(){$("fp").innerHTML=`<div class="lef"><div class="leh"><button onclick="$('fp').classList.remove('open')">Cancelar</button><b>Seleccionar una serie</b><div class="av" style="width:34px;height:34px;font-size:14px;justify-self:end${avs(sd.avd||sd.av)}">${ini()}</div></div><div class="lpb"><div class="lps">${svg(IC.search,20)}<input id="fpi" autocomplete="off" oninput="$('fpx').style.display=this.value?'':'none';fpl()"><button class="sbx" id="fpx" aria-label="Borrar" style="display:none" onclick="$('fpi').value='';this.style.display='none';fpl();$('fpi').focus()">×</button></div></div><div class="lpd"></div><div id="fpr"></div></div>`;$("fp").classList.add("open");$("fp").scrollTop=0;setTimeout(()=>{try{$("fpi").focus()}catch(e){}},60)}
+function fpl(){const n=norm($("fpi").value),el=$("fpr");if(!n){el.innerHTML="";return}const r=catAll().filter(i=>!sd.fav.includes(i.id)&&norm(i.title+i.app+i.tropes.join("")).includes(n)).slice(0,30);
+  el.innerHTML=r.length?r.map(i=>`<div class="ar" style="padding:8px 16px" onclick="sdPick(${i.id})">${nop(i)}<div style="flex:1;min-width:0"><b>${esc(short(i.title))}</b><small>${esc(i.app)}</small></div></div>`).join(""):'<div class="empty">Sin resultados en tu catálogo.</div>'}
+function sdPick(id){if(sd.fav.length<4&&!sd.fav.includes(id)){if(!get(id)){const it=catAll().find(x=>x.id===id);if(it)cache[id]=it}sd.fav.push(id)}$("fp").classList.remove("open");drawSet()}
 function fvDrag(e){const el=e.target.closest(".fvp[data-k]");if(!el||e.target.closest(".fvx"))return;const box=el.parentNode,k0=+el.dataset.k,x0=e.clientX;let drag=false;
   const t=setTimeout(()=>{drag=true;el.classList.add("drag");try{el.setPointerCapture(e.pointerId)}catch(_){}},220);
   const mv=ev=>{if(!drag){if(Math.abs(ev.clientX-x0)>8)clearTimeout(t);return}ev.preventDefault();el.style.transform=`translateX(${ev.clientX-x0}px)`};
