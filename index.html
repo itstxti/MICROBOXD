@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Microboxd</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Microboxd">
+<link rel="icon" type="image/png" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#14181c;--hd:#000;--pan:#2c3440;--tab:#445566;--tx:#fff;--mute:#9ab;--line:#2c3440;--g:#ff4d8d;--o:#ffb020;--b:#40bcf4;--st:#7b8b9b}
@@ -18,7 +23,7 @@ h1{margin:0 0 10px;text-align:center;color:var(--tx);font-size:21px;font-weight:
 .seg{display:flex;background:var(--bg);border-radius:10px;padding:3px}
 .seg button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:7px 0;border-radius:8px;cursor:pointer}
 .seg button.on{background:#667788;color:#fff}
-main{flex:1;overflow-y:auto;padding:0 0 20px}
+main{flex:1;overflow-y:auto;padding:0 0 20px;scrollbar-width:none}main::-webkit-scrollbar,.sheet::-webkit-scrollbar{display:none}.sheet{scrollbar-width:none}
 nav{flex:none;display:flex;justify-content:space-around;align-items:center;background:var(--tab);padding:10px 0}
 nav button{background:none;border:0;color:var(--mute);cursor:pointer;padding:4px 12px}
 nav button.on{color:var(--b)}nav button.plus{color:var(--g)}
@@ -39,7 +44,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 .act{display:flex;gap:12px;padding:12px 14px;background:var(--pan);border-bottom:1px solid var(--bg);align-items:flex-start}
 .act span.t{margin-left:auto;font-size:12px;flex:none}
 .av{width:36px;height:36px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--g),var(--b));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
-.big{width:110px;height:110px;font-size:44px;margin:20px auto 8px}
+.big{width:110px;height:110px;font-size:44px;margin:20px auto 8px;display:flex;justify-self:center}
 .dmh{background:var(--hd);color:var(--mute);font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:9px 14px;margin-top:6px}
 .de{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
 .ddn{width:34px;height:34px;flex:none;border-radius:6px;border:1px solid var(--line);color:var(--mute);display:flex;align-items:center;justify-content:center;font-size:16px}
@@ -166,7 +171,7 @@ button.tag{background:none;font:inherit;font-size:11px;text-transform:uppercase;
 .rt{border-top:1px solid var(--bg);padding:12px;text-align:center}.rt .sr{justify-content:center}
 .oi{display:block;width:100%;background:none;border:0;border-top:1px solid var(--bg);color:var(--tx);font:inherit;font-size:17px;padding:15px;cursor:pointer}.oi.d{color:var(--o)}
 button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cursor:pointer;width:100%}
-#lgs{z-index:25;background:var(--pan)}#lgs .w{max-width:680px;margin:0 auto}
+#lgs{z-index:35;background:var(--pan)}#sub{z-index:26}#lgs .w{max-width:680px;margin:0 auto}
 .lh{display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;color:var(--tx);font-size:17px}
 .lh button{background:none;border:0;font:inherit;color:var(--mute);cursor:pointer}.lh .sv{color:#4ddc6f;font-weight:700}
 .lt{display:flex;gap:12px;align-items:center;background:var(--bg);padding:12px 16px;color:var(--tx);font-weight:700;font-size:18px}
@@ -218,6 +223,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .gerr{color:var(--o);font-size:13px;max-width:300px}.gok{color:#4ddc6f;font-size:13px;max-width:300px}
 .gf{display:flex;flex-direction:column;gap:10px;width:min(320px,100%)}.gf input{margin:0;padding:13px;border-radius:10px;font-size:16px}.gf .gb{justify-content:center;background:var(--g);color:#fff}.gf .gb:disabled{opacity:.6}
 .glk{background:none;border:0;color:var(--b);font:inherit;font-size:14px;cursor:pointer;padding:6px}
+.rvl{color:var(--mute);font-size:13px;margin-top:8px}.rvi:active{opacity:.7}.pinfo .btn{border-radius:8px}
 .qa2 .qa{border:0}.qa2 .qa button{padding:4px 0 10px}
 </style>
 </head>
@@ -225,7 +231,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 <header id="hd"></header>
 <main id="mn"></main>
 <nav id="tb"></nav>
-<div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="le"></div><div class="sheet" id="set"></div>
+<div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="sub"></div><div class="sheet" id="le"></div><div class="sheet" id="set"></div>
 <div class="sheet" id="lgs"></div><div class="gate" id="gate"></div><div class="toast" id="toast"></div><div class="ov" id="ov" onclick="if(event.target===this)closeOv()"></div>
 <div class="sheet" id="form"><div class="in fm">
   <div class="lh"><button id="cancel">Cancelar</button><b>Nueva serie</b><span></span></div>
@@ -304,14 +310,13 @@ function render(){
       if(!items.length)h='<div class="empty">Añade tu primera serie con el botón +</div>';
     }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=lv();
     }else{
-      const r=items.filter(i=>i.review);
-      h=r.length?r.map(i=>`<div class="row" onclick="show(${i.id})" style="cursor:pointer">${poster(i)}<div><b>${esc(short(i.title))}</b><div class="ss">${S(i.rating)}${i.liked?" ♥":""}</div>${i.spoil?"<i>⚠ Contiene spoilers</i>":esc(i.review)}</div></div>`).join(""):'<div class="empty">Aún no hay reseñas. Escribe una desde la ficha de una serie.</div>';
+      h=hrH();
     }
   }else if(tab==="search"){
     h=(br.length&&!q.trim())?'<div id="sr"></div>':`<div class="sbw"><div class="sb">${svg(IC.search,20)}<input id="qi" placeholder="Busca series, apps, tropos…" value="${esc(q)}" oninput="q=this.value;this.nextElementSibling.style.display=q?'':'none';sr()"><button class="sbx" aria-label="Borrar" style="display:${q?"":"none"}" onclick="q='';render()">×</button></div></div><div id="sr"></div>`;
   }else if(tab==="act"){
-    if(seg.act==="fr")h='<div class="empty">Próximamente: cuando haya cuentas verás aquí lo que ven tus amigos.</div>';
-    else if(seg.act==="in")h='<div class="empty">Sin actividad entrante.</div>';
+    if(seg.act==="fr")h=feedH();
+    else if(seg.act==="in")h=incH();
     else{const g=[];log.forEach(e=>{const l=g[g.length-1];if(l&&l.id===e.id&&l.ts===e.ts)l.es.push(e);else g.push({id:e.id,ts:e.ts,title:e.title,es:[e]})});
       h=g.length?g.map(o=>{const it=get(o.id),t=o.es.map(e=>e.t),r=(o.es.find(e=>e.t==="rate")||{}).r,v=[];
         if(t.includes("add")&&t.length===1)v.push("Añadiste");else{if(t.includes("done"))v.push("viste");if(it&&it.liked&&(t.includes("done")||t.includes("rate")))v.push("marcaste con me gusta");if(t.includes("rate"))v.push("puntuaste")}
@@ -336,15 +341,16 @@ function render(){
 function sr(){
   const el=$("sr");if(!el)return;
   if(!q.trim()){
-    el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join("")+`<h3 class="sec">Letterboxd → Microboxd</h3><div class="br" onclick="openAll()">Todas las series<span>${items.length} ›</span></div>`;
+    el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join("");
   }else{
-    const n=norm(q),tb=`<div class="seg" style="margin:0 14px">${[["s","Series"],["r","Reseñas"],["l","Listas"]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</div>`;
-    el.innerHTML=tb+(sq==="r"?rvl(items.filter(i=>i.review&&norm(i.title+i.review).includes(n))):sq==="l"?lv(lists.filter(l=>norm(l.name+l.desc).includes(n)),0):grid(catAll().filter(i=>norm(i.title+i.app+i.tropes.join("")).includes(n)),"g3"));
+    const n=norm(q),tb=`<div class="seg" style="margin:0 14px">${[["s","Series"],["r","Reseñas"],["l","Listas"],["m","Miembros"]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</div>`;
+    el.innerHTML=tb+(sq==="m"?`<div id="mem">${memHtml()}</div>`:sq==="r"?rvl(items.filter(i=>i.review&&norm(i.title+i.review).includes(n))):sq==="l"?lv(lists.filter(l=>norm(l.name+l.desc).includes(n)),0):grid(catAll().filter(i=>norm(i.title+i.app+i.tropes.join("")).includes(n)),"g3"));
+    if(sq==="m")memSearch()
   }
 }
 let br=[];
-const BRR=[["apps","Aplicación"],["tropes","Tropo"],["pop","Más populares"],["top","Mejor valoradas"],["recent","Añadidas recientemente"],["lists","Listas"]];
-const brTitle=n=>({apps:"Aplicación",tropes:"Tropo",app:n.v,trope:n.v,pop:"Más populares",top:"Mejor valoradas",recent:"Añadidas recientemente",lists:"Listas"}[n.t]);
+const BRR=[["apps","Aplicación"],["tropes","Tropo"],["pop","Más populares"],["top","Mejor valoradas"],["recent","Añadidas recientemente"],["lists","Listas"],["all","Todas las series"]];
+const brTitle=n=>({apps:"Aplicación",tropes:"Tropo",app:n.v,trope:n.v,pop:"Más populares",top:"Mejor valoradas",recent:"Añadidas recientemente",lists:"Listas",all:"Todas las series"}[n.t]);
 const brPush=(t,v)=>{br.push({t,v});render();$("mn").scrollTop=0};
 const brBack=()=>{br.pop();render();$("mn").scrollTop=0};
 function brBody(){const n=br[br.length-1],rows=(a,t)=>a.map(([l,c])=>`<div class="br" data-v="${esc(l)}" onclick="brPush('${t}',this.dataset.v)">${esc(l)}<span>${c} ›</span></div>`).join("");
@@ -355,6 +361,7 @@ function brBody(){const n=br[br.length-1],rows=(a,t)=>a.map(([l,c])=>`<div class
   if(n.t==="pop")return grid([...catAll()].sort((a,b)=>((com[key(b)]||[]).length+(b.rating?1:0))-((com[key(a)]||[]).length+(a.rating?1:0))||b.watched-a.watched),"g3");
   if(n.t==="top")return grid(items.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating),"g3");
   if(n.t==="recent")return grid(catAll(),"g3");
+  if(n.t==="all")return grid([...catAll()].sort((a,b)=>a.title.localeCompare(b.title)),"g3");
   return lv(lists,0)}
 function setQ(v){q=v;$("qi").value=v;$("qi").nextElementSibling.style.display="";sr()}
 const GEAR='<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',PIN='<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>';
@@ -366,7 +373,7 @@ function drawSet(){const R=(l,k,ph,t)=>`<label class="srow"><span>${l}</span><in
   const slots=[0,1,2,3].map(k=>{const it=get(sd.fav[k]);return it?`<div class="fvp" data-k="${k}">${nop(it)}<button class="fvx" aria-label="Quitar" onclick="sdRm(${k})">×</button></div>`:`<div class="fvp fve" onclick="sdAdd()">＋</div>`}).join("");
   $("set").innerHTML=`<div class="slh"><button onclick="$('set').classList.remove('open')">Cancelar</button><b>Ajustes</b><button class="sv" onclick="saveSet()">Guardar</button></div>
   <div class="slb">Perfil</div><div class="sgrp">${R("Nombre","name")}${R("Apellidos","fam")}${R("Correo electrónico","email","","email")}${R("Ubicación","loc","Ciudad, país")}${R("Web","web","tusitio.com","url")}${R("Pronombres","pron")}<div class="sbio"><span>Bio</span><textarea rows="4" maxlength="400" placeholder="Cuenta algo sobre ti…" oninput="sd.bio=this.value">${esc(sd.bio)}</textarea></div></div>
-  <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Mantén y arrastra los pósters para reordenar.</div><div class="slb">Cuenta</div><div class="sgrp"><div class="srow" style="cursor:default"><span>${esc(U?U.email:"")}</span></div><button class="oi d" onclick="logout()">Cerrar sesión</button></div>`}
+  <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Mantén y arrastra los pósters para reordenar.</div>${instH()}<div class="slb">Cuenta</div><div class="sgrp"><div class="srow" style="cursor:default"><span>${esc(U?U.email:"")}</span></div><button class="oi d" onclick="logout()">Cerrar sesión</button></div>`}
 function sdRm(k){sd.fav.splice(k,1);drawSet()}
 function sdAdd(){const l=items.filter(i=>!sd.fav.includes(i.id));$("ov").innerHTML=`<div class="card"><div class="ot"><b>Añadir favorita</b></div>${l.length?l.map(i=>`<button class="oi" onclick="sdPick(${i.id})">${esc(short(i.title))}</button>`).join(""):'<div class="empty">No hay más series en tu catálogo.</div>'}</div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
 function sdPick(id){if(sd.fav.length<4&&!sd.fav.includes(id))sd.fav.push(id);closeOv();drawSet()}
@@ -379,8 +386,8 @@ function fvDrag(e){const el=e.target.closest(".fvp[data-k]");if(!el||e.target.cl
 function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>prof[k]=(sd[k]||"").trim());prof.fav=sd.fav.filter(id=>get(id));save();$("set").classList.remove("open");render()}
 const myHist=()=>{const b=Array(10).fill(0);items.forEach(i=>{if(i.rating){const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++}});const m=Math.max(1,...b);return `<div class="lbl">Valoraciones</div><div class="mh"><span>★</span><div class="bars">${b.map(n=>`<u title="${n}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><span>★★★★★</span></div>`};
 const setNh=()=>document.documentElement.style.setProperty("--nh",Math.max(0,innerHeight-$("tb").getBoundingClientRect().top)+"px");addEventListener("resize",setNh);
-function setSeg(k){seg[tab]=k;render();$("mn").scrollTop=0}
-function go(t){if(t==="add"){openAdd();return}if(t==="search"&&tab==="search"){br=[];q=""}$("det").classList.remove("open");$("lst").classList.remove("open");tab=t;render();$("mn").scrollTop=0}
+function setSeg(k){seg[tab]=k;FEED=INC=HR=null;render();$("mn").scrollTop=0}
+function go(t){if(t==="add"){openAdd();return}if(t==="search"&&tab==="search"){br=[];q=""}$("det").classList.remove("open");$("lst").classList.remove("open");$("sub").classList.remove("open");tab=t;if(t==="act")FEED=INC=null;if(t==="home")HR=null;render();$("mn").scrollTop=0}
 
 let dtab="cast",castAll=false;
 const castList=i=>(i.castTxt||"").split(",").map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.*?)\s*\((.*)\)$/);return m?[m[1],m[2]]:[x,""]});
@@ -406,7 +413,7 @@ function dt(i){
 const simSec=i=>{const sim=items.filter(x=>x.id!==i.id).map(x=>({x,s:x.tropes.filter(t=>i.tropes.includes(t)).length*2+(x.app===i.app?1:0)})).filter(o=>o.s).sort((a,b)=>b.s-a.s).map(o=>o.x);return sim.length?`<div style="margin:0 -14px">${hrow("Series parecidas",sim)}</div>`:""};
 const lstSec=i=>{const ls=lists.filter(l=>l.ids.includes(i.id));return ls.length?`<h3 class="sec" style="margin-left:0;margin-right:0">En tus listas</h3>`+ls.map(l=>`<div class="br" style="padding-left:0;padding-right:0" onclick="$('det').classList.remove('open');openList(${l.id})">${esc(l.name)}<span>›</span></div>`).join(""):""};
 function show(id,keep){
-  const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep){dtab="cast";castAll=false}
+  const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
   const bg=i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`;
   d.innerHTML=`<div class="top"><button class="rb" aria-label="Volver" onclick="closeDet()">‹</button><span class="tpt">${esc(short(i.title))}</span><button class="rb" aria-label="Más" onclick="opts(${i.id})">•••</button></div>
   <div class="hw"><div class="hb" style="background-image:${bg}"></div></div>
@@ -419,10 +426,10 @@ function show(id,keep){
   ${prog(i)}
   ${hist(i)}
   ${wbSec(i)}${wwSec(i)}
-  ${revSec(i)}
+  ${revsSec(i)}
   <div class="seg d">${[["cast","Reparto"],["inf","Detalles"],["trp","Tropos"]].map(([k,l])=>`<button class="${dtab===k?"on":""}" onclick="setDt('${k}',${i.id})">${l}</button>`).join("")}</div>
   ${dt(i)}${simSec(i)}${lstSec(i)}</div>`;
-  d.classList.add("open");d.scrollTop=keep?y:0;detSc();loadStat(i);
+  d.classList.add("open");d.scrollTop=keep?y:0;detSc();loadStat(i);loadRevs(i);
 }
 const detSc=()=>{const t=document.querySelector('#det .top');if(t)t.classList.toggle('sc',$('det').scrollTop>150)};$('det').addEventListener('scroll',detSc);
 const setDt=(k,id)=>{dtab=k;show(id,true)};
@@ -555,8 +562,9 @@ async function pull(){
    sb.from("diary_entries").select("*").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}),
    sb.from("lists").select("*,list_items(series_id,position)").eq("user_id",uid).order("created_at",{ascending:false}),
    sb.from("profiles").select("*").eq("id",uid).single(),
-   sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000)]);
-  R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e]=R,de={};b.data.forEach(x=>{if(!de[x.series_id])de[x.series_id]=x});
+   sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
+   sb.from("follows").select("followee_id").eq("follower_id",uid)]);
+  R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));b.data.forEach(x=>{if(!de[x.series_id])de[x.series_id]=x});
   items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);
@@ -567,7 +575,7 @@ async function pull(){
   log=[];b.data.forEach(x=>{const i=get(idOf(x.series_id));if(!i)return;const ts=Date.parse(x.watched_on+"T12:00:00");log.push({t:"done",id:i.id,title:i.title,r:+x.rating||0,ts});if(x.rating)log.push({t:"rate",id:i.id,title:i.title,r:+x.rating,ts})});
   items.forEach(i=>{if(i.created_by===uid)log.push({t:"add",id:i.id,title:i.title,ts:i.added})});
   log.sort((p,q)=>q.ts-p.ts);log=log.slice(0,100);
-  shadow={};items.forEach(i=>shadow[i.id]={st:iState(i),sid:i.sid});shadowL={};lists.forEach(l=>shadowL[l.id]={st:listState(l),sid:l.sid});shadowP=profState();
+  shadow={};items.forEach(i=>shadow[i.id]={st:iState(i),sid:i.sid});shadowL={};lists.forEach(l=>shadowL[l.id]={st:listState(l),sid:l.sid});shadowP=profState();if(!P.display_name){prof.name=P.username.replace(/_[0-9a-f]{6}$/,"");sched()}
   if(items.length){const r=await sb.from("series_stats").select("*").in("series_id",items.map(i=>i.sid));if(!r.error)r.data.forEach(applyStat)}
 }
 async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));i.cp=path;i.cover=cvr(path)}
@@ -579,7 +587,8 @@ async function push(){
    if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>shadow[r.i.id]={st:r.st,sid:r.i.sid})}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
    if(gone.length){await ck(sb.from("user_series").delete().eq("user_id",uid).in("series_id",gone.map(k=>shadow[k].sid)));gone.forEach(k=>delete shadow[k])}
-   while(dq.length){const e=dq[0];await ck(sb.from("diary_entries").upsert(Object.assign({id:e.id,user_id:uid,series_id:e.series.sid},e.row)));dq.shift()}
+   let dsent=0;while(dq.length){const e=dq[0];await ck(sb.from("diary_entries").upsert(Object.assign({id:e.id,user_id:uid,series_id:e.series.sid},e.row)));dq.shift();dsent=1}
+   if(dsent){RV={};RVt={};HR=null;statAt={};if($("det").classList.contains("open")&&curDet){const c=get(curDet);if(c){loadRevs(c,true);loadStat(c)}}}
    for(const l of lists){const st=listState(l);if(shadowL[l.id]&&shadowL[l.id].st===st)continue;
     await ck(sb.from("lists").upsert({id:l.sid,user_id:uid,name:l.name,description:l.desc||"",ranked:!!l.rank}));
     await ck(sb.from("list_items").delete().eq("list_id",l.sid));
@@ -625,6 +634,77 @@ async function boot(){
   U=session.user;gate("Cargando…",1);
   try{await pull();await legacy()}catch(e){console.error(e);gate("Error al cargar tus datos: "+(e.message||e),0,1);return}
   $("gate").style.display="none";render()}
+/* ===== PWA ===== */
+let IP=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();IP=e});
+const isSA=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+const instH=()=>isSA()?"":IP?`<div class="slb">App</div><div class="sgrp"><button class="oi" style="color:var(--b)" onclick="instApp()">Instalar Microboxd en tu móvil</button></div>`:/iphone|ipad|ipod/i.test(navigator.userAgent)?`<div class="slb">App</div><div class="shint" style="padding-top:0">Para tenerla en el inicio: pulsa <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>.</div>`:"";
+async function instApp(){if(!IP)return;IP.prompt();try{await IP.userChoice}catch(e){}IP=null;drawSet()}
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+/* ===== Social: reseñas, perfiles, seguir ===== */
+let RV={},RVt={},RX={},FW=new Set(),rvTab="pop",rsTab="all",FEED=null,INC=null,HR=null,MEM=[],mq=0,memT=0,subH=[];
+const RSEL="id,user_id,series_id,watched_on,rating,liked,rewatch,review,spoilers,created_at,profiles(username,display_name),review_likes(user_id)";
+const pname=p=>p?(p.display_name||p.username):"usuario";
+const nrm=x=>{const r={id:x.id,uid:x.user_id,sid:x.series_id,u:pname(x.profiles),r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers,ts:Date.parse(x.created_at),wd:x.watched_on,lk:(x.review_likes||[]).length,me:(x.review_likes||[]).some(l=>l.user_id===U.id)};RX[r.id]=r;return r};
+const av2=(n,s)=>`<div class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.44)}px">${esc((n||"?").charAt(0).toUpperCase())}</div>`;
+const sCache=r=>{const id=idOf(r.id);return get(id)||(cache[id]=mapS(r))};
+const subBar=(t)=>`<div class="lbar"><button onclick="subX()">‹ Atrás</button><b>${t}</b><span style="min-width:44px"></span></div>`;
+function subOpen(h){const s=$("sub");if(s.classList.contains("open"))subH.push(s.innerHTML);else subH=[];$("det").style.zIndex="";s.innerHTML=h;s.classList.add("open");s.scrollTop=0}
+const subRe=h=>{$("sub").innerHTML=h};
+function subX(){const s=$("sub");if(subH.length)s.innerHTML=subH.pop();else s.classList.remove("open")}
+const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rvh"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" ${r.uid===U.id?"":`onclick="event.stopPropagation();openUser('${r.uid}')"`}>${esc(r.u)}${av2(r.u,32)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
+async function loadRevs(i,force){if(!sb||!i.sid)return;if(!force&&Date.now()-(RVt[i.sid]||0)<30000)return;RVt[i.sid]=Date.now();
+  try{const{data,error}=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).neq("review","").order("created_at",{ascending:false}).limit(100);if(error)throw error;
+   const o=JSON.stringify(RV[i.sid]);RV[i.sid]=data.map(nrm);if(o!==JSON.stringify(RV[i.sid])&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}}
+const revsSec=i=>{const a=RV[i.sid];if(!a)return revSec(i);if(!a.length)return"";
+  const l=rvTab==="fr"?a.filter(r=>FW.has(r.uid)):[...a].sort((x,y)=>y.lk-x.lk||y.ts-x.ts);
+  return `<div class="rvs"><div class="seg d" style="margin:6px 0 4px">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${rvTab===k?"on":""}" onclick="rvTab='${k}';show(${i.id},true)">${t}</button>`).join("")}</div>${l.length?l.slice(0,4).map(rvItem).join(""):'<div class="chint">Nadie a quien sigues ha reseñado esta serie.</div>'}<div class="cmore" onclick="openRevs(${i.id})">Todas las reseñas <span>${a.length} ›</span></div></div>`};
+function openReview(id,re){const r=RX[id];if(!r)return;const i=get(idOf(r.sid)),mine=r.uid===U.id;
+  const h=subBar("Reseña")+`<div class="in"><div class="lown" ${mine?"":`onclick="openUser('${r.uid}')" style="cursor:pointer"`}>${av2(r.u,28)}<span>${esc(r.u)}</span></div>
+  <div style="display:flex;gap:14px;margin-top:12px"><div style="flex:1;min-width:0"><h2 ${i?`onclick="subX();show(${i.id})" style="cursor:pointer"`:""}>${esc(i?short(i.title):"")}</h2><div style="font-size:20px;color:var(--g);margin:6px 0">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</div><div class="meta">Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</div></div>${i?`<div style="width:90px;flex:none">${nop(i)}</div>`:""}</div>
+  <p class="syn" style="white-space:pre-wrap;opacity:1;margin:18px 0">${esc(r.t)}</p>
+  <div class="ctl" style="justify-content:space-between">${mine?`<span>${r.lk} ${r.lk===1?"like":"likes"}</span>${i?`<button class="btn" onclick="openLog(${i.id})">Editar</button>`:""}`:`<button class="hb2 ${r.me?"on":""}" aria-label="Me gusta" onclick="likeRev('${r.id}')" style="display:flex;align-items:center;gap:8px">${svg(HEART,28)}<span style="color:var(--tx)">${r.me?"Te gusta":"¿Te gusta?"}</span></button><span>${r.lk} ${r.lk===1?"like":"likes"}</span>`}</div></div>`;
+  re?subRe(h):subOpen(h)}
+async function likeRev(id){const r=RX[id];if(!r||r.uid===U.id)return;const on=!r.me;r.me=on;r.lk+=on?1:-1;openReview(id,1);if($("det").classList.contains("open"))show(curDet,true);HR=null;
+  try{if(on)await ck(sb.from("review_likes").insert({entry_id:id,user_id:U.id}));else await ck(sb.from("review_likes").delete().eq("entry_id",id).eq("user_id",U.id))}
+  catch(e){r.me=!on;r.lk+=on?-1:1;openReview(id,1);toast("No se pudo guardar el me gusta")}}
+async function openRevs(iid){const i=get(iid);if(!i)return;if(!RV[i.sid])await loadRevs(i,true);rsTab="all";drawRevs(iid,0)}
+function drawRevs(iid,re){const i=get(iid),a=RV[i.sid]||[];
+  const f=({all:a,fr:a.filter(r=>FW.has(r.uid)),me:a.filter(r=>r.uid===U.id),lk:a.filter(r=>r.hl)})[rsTab].slice().sort((x,y)=>y.lk-x.lk||y.ts-x.ts);
+  const h=subBar("Reseñas")+`<div class="in"><h2 style="font-size:20px;margin:6px 0 12px">${esc(short(i.title))}</h2><div class="seg">${[["all","Todos"],["fr","Amigos"],["me","Tú"],["lk","Con ♥"]].map(([k,l])=>`<button class="${rsTab===k?"on":""}" onclick="rsTab='${k}';drawRevs(${iid},1)">${l}</button>`).join("")}</div>${f.length?f.map(rvItem).join(""):'<div class="empty">Sin reseñas aquí.</div>'}</div>`;
+  re?subRe(h):subOpen(h)}
+async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go("me");return}
+  subOpen(subBar("Perfil")+'<div class="empty">Cargando…</div>');
+  try{const cnt=(t,c,v)=>sb.from(t).select("*",{count:"exact",head:true}).eq(c,v);
+   const R=await Promise.all([sb.from("profiles").select("*").eq("id",uid).single(),sb.from("diary_entries").select("*,series(*),review_likes(user_id)").eq("user_id",uid).order("created_at",{ascending:false}).limit(40),cnt("follows","followee_id",uid),cnt("follows","follower_id",uid),sb.from("user_series").select("*",{count:"exact",head:true}).eq("user_id",uid).eq("status","done")]);
+   R.forEach(r=>{if(r.error)throw r.error});const[p,d,fo,fg,dn]=R,P=p.data,nm=pname(P),seen=new Set(),ps=[];
+   d.data.forEach(x=>{if(!seen.has(x.series_id)&&ps.length<8){seen.add(x.series_id);ps.push(sCache(x.series))}});
+   const rv=d.data.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:P}))),isF=FW.has(uid);
+   subRe(subBar(esc(nm))+`<div class="av big">${esc(nm.charAt(0).toUpperCase())}</div><div class="pinfo"><div class="pnm">${esc(nm)}</div><div class="ploc">@${esc(P.username)}</div>${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}<button class="btn ${isF?"":"p"}" style="margin-top:12px;min-width:140px" id="fbtn" onclick="toggleFollow('${uid}')">${isF?"Siguiendo":"Seguir"}</button></div>
+   <div class="stats"><div><b>${dn.count||0}</b>Vistas</div><div><b>${fg.count||0}</b>Siguiendo</div><div><b>${fo.count||0}</b>Seguidores</div></div>
+   ${ps.length?`<div class="lbl">Actividad reciente</div>${grid(ps)}`:""}${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.slice(0,10).map(rvItem).join("")}</div>`:""}`)}
+  catch(e){console.error(e);subRe(subBar("Perfil")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
+async function toggleFollow(uid){const on=!FW.has(uid);on?FW.add(uid):FW.delete(uid);const b=$("fbtn"),paint=v=>{if(b){b.textContent=v?"Siguiendo":"Seguir";b.classList.toggle("p",!v)}};paint(on);FEED=null;HR=null;
+  try{if(on)await ck(sb.from("follows").insert({follower_id:U.id,followee_id:uid}));else await ck(sb.from("follows").delete().eq("follower_id",U.id).eq("followee_id",uid))}
+  catch(e){on?FW.delete(uid):FW.add(uid);paint(!on);toast("No se pudo actualizar")}}
+const loadingH='<div class="empty">Cargando…</div>';
+async function loadFeed(){if(!FW.size){FEED=[];if(tab==="act")render();return}
+  try{const{data,error}=await sb.from("diary_entries").select("*,series(*),profiles(username,display_name)").in("user_id",[...FW]).order("created_at",{ascending:false}).limit(40);if(error)throw error;FEED=data}catch(e){console.error(e);FEED=[]}if(tab==="act")render()}
+const feedH=()=>{if(FEED===null){FEED=0;loadFeed()}if(FEED===0)return loadingH;
+  if(!FEED.length)return `<div class="empty">${FW.size?"Las personas que sigues aún no han registrado nada.":"Sigue a otros miembros desde Buscar → Miembros para ver aquí lo que ven."}</div>`;
+  return FEED.map(x=>{const it=sCache(x.series),n=pname(x.profiles);return `<div class="act" onclick="show(${it.id})" style="cursor:pointer">${av2(n,36)}<div><b>${esc(n)}</b> ${x.rating?"puntuó":"vio"} <b>${esc(short(it.title))}</b>${x.rating?" "+S(+x.rating):""}</div><span class="t">${rel(Date.parse(x.created_at))}</span></div>`}).join("")};
+async function loadInc(){try{
+  const[f,m]=await Promise.all([sb.from("follows").select("follower_id,created_at,profiles!follows_follower_id_fkey(username,display_name)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select("id,series(title)").eq("user_id",U.id).neq("review","").limit(100)]);
+  if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:"f",uid:x.follower_id,n:pname(x.profiles),ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>tt[x.id]=x.series&&x.series.title);
+  if(m.data.length){const l=await sb.from("review_likes").select("entry_id,user_id,created_at,profiles(username,display_name)").in("entry_id",m.data.map(x=>x.id)).order("created_at",{ascending:false}).limit(30);if(!l.error)l.data.forEach(x=>out.push({k:"l",uid:x.user_id,n:pname(x.profiles),ts:Date.parse(x.created_at),t:tt[x.entry_id]||""}))}
+  INC=out.sort((a,b)=>b.ts-a.ts)}catch(e){console.error(e);INC=[]}if(tab==="act")render()}
+const incH=()=>{if(INC===null){INC=0;loadInc()}if(INC===0)return loadingH;if(!INC.length)return '<div class="empty">Sin actividad entrante.</div>';
+  return INC.map(x=>`<div class="act" onclick="openUser('${x.uid}')" style="cursor:pointer">${av2(x.n,36)}<div><b>${esc(x.n)}</b> ${x.k==="f"?"empezó a seguirte":`le dio like a tu reseña de <b>${esc(short(x.t))}</b>`}</div><span class="t">${rel(x.ts)}</span></div>`).join("")};
+async function loadHR(){try{const{data,error}=await sb.from("diary_entries").select(RSEL+",series(*)").in("user_id",[U.id,...FW]).neq("review","").order("created_at",{ascending:false}).limit(30);if(error)throw error;HR=data}catch(e){console.error(e);HR=[]}if(tab==="home"&&seg.home==="rev")render()}
+const hrH=()=>{if(HR===null){HR=0;loadHR()}if(HR===0)return loadingH;if(!HR.length)return '<div class="empty">Aún no hay reseñas. Escribe una desde la ficha de una serie o sigue a otros miembros.</div>';
+  return HR.map(x=>{const r=nrm(x),it=sCache(x.series);return `<div class="row" onclick="openReview('${r.id}')" style="cursor:pointer">${nop(it)}<div><b>${esc(short(it.title))}</b><div class="ss">${r.r?S(r.r):""}${r.hl?" ♥":""} <span>${esc(r.u)}</span></div>${r.sp?"<i>⚠ Esta reseña puede contener spoilers</i>":esc(r.t.slice(0,300))}</div></div>`}).join("")};
+const memHtml=()=>q.trim()?(MEM.length?MEM.map(m=>`<div class="ar" style="padding:10px 14px" onclick="openUser('${m.id}')">${av2(pname(m),40)}<div style="flex:1"><b>${esc(pname(m))}</b><small>@${esc(m.username)}</small></div>${FW.has(m.id)?"<small>Siguiendo</small>":""}</div>`).join(""):'<div class="empty">Sin resultados.</div>'):'<div class="empty">Escribe un nombre para buscar miembros.</div>';
+function memSearch(){clearTimeout(memT);memT=setTimeout(async()=>{const t=q.trim().replace(/[%,()*]/g," ").trim();if(!t){MEM=[];return}const k=++mq;
+  try{const{data,error}=await sb.from("profiles").select("id,username,display_name").or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).neq("id",U.id).limit(20);if(error)throw error;if(k!==mq)return;MEM=data;const e=$("mem");if(e)e.innerHTML=memHtml()}catch(e){console.error(e)}},250)}
 $("cancel").onclick=()=>$("form").classList.remove("open");
 let dupT=0;$("f-title").oninput=()=>{clearTimeout(dupT);const v=$("f-title").value.trim();if(v.length<4){$("dup").style.display="none";return}
   dupT=setTimeout(async()=>{try{const{data}=await sb.rpc("similar_series",{q:v}),d=data&&data[0];$("dup").style.display=d?"block":"none";if(d)$("dup").textContent="¿Es la misma que “"+d.title+"” ("+d.app+")? Una serie puede tener nombres distintos según la app o el país."}catch(e){}},300)};

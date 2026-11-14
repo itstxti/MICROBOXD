@@ -12,6 +12,12 @@ Activado por defecto en Supabase (*Authentication → Sign In / Providers → Em
 1. *Authentication → URL Configuration*: **Site URL** = tu dominio de Vercel; añade esa URL (y `http://localhost:3000`) a *Redirect URLs*.
 2. Por defecto Supabase exige **confirmar el correo**. El SMTP integrado solo envía unos pocos correos por hora: para producción configura un SMTP propio (*Authentication → SMTP Settings*). Para probar rápido puedes desactivar "Confirm email" en el proveedor Email.
 
+## Social
+Reseñas de otros usuarios (con "me gusta", spoilers ocultos), perfiles públicos, seguir/dejar de seguir, feed de amigos y búsqueda de miembros. Tablas: `diary_entries`, `review_likes`, `follows` (ver migraciones `0001` y `0002`).
+
+## PWA
+`manifest.json`, `sw.js` (caché del shell; las llamadas a Supabase nunca se cachean) e iconos en `icons/`. En Android/Chrome aparece "Instalar" en Ajustes; en iPhone: Compartir → *Añadir a pantalla de inicio*. Si cambias archivos estáticos, sube la versión `V` en `sw.js`.
+
 ## Desarrollo local
 ```
 npx serve .
