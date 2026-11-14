@@ -224,6 +224,9 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .gf{display:flex;flex-direction:column;gap:10px;width:min(320px,100%)}.gf input{margin:0;padding:13px;border-radius:10px;font-size:16px}.gf .gb{justify-content:center;background:var(--g);color:#fff}.gf .gb:disabled{opacity:.6}
 .glk{background:none;border:0;color:var(--b);font:inherit;font-size:14px;cursor:pointer;padding:6px}
 .rvl{color:var(--mute);font-size:13px;margin-top:8px}.rvi:active{opacity:.7}.pinfo .btn{border-radius:8px}
+.fcr{display:flex;gap:10px;align-items:center;margin-bottom:10px}.fcr .cph{position:relative;width:48px;height:60px;flex:none;border:1.5px dashed var(--st);border-radius:6px;background:var(--pan) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--g);font-size:20px;cursor:pointer;overflow:hidden}.fcr .cph.has{border-style:solid;border-color:transparent;color:transparent}
+.fcr .fcn{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}.fcr .fcn input{padding:9px 12px}.fcx{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:var(--tab);color:var(--tx);font-size:18px;line-height:1;cursor:pointer}
+.fca{width:100%;margin-top:2px;background:none;border:1px dashed var(--st);color:var(--mute)}
 .qa2 .qa{border:0}.qa2 .qa button{padding:4px 0 10px}
 </style>
 </head>
@@ -250,8 +253,9 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
   <textarea id="f-syn" rows="4" placeholder="¿De qué va?"></textarea>
   <label class="fl" for="f-tropes">Tropos</label>
   <input id="f-tropes" placeholder="venganza, CEO, hombre lobo…">
-  <label class="fl" for="f-cast">Personajes</label>
-  <input id="f-cast" placeholder="Personaje (rol), Personaje (rol)…">
+  <label class="fl">Personajes</label>
+  <div id="fcl"></div>
+  <button type="button" class="btn fca" id="fca">＋ Añadir personaje</button>
   <label class="fl" for="f-eps">Episodios</label>
   <input id="f-eps" type="number" min="1" inputmode="numeric" placeholder="60">
   <div class="fs"><button class="btn p" id="save">Guardar serie</button></div>
@@ -390,7 +394,7 @@ function setSeg(k){seg[tab]=k;FEED=INC=HR=null;render();$("mn").scrollTop=0}
 function go(t){if(t==="add"){openAdd();return}if(t==="search"&&tab==="search"){br=[];q=""}$("det").classList.remove("open");$("lst").classList.remove("open");$("sub").classList.remove("open");tab=t;if(t==="act")FEED=INC=null;if(t==="home")HR=null;render();$("mn").scrollTop=0}
 
 let dtab="cast",castAll=false;
-const castList=i=>(i.castTxt||"").split(",").map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.*?)\s*\((.*)\)$/);return m?[m[1],m[2]]:[x,""]});
+const castList=i=>i.cast&&i.cast.length?i.cast.map(c=>[c.a,c.p,c.ph||""]):(i.castTxt||"").split(",").map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.*?)\s*\((.*)\)$/);return m?[m[1],m[2]]:[x,""]});
 function castPhoto(id,inp){const f=inp.files[0],k=inp.dataset.k;if(!f)return;const i=get(id),im=new Image();
   im.onload=()=>{const W=120,H=150,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;
    c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2,w,h);(i.castPh=i.castPh||{})[k]=c.toDataURL("image/jpeg",.8);save();show(id,true)};
@@ -405,7 +409,7 @@ if(!left){const lg_=!!i.watchedOn;return `<div class="panel pgp"><div class="pgd
 return `<div class="panel pgp"><div class="pgh"><div class="pl">Progreso</div><span class="pgpct">${p}%</span></div><div class="pgt">Episodio <b>${i.watched}</b> de ${i.eps}</div><div class="pgs">${i.watched?`Te quedan ${left}`:"Aún no has empezado"}</div><div class="pgb"><i style="width:${p}%"></i></div><div class="row2"><button class="btn" aria-label="Quitar episodio" ${i.watched?"":"disabled"} onclick="ep(${i.id},-1)">−</button><button class="btn p" onclick="ep(${i.id},1)">${i.watched?"Siguiente":"Empezar"} · ep. ${i.watched+1}</button></div></div>`};
 function dt(i){
   if(dtab==="cast"){const c=castList(i),sh=castAll?c:c.slice(0,10),ph=i.castPh||{};
-    const rows=sh.map(([a,p])=>{const k=a.trim().toLowerCase(),im=ph[k],h=hue(a);return `<div class="cr"><div class="cav" style="${im?`background-image:url(${im})`:`background:linear-gradient(160deg,hsl(${h},55%,40%),hsl(${(h+50)%360},60%,22%))`}">${im?"":esc(a.trim().charAt(0).toUpperCase())}</div><div><b>${esc(a)}</b>${p?`<small>${esc(p)}</small>`:""}</div></div>`}).join("");
+    const rows=sh.map(([a,p,im0])=>{const k=a.trim().toLowerCase(),im=im0||ph[k],h=hue(a);return `<div class="cr"><div class="cav" style="${im?`background-image:url(${im})`:`background:linear-gradient(160deg,hsl(${h},55%,40%),hsl(${(h+50)%360},60%,22%))`}">${im?"":esc(a.trim().charAt(0).toUpperCase())}</div><div><b>${esc(a)}</b>${p?`<small>${esc(p)}</small>`:""}</div></div>`}).join("");
     return (c.length?rows+(c.length>10&&!castAll?`<div class="cmore" onclick="castAll=true;show(${i.id},true)">Mostrar ${c.length-10} más <span>⌄</span></div>`:""):'<div class="empty">Aún no hay personajes.</div>')}
   if(dtab==="inf")return [["App",i.app],["Episodios",i.eps]].map(([a,b])=>`<div class="dr"><span>${a}</span><b>${esc(b)}</b></div>`).join("");
   return i.tropes.length?i.tropes.map(t=>`<div class="br" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}<span>›</span></div>`).join(""):'<div class="empty">Esta serie no tiene tropos.</div>';
@@ -547,7 +551,7 @@ const idOf=u=>parseInt(String(u).replace(/-/g,"").slice(0,12),16);
 const sidOf=id=>{const i=get(id);return i&&i.sid};
 const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
-const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
+const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
 function catAll(){const m=new Map();[...CAT,...items].forEach(i=>m.set(i.id,i));return [...m.values()]}
 const listState=l=>JSON.stringify([l.name,l.desc||"",!!l.rank,l.ids.map(sidOf)]);
 const profState=()=>JSON.stringify([prof.name,prof.fam,prof.loc,prof.web,prof.pron,prof.bio,(prof.fav||[]).map(sidOf)]);
@@ -579,10 +583,11 @@ async function pull(){
   if(items.length){const r=await sb.from("series_stats").select("*").in("series_id",items.map(i=>i.sid));if(!r.error)r.data.forEach(applyStat)}
 }
 async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));i.cp=path;i.cover=cvr(path)}
+async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.cast[k];if(!c.ph||!c.ph.startsWith("data:"))continue;const bl=await (await fetch(c.ph)).blob(),path=uid+"/"+i.sid+"/c"+k+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));c.pp=path;c.ph=cvr(path)}}
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
-   for(const i of items.filter(x=>x.fresh)){await up(i,uid);await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
+   for(const i of items.filter(x=>x.fresh)){await up(i,uid);await upCast(i,uid);await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
    const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked}})}
    if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>shadow[r.i.id]={st:r.st,sid:r.i.sid})}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
@@ -705,6 +710,12 @@ const hrH=()=>{if(HR===null){HR=0;loadHR()}if(HR===0)return loadingH;if(!HR.leng
 const memHtml=()=>q.trim()?(MEM.length?MEM.map(m=>`<div class="ar" style="padding:10px 14px" onclick="openUser('${m.id}')">${av2(pname(m),40)}<div style="flex:1"><b>${esc(pname(m))}</b><small>@${esc(m.username)}</small></div>${FW.has(m.id)?"<small>Siguiendo</small>":""}</div>`).join(""):'<div class="empty">Sin resultados.</div>'):'<div class="empty">Escribe un nombre para buscar miembros.</div>';
 function memSearch(){clearTimeout(memT);memT=setTimeout(async()=>{const t=q.trim().replace(/[%,()*]/g," ").trim();if(!t){MEM=[];return}const k=++mq;
   try{const{data,error}=await sb.from("profiles").select("id,username,display_name").or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).neq("id",U.id).limit(20);if(error)throw error;if(k!==mq)return;MEM=data;const e=$("mem");if(e)e.innerHTML=memHtml()}catch(e){console.error(e)}},250)}
+/* ===== Formulario: personajes con foto ===== */
+let fc=[];
+function drawFc(){$("fcl").innerHTML=fc.map((r,k)=>`<div class="fcr"><label class="cph ${r.img?"has":""}" ${r.img?`style="background-image:url(${r.img})"`:""}>${r.img?"":"＋"}<input type="file" accept="image/*" hidden onchange="fcPh(${k},this)"></label><div class="fcn"><input placeholder="Nombre del personaje" maxlength="60" value="${esc(r.n)}" oninput="fc[${k}].n=this.value"><input placeholder="Actor/actriz o rol (opcional)" maxlength="60" value="${esc(r.r)}" oninput="fc[${k}].r=this.value"></div><button type="button" class="fcx" aria-label="Quitar" onclick="fc.splice(${k},1);drawFc()">×</button></div>`).join("");$("fca").style.display=fc.length>=20?"none":""}
+function fcPh(k,inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const W=120,H=150,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2,w,h);fc[k].img=c.toDataURL("image/jpeg",.8);URL.revokeObjectURL(im.src);drawFc()};im.src=URL.createObjectURL(f)}
+$("fca").onclick=()=>{if(fc.length<20){fc.push({n:"",r:"",img:""});drawFc();const i=$("fcl").querySelectorAll(".fcn input");if(i.length>=2)i[i.length-2].focus()}};
+drawFc();
 $("cancel").onclick=()=>$("form").classList.remove("open");
 let dupT=0;$("f-title").oninput=()=>{clearTimeout(dupT);const v=$("f-title").value.trim();if(v.length<4){$("dup").style.display="none";return}
   dupT=setTimeout(async()=>{try{const{data}=await sb.rpc("similar_series",{q:v}),d=data&&data[0];$("dup").style.display=d?"block":"none";if(d)$("dup").textContent="¿Es la misma que “"+d.title+"” ("+d.app+")? Una serie puede tener nombres distintos según la app o el país."}catch(e){}},300)};
@@ -714,10 +725,10 @@ $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
   im.src=URL.createObjectURL(f)};
 $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
   const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title,app:$("f-app").value,syn:$("f-syn").value.trim(),
-   tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),castTxt:$("f-cast").value.trim(),eps:Math.max(1,parseInt($("f-eps").value)||1),
+   tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),cast:fc.filter(r=>r.n.trim()).map(r=>({a:r.n.trim(),p:r.r.trim(),ph:r.img||"",pp:""})),castTxt:fc.filter(r=>r.n.trim()).map(r=>r.n.trim()+(r.r.trim()?" ("+r.r.trim()+")":"")).join(", "),eps:Math.max(1,parseInt($("f-eps").value)||1),
    watched:0,rating:0,review:"",status:"want",cover,added:Date.now()};
   items.unshift(it);addLog("add",it);
-  ["f-title","f-syn","f-tropes","f-cast","f-eps","f-img"].forEach(k=>$(k).value="");cover="";$("prev").style.display="none";$("dup").style.display="none";
+  ["f-title","f-syn","f-tropes","f-eps","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
   $("form").classList.remove("open");$("ad").classList.remove("open");save();render()};
 boot();
 </script>
