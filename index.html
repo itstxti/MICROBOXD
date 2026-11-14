@@ -234,6 +234,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .fm .fcg input::placeholder{color:var(--st);font-weight:400}.fm .fcg input:focus{border:0}
 .fcx{flex:none;width:28px;height:28px;border:0;background:none;color:var(--st);font-size:20px;line-height:1;cursor:pointer;border-radius:50%}.fcx:active{background:var(--bg)}
 .fca{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:46px;border:0;background:none;color:var(--g);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
+.sr[data-s]{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .qa2 .qa{border:0}.qa2 .qa button{padding:4px 0 10px}
 </style>
 </head>
@@ -327,7 +328,7 @@ function render(){
   }else if(tab==="act"){
     if(seg.act==="fr")h=feedH();
     else if(seg.act==="in")h=incH();
-    else{const g=[];log.forEach(e=>{const l=g[g.length-1];if(l&&l.id===e.id&&l.ts===e.ts)l.es.push(e);else g.push({id:e.id,ts:e.ts,title:e.title,es:[e]})});
+    else{const g=[];log.forEach(e=>{const l=g[g.length-1];if(l&&l.id===e.id&&Math.abs(l.ts-e.ts)<2500)l.es.push(e);else g.push({id:e.id,ts:e.ts,title:e.title,es:[e]})});
       h=g.length?g.map(o=>{const it=get(o.id),t=o.es.map(e=>e.t),r=(o.es.find(e=>e.t==="rate")||{}).r,v=[];
         if(t.includes("add")&&t.length===1)v.push("Añadiste");else{if(t.includes("done"))v.push("viste");if(it&&it.liked&&(t.includes("done")||t.includes("rate")))v.push("marcaste con me gusta");if(t.includes("rate"))v.push("puntuaste")}
         let x=v.length>1?v.slice(0,-1).join(", ")+" y "+v[v.length-1]:v[0];x=x.charAt(0).toUpperCase()+x.slice(1);
@@ -432,7 +433,7 @@ function show(id,keep){
   <div>${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>
   <div class="logrow" onclick="opts(${i.id})"><div class="av" style="width:32px;height:32px;font-size:14px">${ini()}</div><span>${lt(i)}</span><span class="more">•••</span></div>
   <div class="panel qa2" style="margin-top:12px"><div class="qa">${[["v",EYE,"Vista",i.status==="done"],["l",HEART,"Me gusta",i.liked],["w",CLOCK,"Pendiente",i.status==="want"]].map(([k,pp,l,on])=>`<button class="${on?"on":""}" onclick="qv(${i.id},'${k}',1)">${svg(pp,34)}${l}</button>`).join("")}</div>
-   <div class="rt"><div class="pl">${i.rating?"Tu nota":"Puntúa"}</div><div class="sr" style="justify-content:center">${stars(i)}</div></div></div>
+   <div class="rt"><div class="pl">${i.rating?"Tu nota":"Puntúa"}</div><div class="sr" data-s="rate:${i.id}" style="justify-content:center">${stars(i)}</div></div></div>
   ${prog(i)}
   ${hist(i)}
   ${wbSec(i)}${wwSec(i)}
@@ -455,20 +456,22 @@ const wbSec=i=>{
   return (ps.length?`<div class="wbs"><div class="wbh"><span>Visto por</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="pl">Reseña</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:32px;height:32px;font-size:14px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Contiene spoilers</div>':""}<p class="rvt">${esc(i.review)}</p></div></div>`};
 const EYE='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',HEART='<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',CLOCK='<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',WARN='<path d="M12 3L2 20h20z"/><path d="M12 10v5M12 18v.5"/>';
-const lt=i=>!i.status?"No está en tu biblioteca":i.status==="want"?"Está en tus pendientes":i.status==="done"?(i.watchedOn?`Registrada el ${fsh(i.watchedOn)} ${i.rating?S(i.rating):""}${i.liked?" ♥":""}`:`Marcada como vista · sin registrar en el diario`):`Viendo · ep. ${i.watched} de ${i.eps}`;
+const lt=i=>!i.status?"No está en tu biblioteca":i.status==="want"?"Está en tus pendientes":i.status==="done"?(i.watchedOn?`Registrada el ${fsh(i.watchedOn)} ${i.rating?S(i.rating):""}${i.liked?" ♥":""}`:(i.rating?`Has puntuado esta serie ${S(i.rating)}${i.liked?" ♥":""}`:`Marcada como vista${i.liked?" ♥":""}`)):`Viendo · ep. ${i.watched} de ${i.eps}`;
 const sx=(r,cb)=>[1,2,3,4,5].map(n=>`<span class="sx"><b style="width:${r>=n?100:r>=n-.5?50:0}%">★</b>★<button class="hl" onclick="${cb(n-.5)}"></button><button class="hr" onclick="${cb(n)}"></button></span>`).join("");
 const refresh=id=>{if($("det").classList.contains("open"))show(id,true)};
 const closeOv=()=>$("ov").classList.remove("open");
 function opts(id){const i=get(id);$("ov").innerHTML=`<div class="card"><div class="ot"><b>${esc(short(i.title))}</b><span>${esc(i.app)}</span></div>
   <div class="qa"><button class="${i.status==="done"?"on":""}" onclick="qv(${id},'v')">${svg(EYE,40)}Vista</button><button class="${i.liked?"on":""}" onclick="qv(${id},'l')">${svg(HEART,40)}Me gusta</button><button class="${i.status==="want"?"on":""}" onclick="qv(${id},'w')">${svg(CLOCK,40)}Pendiente</button></div>
-  <div class="rt"><div class="pl">Nota</div><div class="sr">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
+  <div class="rt"><div class="pl">Nota</div><div class="sr" data-s="qr:${id}">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
   <button class="oi" onclick="openLog(${id})">Registrar en el diario o reseñar</button><button class="oi" onclick="pickList(${id})">Añadir a lista</button><button class="oi" onclick="shr(${id})">Compartir</button><button class="oi d" onclick="del(${id});closeOv()">Quitar de mi biblioteca</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 function qv(id,k,sl){const i=get(id);
-  if(k==="l")i.liked=!i.liked;
+  if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i)}
   else if(k==="v"){if(i.status==="done")i.status=i.watched>0?"watching":"want";else{i.status="done";i.watched=i.eps;addLog("done",i)}}
   else i.status=i.status==="want"?(i.watched>0?"watching":"want"):"want";
   save();if(!sl)opts(id);refresh(id)}
-function qr(id,v){const i=get(id);i.rating=i.rating===v?0:v;if(i.rating)addLog("rate",i);save();opts(id);refresh(id)}
+const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
+function setR(i,v){i.rating=v;if(v){mark(i);addLog("rate",i)}}
+function qr(id,v,d){const i=get(id);setR(i,d?v:(i.rating===v?0:v));save();opts(id);refresh(id)}
 async function shr(id){const i=get(id),t=`${short(i.title)} (${i.app})${i.rating?" "+S(i.rating):""} · Microboxd`;try{if(navigator.share)await navigator.share({text:t});else await navigator.clipboard.writeText(t)}catch(e){}}
 let lg={},lg0="";
 function openLog(id,add){closeOv();const i=get(id);
@@ -485,7 +488,7 @@ const ldate=()=>{const t=fmt(new Date((lg.d||new Date().toISOString().slice(0,10
 function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div class="lh"><button onclick="cancelLog()">Cancelar</button><b>He visto…</b><button class="sv" onclick="saveLog()">Guardar</button></div>
   <div class="lt"><div class="ltp">${nop(i)}</div><span>${esc(short(i.title))}</span><small>${esc(i.app)}</small></div>
   <label class="lr ldt"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" onchange="lg.d=this.value;drawLog()"></label>
-  <div class="lrx"><div><div class="lb">Valoración</div><div class="sr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
+  <div class="lrx"><div><div class="lb">Valoración</div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
   <textarea placeholder="Añade una reseña…" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
   <input class="tgi" placeholder="Añadir etiquetas…" value="${esc(lg.g)}" oninput="lg.g=this.value">
   <div class="tg"><button class="${lg.re?"on":""}" onclick="lg.re=!lg.re;drawLog()">${svg(EYE,34)}<span>Ya la había visto</span></button><button class="${lg.sp?"on":""}" onclick="lg.sp=!lg.sp;drawLog()">${svg(WARN,34)}<span>${lg.sp?"Con spoilers":"Sin spoilers"}</span></button></div></div>`}
@@ -502,7 +505,7 @@ function goQ(v){closeDet();tab="search";q=v;render()}
 function closeDet(){$("det").classList.remove("open");render()}
 function ep(id,d){const i=get(id),was=i.status;i.watched=Math.max(0,Math.min(i.eps,i.watched+d));
   if(i.watched===i.eps){i.status="done";if(was!=="done")addLog("done",i)}else if(i.watched>0)i.status="watching";save();show(id,true)}
-function rate(id,n){const i=get(id);i.rating=i.rating===n?0:n;if(i.rating)addLog("rate",i);save();show(id,true)}
+function rate(id,n,d){const i=get(id);setR(i,d?n:(i.rating===n?0:n));save();show(id,true)}
 function setSt(id,s){const i=get(id),was=i.status;i.status=s;if(s==="done"){i.watched=i.eps;if(was!=="done")addLog("done",i)}save();show(id,true)}
 function rev(id,v){get(id).review=v;save()}
 function del(id){const d=get(id);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id);save();closeDet()}
@@ -645,6 +648,17 @@ async function boot(){
   U=session.user;gate("Cargando…",1);
   try{await pull();await legacy()}catch(e){console.error(e);gate("Error al cargar tus datos: "+(e.message||e),0,1);return}
   $("gate").style.display="none";render()}
+/* ===== Arrastrar para puntuar (como Letterboxd) ===== */
+let sd0=null,sdDrag=false,sdSwallow=false;
+const sdVal=(g,x)=>{const sx=g.querySelectorAll(".sx"),a=sx[0].getBoundingClientRect(),b=sx[1].getBoundingClientRect(),st=b.left-a.left;if(x<a.left-14)return 0;return Math.min(5,Math.max(.5,Math.ceil((x-a.left)/st*2)/2))};
+const sdPaint=(g,v)=>g.querySelectorAll(".sx").forEach((el,k)=>{el.querySelector("b").style.width=(v>=k+1?100:v>=k+.5?50:0)+"%"});
+document.addEventListener("pointerdown",e=>{const g=e.target.closest&&e.target.closest(".sr[data-s]");if(!g||g.querySelectorAll(".sx").length<2)return;sd0={g,x:e.clientX,id:e.pointerId,v:null};sdDrag=false},true);
+document.addEventListener("pointermove",e=>{if(!sd0||e.pointerId!==sd0.id)return;if(!sdDrag&&Math.abs(e.clientX-sd0.x)<8)return;sdDrag=true;try{sd0.g.setPointerCapture(e.pointerId)}catch(_){}
+  const v=sdVal(sd0.g,e.clientX);if(v!==sd0.v){sd0.v=v;sdPaint(sd0.g,v);if(navigator.vibrate)navigator.vibrate(6)}},true);
+const sdEnd=e=>{if(!sd0||e.pointerId!==sd0.id)return;const o=sd0,drag=sdDrag&&o.v!=null;sd0=null;
+  if(drag){sdSwallow=true;setTimeout(()=>sdSwallow=false,0);const[k,id]=o.g.dataset.s.split(":");if(k==="rate")rate(+id,o.v,1);else if(k==="qr")qr(+id,o.v,1);else if(k==="lgr"){lg.r=o.v;drawLog()}}sdDrag=false};
+document.addEventListener("pointerup",sdEnd,true);document.addEventListener("pointercancel",e=>{if(sd0&&e.pointerId===sd0.id){const o=sd0;sd0=null;sdDrag=false;if(o.g.isConnected){const[k,id]=o.g.dataset.s.split(":");if(k==="rate")show(+id,true);else if(k==="qr")opts(+id);else drawLog()}}},true);
+document.addEventListener("click",e=>{if(sdSwallow){e.stopPropagation();e.preventDefault()}},true);
 /* ===== PWA ===== */
 let IP=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();IP=e});
 const isSA=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone;
