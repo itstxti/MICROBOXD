@@ -1488,25 +1488,31 @@ chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk(
   /* 1) Contenido principal: aparece al cambiar de pestaña o de sub-pestaña (no en cada render).
         Si la pantalla empieza con "Cargando…", se espera al contenido real y se anima una sola vez.
         Las clases van en los elementos que existen en ese momento, así un repintado posterior no repite la animación. */
-  let pend=false;
+  let pend=false,animT=0;
   function mainKey(){const tb=[...document.querySelectorAll("#tb button")],t=tb.findIndex(b=>b.classList.contains("on")),s=document.querySelector("#hd .seg button.on");return t+"|"+(s?s.textContent.trim():"")}
-  function clean(mn){mn.querySelectorAll(".mbx-f,.mbx-s,.mbx-gy,.mbx-gx").forEach(e=>{e.classList.remove("mbx-f","mbx-s","mbx-gy","mbx-gx");e.style.animationDelay=""})}
+  const CL=["mbx-f","mbx-s","mbx-gy","mbx-gx"];
+  /* Aplica la animación a lo que hay ahora en pantalla. Si es un repintado a mitad de animación
+     (p. ej. llegan datos nuevos justo después de enseñar los de caché), continúa desde el mismo punto. */
+  function play(mn,el){
+    clearTimeout(tmM);
+    const kids=[...mn.children],it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,12),
+      gy=[...mn.querySelectorAll(".bars u")],gx=[...mn.querySelectorAll(".stb>u i")],d=n=>(n-el)+"ms";
+    kids.forEach(e=>{e.classList.add("mbx-f");if(el)e.style.animationDelay=d(0)});
+    it.forEach((e,n)=>{e.style.animationDelay=d(n*20);e.classList.add("mbx-s")});
+    gy.forEach((e,n)=>{e.style.animationDelay=d(n%10*30);e.classList.add("mbx-gy")});
+    gx.forEach(e=>{e.classList.add("mbx-gx");if(el)e.style.animationDelay=d(0)});
+    tmM=setTimeout(()=>{animT=0;[...kids,...it,...gy,...gx].forEach(e=>{e.classList.remove(...CL);e.style.animationDelay=""})},Math.max(60,900-el));
+  }
   function onMain(){
     const k=mainKey(),first=lastKey===null,fresh=!first&&k!==lastKey;lastKey=k;
     const mn=$("mn");if(!mn||RM.matches)return;
-    if(mn.querySelector("#sr")){pend=false;return}
+    if(mn.querySelector("#sr")){pend=false;animT=0;return}
     const loading=!!mn.querySelector(".ld");
-    if(fresh)pend=true;
-    if(!pend||loading)return;
-    pend=false;
-    clearTimeout(tmM);clean(mn);
-    const kids=[...mn.children],it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,12),
-      gy=[...mn.querySelectorAll(".bars u")],gx=[...mn.querySelectorAll(".stb>u i")];
-    kids.forEach(e=>e.classList.add("mbx-f"));
-    it.forEach((e,n)=>{e.style.animationDelay=(n*20)+"ms";e.classList.add("mbx-s")});
-    gy.forEach((e,n)=>{e.style.animationDelay=(n%10*30)+"ms";e.classList.add("mbx-gy")});
-    gx.forEach(e=>e.classList.add("mbx-gx"));
-    tmM=setTimeout(()=>{[...kids,...it,...gy,...gx].forEach(e=>{e.classList.remove("mbx-f","mbx-s","mbx-gy","mbx-gx");e.style.animationDelay=""})},900);
+    if(fresh){pend=true;animT=0}
+    if(loading)return;
+    if(pend){pend=false;animT=performance.now();play(mn,0);return}
+    const el=animT?performance.now()-animT:0;
+    if(animT&&el<700)play(mn,el)
   }
 
   /* 2) Detalle de serie: las barras crecen al abrir; al puntuar pasan del valor antiguo al nuevo */
