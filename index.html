@@ -32,6 +32,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 .hrow{display:flex;gap:10px;overflow-x:auto;padding:0 14px;scrollbar-width:none}.hrow::-webkit-scrollbar{display:none}.hp{width:105px;flex:none}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px;padding:14px}
 .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#sr .g3{grid-template-columns:repeat(4,minmax(0,1fr))}
 .poster{position:relative;aspect-ratio:2/3;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.16);cursor:pointer;background:var(--pan)}
 .poster img{width:100%;height:100%;object-fit:cover;display:block}
 .fb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:7px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}
@@ -457,7 +458,8 @@ const RXS=[
 [/^el ([A-Z][^ ]*, .*)$/,"on $1"],
 [/^([★½]+ )?el ([A-Za-z]{3,9}\.? \d{1,2}, \d{4})$/,(m,a,d)=>(a||"")+"on "+d]
 ];
-function T(s){if(typeof s!=="string")return s;const t=s.trim();if(!t)return s;let r=D.get(t);if(r===undefined&&t.length>2&&t.endsWith(" ›")){const q=T(t.slice(0,-2));if(q!==t.slice(0,-2))r=q+" ›"}
+function T(s){if(typeof s!=="string")return s;const t=s.trim();if(!t)return s;let r=D.get(t);if(r===undefined&&t.startsWith("‹ ")){const q=T(t.slice(2));if(q!==t.slice(2))r="‹ "+q}
+if(r===undefined&&t.length>2&&t.endsWith(" ›")){const q=T(t.slice(0,-2));if(q!==t.slice(0,-2))r=q+" ›"}
 if(r===undefined)for(const[p,e]of PRE)if(t.startsWith(p)){r=e+t.slice(p.length);break}
 if(r===undefined)for(const[x,e]of RXS)if(x.test(t)){r=t.replace(x,e);break}
 if(r===undefined||r===t)return s;r=r.replace(" · otra vez"," · again");return s.replace(t,()=>r)}
