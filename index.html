@@ -377,7 +377,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .tgrw{display:flex;align-items:center;gap:10px;margin-left:16px;padding:14px 16px 14px 0;border-bottom:1px solid var(--line);cursor:pointer}.tgrw .tgc{height:36px;font-size:17px;max-width:70%}.tgrw b{margin-left:auto;font-weight:400;color:var(--st);font-size:19px}.tgrw i{font-style:normal;color:var(--st);font-size:26px;line-height:1}
 .tgtabs{margin:12px 14px 6px}
 #tgs .tgb b{font-size:15px}#tgs .tgth{width:28px}#tgs .tgth .poster{width:24px}#tgs .tgac{gap:12px}#tgs .tgac svg{width:20px;height:20px}#tgs .tgac .sv{font-size:15px}
-#tgs .tgf{gap:7px;padding:10px 14px;min-height:50px}#tgs .tgf input{font-size:15px;padding:4px 0;min-width:70px}
+#tgs .tgf{gap:7px;padding:10px 14px;min-height:50px}#tgs .tgf input{font-size:15px;height:28px;line-height:28px;padding:0;margin:0;min-width:70px;align-self:center;box-sizing:border-box}#tgs .tgc{line-height:28px;padding-bottom:1px}
 #tgs .tgc{height:28px;font-size:13px;padding:0 16px 0 10px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
 #tgs .tgli{margin-left:14px;padding:12px 14px 12px 0;font-size:15px}#tgs .tgli b{font-size:14px}
 #lst.top{z-index:30}
@@ -667,14 +667,14 @@ function setR(i,v){comRate(i,v);i.rating=v;if(v){mark(i);addLog("rate",i)}}
 function qr(id,v,d){const i=get(id);setR(i,d?v:(i.rating===v?0:v));save();opts(id);refresh(id)}
 async function shr(id){const i=get(id),t=`${short(i.title)} (${i.app})${i.rating?" "+S(i.rating):""} · Microboxd`;try{if(navigator.share)await navigator.share({text:t});else await navigator.clipboard.writeText(t)}catch(e){}}
 let lg={},lg0="";
-function openLog(id,add){closeOv();const i=get(id);
-  const fresh=()=>({id,add:!!add,d:new Date(i.watchedOn||Date.now()).toISOString().slice(0,10),r:i.rating||0,l:!!i.liked,re:false,sp:!!i.spoil,t:i.review||"",g:(i.rtags||[]).join(", ")});
+function openLog(id,add,ed){closeOv();const i=get(id);
+  const fresh=()=>({id,add:!!add,ed:!!ed,d:new Date(i.watchedOn||Date.now()).toISOString().slice(0,10),r:i.rating||0,l:!!i.liked,re:false,sp:!!i.spoil,t:i.review||"",g:(i.rtags||[]).join(", ")});
   const go=o=>{lg=o;drawLog();$("lgs").classList.add("open");$("lgs").scrollTop=0};
   lg0=JSON.stringify(fresh());
   const dr=drafts[id];
   if(!dr){go(fresh());return}
-  $("ov").innerHTML=`<div class="card"><div class="ot" style="padding:22px 16px 14px"><b>Borrador</b><span>Hay una entrada sin guardar de esta serie. ¿Quieres seguir editando?</span></div><div class="qa"><button onclick="dDisc(${id},${add?1:0})">Descartar</button><button style="color:#4ddc6f;font-weight:700" onclick="dRes(${id},${add?1:0})">Seguir editando</button></div></div>`;$("ov").classList.add("open")}
-function dDisc(id,add){delete drafts[id];pers();openLog(id,!!add)}
+  $("ov").innerHTML=`<div class="card"><div class="ot" style="padding:22px 16px 14px"><b>Borrador</b><span>Hay una entrada sin guardar de esta serie. ¿Quieres seguir editando?</span></div><div class="qa"><button onclick="dDisc(${id},${add?1:0},${ed?1:0})">Descartar</button><button style="color:#4ddc6f;font-weight:700" onclick="dRes(${id},${add?1:0})">Seguir editando</button></div></div>`;$("ov").classList.add("open")}
+function dDisc(id,add,ed){delete drafts[id];pers();openLog(id,!!add,!!ed)}
 function dRes(id,add){const d=drafts[id];closeOv();lg=Object.assign({},d,{add:!!add});drawLog();$("lgs").classList.add("open");$("lgs").scrollTop=0}
 function cancelLog(){const{add,...rest}=lg;if(JSON.stringify(Object.assign({},lg,{add:lg.add}))!==lg0){drafts[lg.id]=Object.assign({},lg)}pers();$("lgs").classList.remove("open")}
 const ldate=()=>{const t=fmt(new Date((lg.d||new Date().toISOString().slice(0,10))+"T12:00:00").getTime());return t.charAt(0).toUpperCase()+t.slice(1)};
@@ -709,7 +709,7 @@ function saveLog(){const i=get(lg.id),ts=lg.d?new Date(lg.d+"T12:00:00").getTime
   {const eid=(i.deid&&!lg.re)?i.deid:crypto.randomUUID();i.deid=eid;dq.push({id:eid,series:i,row:{watched_on:lg.d||new Date().toISOString().slice(0,10),rating:lg.r||null,liked:!!lg.l,rewatch:!!lg.re,review:lg.t||"",spoilers:!!lg.sp,tags:i.rtags}})}
   delete drafts[i.id];pers();save();$("lgs").classList.remove("open");
   if(lg.add){$("ad").classList.remove("open");$("det").classList.remove("open");br=[];q="";tab="home";seg.home="series";render();$("mn").scrollTop=0}else{refresh(i.id);render()}
-  toast(`<b>${esc(short(i.title))}</b> se añadió a tu diario`)}
+  toast(`<b>${esc(short(i.title))}</b> ${lg.ed?"se actualizó en tu diario":"se añadió a tu diario"}`)}
 const tm=()=>$("mnu").classList.toggle("open");
 function goQ(v){closeDet();tab="search";q=v;render()}
 function closeDet(){const d=$("det");if(!d.classList.contains("open")||d.classList.contains("out"))return;d.classList.add("out");render();setTimeout(()=>{d.classList.remove("open","out")},190)}
@@ -1114,7 +1114,7 @@ function openReview(id,re){const r=RX[id];if(!r)return;UN[r.uid]=r.u;const i=get
   re?subRe(h):subOpen(h)}
 function rvMenu(id){const r=RX[id];if(!r)return;const i=get(idOf(r.sid)),mine=r.uid===U.id;
   {const h=i?hue(i.app):0;$("ov").style.setProperty("--bgi",i?(i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`):"none")}
-  $("ov").innerHTML=`<div class="otl"><b>${esc(i?short(i.title):"")}</b><span>Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</span></div><div class="card">${mine?`<button class="oi d" onclick="rvDel('${id}')">Eliminar</button><button class="oi" onclick="closeOv();openLog(${i?i.id:0})">Editar</button>`:""}${i?`<button class="oi" onclick="closeOv();pickList(${i.id})">Añadir serie a listas</button>`:""}<button class="oi" onclick="closeOv();${i?`shr(${i.id})`:""}">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
+  $("ov").innerHTML=`<div class="otl"><b>${esc(i?short(i.title):"")}</b><span>Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</span></div><div class="card">${mine?`<button class="oi d" onclick="rvDel('${id}')">Eliminar</button><button class="oi" onclick="closeOv();openLog(${i?i.id:0},0,1)">Editar</button>`:""}${i?`<button class="oi" onclick="closeOv();pickList(${i.id})">Añadir serie a listas</button>`:""}<button class="oi" onclick="closeOv();${i?`shr(${i.id})`:""}">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
 async function rvDel(id){const r=RX[id];if(!r||r.uid!==U.id)return;closeOv();if(!confirm("¿Eliminar esta entrada del diario?"))return;
   try{const{error}=await sb.from("diary_entries").delete().eq("id",id);if(error)throw error}catch(e){toast("No se pudo eliminar");return}
   const i=get(idOf(r.sid));
