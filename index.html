@@ -379,11 +379,11 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 @keyframes mbxRise{from{opacity:0;transform:translateY(10px)}}
 @keyframes mbxGY{from{transform:scaleY(0)}}
 @keyframes mbxGX{from{transform:scaleX(0)}}
-#mn.mbx-in>*{animation:mbxFade .22s ease-out}
+#mn>.mbx-f{animation:mbxFade .22s ease-out}
 #mn .mbx-s{animation:mbxRise .3s cubic-bezier(.2,.8,.2,1) backwards}
-#mn.mbx-in .bars u,#det.fr .bars u,#sub .bars u,#lst .bars u{transform-origin:bottom;animation:mbxGY .5s cubic-bezier(.2,.8,.2,1) backwards}
-#mn.mbx-in .bars u:nth-child(2),#det.fr .bars u:nth-child(2){animation-delay:.03s}#mn.mbx-in .bars u:nth-child(3),#det.fr .bars u:nth-child(3){animation-delay:.06s}#mn.mbx-in .bars u:nth-child(4),#det.fr .bars u:nth-child(4){animation-delay:.09s}#mn.mbx-in .bars u:nth-child(5),#det.fr .bars u:nth-child(5){animation-delay:.12s}#mn.mbx-in .bars u:nth-child(6),#det.fr .bars u:nth-child(6){animation-delay:.15s}#mn.mbx-in .bars u:nth-child(7),#det.fr .bars u:nth-child(7){animation-delay:.18s}#mn.mbx-in .bars u:nth-child(8),#det.fr .bars u:nth-child(8){animation-delay:.21s}#mn.mbx-in .bars u:nth-child(9),#det.fr .bars u:nth-child(9){animation-delay:.24s}#mn.mbx-in .bars u:nth-child(10),#det.fr .bars u:nth-child(10){animation-delay:.27s}
-#mn.mbx-in .stb>u i,#lst .stb>u i,#sub .stb>u i{transform-origin:left;animation:mbxGX .6s cubic-bezier(.2,.8,.2,1) backwards}
+#mn .mbx-gy,#det.fr .bars u,#sub .bars u,#lst .bars u{transform-origin:bottom;animation:mbxGY .5s cubic-bezier(.2,.8,.2,1) backwards}
+#det.fr .bars u:nth-child(2){animation-delay:0.03s}#det.fr .bars u:nth-child(3){animation-delay:0.06s}#det.fr .bars u:nth-child(4){animation-delay:0.09s}#det.fr .bars u:nth-child(5){animation-delay:0.12s}#det.fr .bars u:nth-child(6){animation-delay:0.15s}#det.fr .bars u:nth-child(7){animation-delay:0.18s}#det.fr .bars u:nth-child(8){animation-delay:0.21s}#det.fr .bars u:nth-child(9){animation-delay:0.24s}#det.fr .bars u:nth-child(10){animation-delay:0.27s}
+#mn .mbx-gx,#lst .stb>u i,#sub .stb>u i{transform-origin:left;animation:mbxGX .6s cubic-bezier(.2,.8,.2,1) backwards}
 #det .bars u{transition:height .45s cubic-bezier(.2,.8,.2,1)}
 #det .sx b{transition:width .25s cubic-bezier(.2,.8,.2,1)}
 .mbxp{animation:mbPop .38s cubic-bezier(.3,1.6,.5,1)}
@@ -1485,18 +1485,28 @@ chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk(
   const pop=el=>{if(!el||RM.matches)return;el.classList.remove("mbxp");void el.getBoundingClientRect();el.classList.add("mbxp");setTimeout(()=>el.classList.remove("mbxp"),450)};
   let lastKey=null,tmM=0,tmD=0;
 
-  /* 1) Contenido principal: aparece al cambiar de pestaña o de sub-pestaña (no en cada render) */
+  /* 1) Contenido principal: aparece al cambiar de pestaña o de sub-pestaña (no en cada render).
+        Si la pantalla empieza con "Cargando…", se espera al contenido real y se anima una sola vez.
+        Las clases van en los elementos que existen en ese momento, así un repintado posterior no repite la animación. */
+  let pend=false;
   function mainKey(){const tb=[...document.querySelectorAll("#tb button")],t=tb.findIndex(b=>b.classList.contains("on")),s=document.querySelector("#hd .seg button.on");return t+"|"+(s?s.textContent.trim():"")}
+  function clean(mn){mn.querySelectorAll(".mbx-f,.mbx-s,.mbx-gy,.mbx-gx").forEach(e=>{e.classList.remove("mbx-f","mbx-s","mbx-gy","mbx-gx");e.style.animationDelay=""})}
   function onMain(){
     const k=mainKey(),first=lastKey===null,fresh=!first&&k!==lastKey;lastKey=k;
-    if(!fresh||RM.matches)return;
-    const mn=$("mn");if(!mn||mn.querySelector("#sr"))return;
-    clearTimeout(tmM);mn.classList.remove("mbx-in");mn.querySelectorAll(".mbx-s").forEach(e=>{e.classList.remove("mbx-s");e.style.animationDelay=""});
-    void mn.offsetWidth;
-    const it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,14);
+    const mn=$("mn");if(!mn||RM.matches)return;
+    if(mn.querySelector("#sr")){pend=false;return}
+    const loading=!!mn.querySelector(".ld");
+    if(fresh)pend=true;
+    if(!pend||loading)return;
+    pend=false;
+    clearTimeout(tmM);clean(mn);
+    const kids=[...mn.children],it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,14),
+      gy=[...mn.querySelectorAll(".bars u")],gx=[...mn.querySelectorAll(".stb>u i")];
+    kids.forEach(e=>e.classList.add("mbx-f"));
     it.forEach((e,n)=>{e.style.animationDelay=(n*24)+"ms";e.classList.add("mbx-s")});
-    mn.classList.add("mbx-in");
-    tmM=setTimeout(()=>{mn.classList.remove("mbx-in");it.forEach(e=>{e.classList.remove("mbx-s");e.style.animationDelay=""})},900);
+    gy.forEach((e,n)=>{e.style.animationDelay=(n%10*30)+"ms";e.classList.add("mbx-gy")});
+    gx.forEach(e=>e.classList.add("mbx-gx"));
+    tmM=setTimeout(()=>{[...kids,...it,...gy,...gx].forEach(e=>{e.classList.remove("mbx-f","mbx-s","mbx-gy","mbx-gx");e.style.animationDelay=""})},900);
   }
 
   /* 2) Detalle de serie: las barras crecen al abrir; al puntuar pasan del valor antiguo al nuevo */
