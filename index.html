@@ -465,7 +465,7 @@ function sr(){
   const el=$("sr");if(!el)return;
   const pills=()=>`<div class="ptabs">${[["s","Series"],["r","Reseñas"],["l","Listas"],["m","Miembros"]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</div>`;
   if(!q.trim()&&sf&&!br.length){
-    el.innerHTML=pills()+(rsqH()||(sq==="m"?'<div class="empty">Escribe un nombre para buscar miembros.</div>':""));
+    el.innerHTML=pills()+(rsqH());
   }else if(!q.trim()){
     el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join("");
   }else{
