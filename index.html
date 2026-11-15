@@ -729,9 +729,13 @@ async function unwatch(id){const i=get(id);if(!i)return;
   dq=dq.filter(e=>e.series!==i);
   drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});
   RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render()}
+/* Pulsar «Registrada»: con una sola entrada abre la entrada; con varias, la página de actividad */
+async function goLog(id){const i=get(id);if(!i)return;closeOv();
+  if((i.dcount||0)>1||!i.deid||!sb){showAct(id,U.id);return}
+  try{if(!RX[i.deid]){const r=await sb.from("diary_entries").select(RSEL).eq("id",i.deid).single();if(r.error)throw r.error;nrm(r.data)}openReview(i.deid)}catch(e){console.error(e);showAct(id,U.id)}}
 let POP="";function qv(id,k,sl){POP=k;const i=get(id);
   if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i);else if(!i.status&&!i.rating&&items.includes(i))drop(id)}
-  else if(k==="v"){if(i.status==="done"){unwatch(id);return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="done";i.watched=i.eps;addLog("done",i)}}
+  else if(k==="v"){if(i.status==="done"){if(i.watchedOn||i.deid||(i.dcount||0)>0){POP="";goLog(id);return}unwatch(id);return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="done";i.watched=i.eps;addLog("done",i)}}
   else{if(i.status==="want"){if(i.liked){i.status="";i.watched=0}else drop(id)}else if(i.status==="done"){i.wl=!i.wl}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
   save();if(!sl)opts(id);refresh(id)}
 const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
@@ -1213,6 +1217,7 @@ async function rvDel(id){const r=RX[id];if(!r||r.uid!==U.id)return;closeOv();if(
   try{const{error}=await sb.from("diary_entries").delete().eq("id",id);if(error)throw error}catch(e){toast("No se pudo eliminar");return}
   const i=get(idOf(r.sid));
   dq=dq.filter(e=>e.id!==id);
+  for(const k in ACT)ACT[k]=ACT[k].filter(x=>x.id!==id);
   if(i){i.dcount=Math.max(0,(i.dcount||1)-1);
    /* la serie sigue vista y conserva su nota; si quedan otras entradas, la más reciente pasa a ser la actual */
    let nx=null;try{const q=await sb.from("diary_entries").select("id,watched_on,review,spoilers,rewatch,tags").eq("user_id",U.id).eq("series_id",i.sid).order("watched_on",{ascending:false}).order("created_at",{ascending:false});if(!q.error){i.dcount=q.data.length;nx=q.data[0]||null}}catch(e){}
@@ -1220,7 +1225,7 @@ async function rvDel(id){const r=RX[id];if(!r||r.uid!==U.id)return;closeOv();if(
    else if(i.deid===id||i.dcount===0)Object.assign(i,{review:"",watchedOn:undefined,spoil:false,rewatch:false,rtags:[],deid:undefined,dcount:0});
    if(i.status!=="done"){i.status="done";i.watched=i.eps}
    save()}
-  RV={};RVt={};WB={};WBt={};HR=null;subX();if(i&&curDet===i.id&&$("det").classList.contains("open")){loadRevs(i,true);loadWb(i,true);show(i.id,true)}render()}
+  RV={};RVt={};WB={};WBt={};HR=null;subX();if(i&&pgLive("act"+i.id)&&ACT[i.id+":"+U.id]){actU=U.id;drawAct(i.id,1)}if(i&&curDet===i.id&&$("det").classList.contains("open")){loadRevs(i,true);loadWb(i,true);show(i.id,true)}render()}
 async function likeRev(id){const r=RX[id];if(!r||r.uid===U.id)return;const on=!r.me;r.me=on;r.lk+=on?1:-1;openReview(id,1);if($("det").classList.contains("open"))show(curDet,true);HR=null;
   try{if(on)await ck(sb.from("review_likes").insert({entry_id:id,user_id:U.id}));else await ck(sb.from("review_likes").delete().eq("entry_id",id).eq("user_id",U.id))}
   catch(e){r.me=!on;r.lk+=on?-1:1;openReview(id,1);toast("No se pudo guardar el me gusta")}}
