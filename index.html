@@ -402,6 +402,26 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 #tgs .tgc{height:28px;font-size:13px;padding:0 16px 0 10px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
 #tgs .tgli{margin-left:14px;padding:12px 14px 12px 0;font-size:15px}#tgs .tgli b{font-size:14px}
 #lst.top{z-index:30}
+
+/* ===== Animaciones extra (mbx) ===== */
+@media (prefers-reduced-motion:no-preference){
+@keyframes mbxFade{from{opacity:0}}
+@keyframes mbxRise{from{opacity:0;transform:translateY(10px)}}
+@keyframes mbxGY{from{transform:scaleY(0)}}
+@keyframes mbxGX{from{transform:scaleX(0)}}
+#mn.mbx-in>*{animation:mbxFade .22s ease-out}
+#mn .mbx-s{animation:mbxRise .3s cubic-bezier(.2,.8,.2,1) backwards}
+#mn.mbx-in .bars u,#det.fr .bars u,#sub .bars u,#lst .bars u{transform-origin:bottom;animation:mbxGY .5s cubic-bezier(.2,.8,.2,1) backwards}
+#mn.mbx-in .bars u:nth-child(2),#det.fr .bars u:nth-child(2){animation-delay:.03s}#mn.mbx-in .bars u:nth-child(3),#det.fr .bars u:nth-child(3){animation-delay:.06s}#mn.mbx-in .bars u:nth-child(4),#det.fr .bars u:nth-child(4){animation-delay:.09s}#mn.mbx-in .bars u:nth-child(5),#det.fr .bars u:nth-child(5){animation-delay:.12s}#mn.mbx-in .bars u:nth-child(6),#det.fr .bars u:nth-child(6){animation-delay:.15s}#mn.mbx-in .bars u:nth-child(7),#det.fr .bars u:nth-child(7){animation-delay:.18s}#mn.mbx-in .bars u:nth-child(8),#det.fr .bars u:nth-child(8){animation-delay:.21s}#mn.mbx-in .bars u:nth-child(9),#det.fr .bars u:nth-child(9){animation-delay:.24s}#mn.mbx-in .bars u:nth-child(10),#det.fr .bars u:nth-child(10){animation-delay:.27s}
+#mn.mbx-in .stb>u i,#lst .stb>u i,#sub .stb>u i,#det.fr .pgb i{transform-origin:left;animation:mbxGX .6s cubic-bezier(.2,.8,.2,1) backwards}
+#det .bars u{transition:height .45s cubic-bezier(.2,.8,.2,1)}
+#det .pgb i{transition:width .45s cubic-bezier(.2,.8,.2,1)}
+#det .sx b{transition:width .25s cubic-bezier(.2,.8,.2,1)}
+.mbxp{animation:mbPop .38s cubic-bezier(.3,1.6,.5,1)}
+}
+/* feedback al pulsar en más elementos */
+.btn,.tag,.tile,.tgc,.emb,nav button,.hb2,.mfl,.oi{transition:transform .12s ease,opacity .12s,background-color .15s}
+@media (hover:none){.btn:active:not(:disabled),.tag:active,.tile:active,.tgc:active,nav button:active,.hb2:active,.mfl:active{transform:scale(.94)}.oi:active{opacity:.7}}
 </style>
 </head>
 <body>
@@ -1504,5 +1524,76 @@ chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk(
 })();
 </script>
 
+<script>
+/* Animaciones extra: entrada de contenido por pestaña, barras, progreso, estrellas, likes, seguir y barra inferior */
+(function(){
+  const RM=matchMedia("(prefers-reduced-motion:reduce)");
+  const $=id=>document.getElementById(id);
+  const find=(list,sel)=>{const r=[];list.forEach(n=>{if(n.nodeType!==1)return;if(n.matches(sel))r.push(n);n.querySelectorAll(sel).forEach(x=>r.push(x))});return r};
+  const h2=l=>{const e=find(l,".hd2 h2")[0];return e?e.textContent:null};
+  const pop=el=>{if(!el||RM.matches)return;el.classList.remove("mbxp");void el.getBoundingClientRect();el.classList.add("mbxp");setTimeout(()=>el.classList.remove("mbxp"),450)};
+  let lastKey=null,tmM=0,tmD=0;
+
+  /* 1) Contenido principal: aparece al cambiar de pestaña o de sub-pestaña (no en cada render) */
+  function mainKey(){const tb=[...document.querySelectorAll("#tb button")],t=tb.findIndex(b=>b.classList.contains("on")),s=document.querySelector("#hd .seg button.on");return t+"|"+(s?s.textContent.trim():"")}
+  function onMain(){
+    const k=mainKey(),first=lastKey===null,fresh=!first&&k!==lastKey;lastKey=k;
+    if(!fresh||RM.matches)return;
+    const mn=$("mn");if(!mn||mn.querySelector("#sr"))return;
+    clearTimeout(tmM);mn.classList.remove("mbx-in");mn.querySelectorAll(".mbx-s").forEach(e=>{e.classList.remove("mbx-s");e.style.animationDelay=""});
+    void mn.offsetWidth;
+    const it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,14);
+    it.forEach((e,n)=>{e.style.animationDelay=(n*24)+"ms";e.classList.add("mbx-s")});
+    mn.classList.add("mbx-in");
+    tmM=setTimeout(()=>{mn.classList.remove("mbx-in");it.forEach(e=>{e.classList.remove("mbx-s");e.style.animationDelay=""})},900);
+  }
+
+  /* 2) Detalle de serie: las barras crecen al abrir; al puntuar / avanzar episodio pasan del valor antiguo al nuevo */
+  function onDet(m){
+    const d=$("det");if(!d||RM.matches)return;
+    const oldT=h2(m.removedNodes),newT=h2(m.addedNodes);
+    if(newT===null)return;
+    const same=oldT!==null&&oldT===newT;
+    clearTimeout(tmD);
+    if(!same){d.classList.add("fr");tmD=setTimeout(()=>d.classList.remove("fr"),900);return}
+    d.classList.remove("fr");
+    [[".pgb i","width"],[".sx b","width"],[".bars u","height"]].forEach(([sel,prop])=>{
+      const o=find(m.removedNodes,sel),n=find(m.addedNodes,sel);
+      if(!n.length||o.length!==n.length)return;
+      const to=n.map(e=>e.style[prop]);let any=false;
+      n.forEach((e,k)=>{const ov=o[k].style[prop];if(ov&&ov!==to[k]){e.style[prop]=ov;any=true}});
+      if(!any)return;
+      void d.offsetWidth;
+      requestAnimationFrame(()=>n.forEach((e,k)=>{e.style[prop]=to[k]}));
+    });
+    /* porcentaje de progreso: cuenta hasta el nuevo valor */
+    const po=find(m.removedNodes,".pgpct")[0],pn=find(m.addedNodes,".pgpct")[0];
+    if(po&&pn){const a=parseInt(po.textContent),b=parseInt(pn.textContent);if(!isNaN(a)&&!isNaN(b)&&a!==b){const t0=performance.now();pn.textContent=a+"%";(function f(t){const p=Math.min(1,(t-t0)/450),e=1-Math.pow(1-p,3);pn.textContent=Math.round(a+(b-a)*e)+"%";if(p<1&&pn.isConnected)requestAnimationFrame(f)})(t0)}}
+  }
+
+  /* 3) Rebote al dar like / seguir / cambiar de pestaña inferior */
+  function onPop(m){
+    if(RM.matches)return;
+    const t=m.target;
+    if(t.nodeType===1&&t.classList&&t.classList.contains("mfl")&&t.classList.contains("on")){pop(t.querySelector("svg"));return}
+    const on=find(m.addedNodes,".hb2.on"),old=find(m.removedNodes,".hb2");
+    if(on.length&&old.length===on.length)on.forEach((e,k)=>{if(!old[k].classList.contains("on"))pop(e.querySelector("svg"))});
+    if(t.id==="tb"){
+      const idx=l=>l.findIndex(b=>b.classList.contains("on")),ob=find(m.removedNodes,"button"),nb=find(m.addedNodes,"button"),a=idx(ob),b=idx(nb);
+      if(a>=0&&b>=0&&a!==b)pop(nb[b].querySelector("svg"));
+    }
+  }
+
+  new MutationObserver(ms=>{
+    for(const m of ms){
+      if(m.type!=="childList")continue;
+      const t=m.target;
+      if(t.id==="mn")onMain();
+      else if(t.id==="det")onDet(m);
+      onPop(m);
+    }
+  }).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
