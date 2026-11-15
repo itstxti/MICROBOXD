@@ -243,9 +243,9 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .stn{margin:10px 14px 0;color:var(--mute);font-size:12px;text-align:center;line-height:1.5}
 .stc{display:flex;align-items:flex-end;gap:4px;height:120px;padding:0 14px;margin-top:14px}.stc>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:3px}.stc em{font-style:normal;font-size:11px;color:var(--mute);line-height:1}.stc u{display:block;width:100%;background:var(--tab);border-radius:3px 3px 0 0;text-decoration:none}.stc u.mx{background:var(--g)}
 .stl{display:flex;gap:4px;padding:6px 14px 0;font-size:11px;color:var(--mute)}.stl span{flex:1;text-align:center}
-.stt{display:flex;justify-content:space-between;gap:10px;margin:0 14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer}.stt span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stt span:last-child{color:var(--g);flex:none;letter-spacing:1px}
-.stb em{white-space:nowrap;margin-left:auto}
-.stb{display:flex;align-items:center;gap:10px;margin:8px 14px;font-size:13px}.stb span{width:84px;flex:none;color:var(--tx)}.stb i{display:block;height:10px;border-radius:5px;background:var(--g)}.stb em{font-style:normal;color:var(--mute);font-size:12px}
+.sth{display:flex;align-items:center;gap:12px;margin:30px 14px 8px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mute)}.sth::after{content:"";flex:1;height:1px;background:var(--line)}
+.stb{display:grid;grid-template-columns:104px 1fr 72px;align-items:center;gap:12px;margin:0 14px;padding:8px 0;font-size:15px}.stb>span{color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stb>u{display:block;height:8px;border-radius:4px;background:rgba(128,144,160,.14);overflow:hidden;text-decoration:none}.stb>u i{display:block;height:100%;border-radius:4px;background:rgba(128,144,160,.6)}.stb.top>u i{background:var(--g)}.stb>em{font-style:normal;color:var(--mute);font-size:13px;text-align:right;white-space:nowrap}.stb>em b{color:var(--tx);font-size:15px}
+.stt{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--tx);cursor:pointer}.stt:last-child{border-bottom:0}.stt>span{display:flex;align-items:center;gap:14px;min-width:0}.stt .rk{font-style:normal;width:14px;flex:none;text-align:center;color:var(--mute);font-size:13px}.stt b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stt>em{font-style:normal;color:var(--g);flex:none;letter-spacing:1px;font-size:14px}
 .gate{position:fixed;inset:0 0 auto 0;height:var(--H,100%);z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;color:var(--mute)}.gate h2{font-family:inherit;font-size:32px;font-weight:800;margin:0}.gate p{max-width:300px;margin:0;font-size:15px}.gate svg{width:56px;height:56px}
 .gb{display:flex;align-items:center;gap:10px;background:#fff;color:#14181c;border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}.gb b{font-size:20px;background:linear-gradient(90deg,#4285f4 25%,#ea4335 25% 50%,#fbbc05 50% 75%,#34a853 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .gerr{color:var(--o);font-size:13px;max-width:300px}.gok{color:#4ddc6f;font-size:13px;max-width:300px}
@@ -745,12 +745,10 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   const yo=i=>i.watchedOn?new Date(i.watchedOn).getFullYear():0,ys=[...new Set(IT.map(yo).filter(Boolean))].sort((a,b)=>b-a);
   if(stY&&!ys.includes(stY))stY=0;
   const A=stY?IT.filter(i=>yo(i)===stY):IT,dn=A.filter(i=>i.status==="done"),rt=A.filter(i=>i.rating),eps=A.reduce((a,i)=>a+(i.watched||0),0),
-    avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",mins=Math.round(eps*1.5),tm=mins>=60?Math.floor(mins/60)+"h "+(mins%60)+"m":mins+"m",
-    k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="lbl">${t}</div>${b}`;
+    avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",
+    k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||"Todo"}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(tm,"Tiempo est.")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,"Me gusta")}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
-  const en=stY?0:IT.filter(i=>i.status!=="done"&&i.status!=="want"&&i.watched>0).length,pd=stY?0:IT.filter(i=>i.status==="want").length;
-  h+=`<div class="stn">${stY?"":`${en} en curso · ${pd} pendientes<br>`}Tiempo estimado a 1,5 min por episodio</div>`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(IT.filter(i=>i.status==="want").length,"Watchlist")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,"Me gusta")}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
@@ -762,13 +760,13 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
     h+=sec("Valoraciones",`<div class="stc" style="height:110px">${b.map((n,j)=>`<div>${n?`<em>${n}</em>`:""}<u class="${j===top?"mx":""}" style="height:${n?Math.max(6,n/bm*78):2}%"></u></div>`).join("")}</div><div class="stl">${b.map((n,j)=>`<span>${j%2?(j+1)/2+"★":""}</span>`).join("")}</div><div class="stn">Nota más habitual: ${S((top+1)/2)} · ${b[top]} ${b[top]===1?"serie":"series"}</div>`)}
   // por app
   const ap=APPS.map(a=>{const x=A.filter(i=>i.app===a),r=x.filter(i=>i.rating);return{a,n:x.length,r:r.length?(r.reduce((t,i)=>t+i.rating,0)/r.length).toFixed(1).replace(".",","):""}}).filter(x=>x.n).sort((x,y)=>y.n-x.n),am=Math.max(1,...ap.map(x=>x.n));
-  if(ap.length)h+=sec("Por app",ap.map(x=>`<div class="stb"><span>${esc(x.a)}</span><i style="width:${x.n/am*50}%;min-width:4px"></i><em>${x.n}${x.r?` · ★ ${x.r}`:""}</em></div>`).join(""));
+  if(ap.length)h+=sec("Por app",`<div class="stw">${ap.map((x,k)=>`<div class="stb ${k?"":"top"}"><span>${esc(x.a)}</span><u><i style="width:${x.n/am*100}%;min-width:4px"></i></u><em><b>${x.n}</b>${x.r?` · ★ ${x.r}`:""}</em></div>`).join("")}</div>`);
   // tropos
-  const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>tc[t]=(tc[t]||0)+1));const tp=Object.entries(tc).sort((x,y)=>y[1]-x[1]).slice(0,6),tm2=Math.max(1,...tp.map(x=>x[1]));
-  if(tp.length)h+=sec("Tropos favoritos",tp.map(([t,n])=>`<div class="stb"><span style="width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t)}</span><i style="width:${n/tm2*40}%;min-width:4px"></i><em>${n}</em></div>`).join(""));
+  const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>{const key=t.replace(/[’‘`´]/g,"'").trim().toLowerCase();if(!key)return;(tc[key]=tc[key]||{t:t.trim(),n:0}).n++}));const tp=Object.values(tc).sort((x,y)=>y.n-x.n||x.t.localeCompare(y.t)).slice(0,6),tm2=Math.max(1,...tp.map(x=>x.n));
+  if(tp.length)h+=sec("Tropos favoritos",`<div class="stw">${tp.map((x,k)=>`<div class="stb ${k?"":"top"}"><span>${esc(x.t)}</span><u><i style="width:${x.n/tm2*100}%;min-width:4px"></i></u><em><b>${x.n}</b></em></div>`).join("")}</div>`);
   // mejor valoradas
   const tr=[...rt].sort((x,y)=>y.rating-x.rating||(+!!y.liked)-(+!!x.liked)).slice(0,5);
-  if(tr.length)h+=sec("Mejor valoradas",tr.map(i=>`<div class="stt" onclick="show(${i.id})"><span>${esc(short(i.title))}</span><span>${S(i.rating)}${i.liked?" ♥":""}</span></div>`).join(""));
+  if(tr.length)h+=sec("Mejor valoradas",`<div class="stw">${tr.map((i,k)=>`<div class="stt" onclick="show(${i.id})"><span><i class="rk">${k+1}</i><b>${esc(short(i.title))}</b></span><em>${S(i.rating)}${i.liked?" ♥":""}</em></div>`).join("")}</div>`);
   stOut(h+'<div style="height:30px"></div>')}
 function meOpts(){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${esc(uname())}</b><span>Perfil</span></div><button class="oi" onclick="closeOv();openSet()">Editar perfil</button><button class="oi" onclick="closeOv();shrP()">Compartir perfil</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 async function shrP(){const t=`${uname()} en Microboxd · ${items.length} series · ${items.reduce((a,i)=>a+i.watched,0)} episodios`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast("Copiado al portapapeles")}}catch(e){}}
@@ -1259,7 +1257,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794744193";
+const BUILD="1794744475";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
