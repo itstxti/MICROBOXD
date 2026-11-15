@@ -334,6 +334,8 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .mfl{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid transparent;background:#8294a5;color:#14181c;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}.mfl.on{background:none;border-color:#00c030;color:#00c030}
 .sbr{display:flex;align-items:center;gap:12px;margin:0 14px}.sbw .sbr .sb{margin:0;flex:1;min-width:0}.sbc{background:none;border:0;color:var(--tx);font:inherit;font-size:18px;padding:6px 2px;cursor:pointer;white-space:nowrap}
 .sbw .sbx{flex:none;width:24px;height:24px;border-radius:50%;background:var(--mute);color:var(--tab);font-size:17px;padding:0;margin-right:2px;display:flex;align-items:center;justify-content:center}
+.rsqh{display:flex;justify-content:space-between;align-items:center;padding:22px 14px 8px;color:var(--mute);font-size:14px;letter-spacing:.12em;border-bottom:1px solid var(--line)}.rsqh button{border:0;background:none;color:var(--mute);font:inherit;font-size:14px;letter-spacing:0;cursor:pointer;padding:4px 0}
+.rsq{display:flex;align-items:center;gap:10px;margin-left:14px;padding:16px 14px 16px 0;border-bottom:1px solid var(--line);cursor:pointer}.rsq .rq{flex:1;min-width:0;color:var(--mute);font-size:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rsq .rk{flex:none;background:#2c3947;color:#9ab;font-size:14px;font-weight:700;padding:6px 14px;border-radius:999px}.rsq button{flex:none;border:0;background:none;color:var(--mute);font-size:22px;line-height:1;cursor:pointer;padding:0 2px}
 .ptabs{display:flex;gap:6px;overflow-x:auto;padding:4px 14px 12px;background:var(--hd);scrollbar-width:none}.ptabs::-webkit-scrollbar{display:none}.ptabs button{flex:none;border:0;background:none;color:var(--mute);font:inherit;font-size:18px;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer}.ptabs button.on{background:#00b32c;color:#fff}
 </style>
 </head>
@@ -373,6 +375,15 @@ const APPS=["DramaBox","ReelShort","ShortMax","GoodShort","FlexTV","Otra"];
 const ST={want:"Quiero ver",done:"Vista"};
 const KEY="microboxd:v1",LK="microboxd:log";
 let prof={name:"",fam:"",email:"",loc:"",web:"",bio:"",pron:"",fav:[]},items=[],log=[],lists=[],sq="s",sf=0,adq="",tab="home",q="",cover="";
+const SQL={s:"Series",r:"Reseñas",l:"Listas",m:"Miembros"};let RSQ=[];try{RSQ=JSON.parse(localStorage.getItem("microboxd:rsq")||"[]").filter(x=>x&&x.q&&SQL[x.k])}catch(e){}
+const rsqSave=()=>{try{localStorage.setItem("microboxd:rsq",JSON.stringify(RSQ))}catch(e){}};
+function rsqAdd(){const t=q.trim();if(!t)return;const k=RSQ.findIndex(x=>x.q.toLowerCase()===t.toLowerCase());if(k>=0)RSQ.splice(k,1);RSQ.unshift({q:t,k:sq});RSQ=RSQ.slice(0,12);rsqSave()}
+function rsqUse(n){const x=RSQ[n];if(!x)return;sq=x.k;q=x.q;const i=$("qi");if(i){i.value=q;i.focus();i.nextElementSibling.style.display=""}sr()}
+function rsqDel(n,e){e.stopPropagation();RSQ.splice(n,1);rsqSave();sr()}
+function rsqClear(){RSQ=[];rsqSave();sr()}
+const rsqH=()=>RSQ.length?`<div class="rsqh"><span>BÚSQUEDAS RECIENTES</span><button onclick="rsqClear()">Borrar</button></div>`+RSQ.map((x,n)=>`<div class="rsq" onclick="rsqUse(${n})"><span class="rq">${esc(x.q)}</span><span class="rk">${SQL[x.k]}</span><button aria-label="Quitar" onclick="rsqDel(${n},event)">×</button></div>`).join(""):"";
+document.addEventListener("click",e=>{if(tab==="search"&&q.trim()&&e.target.closest&&e.target.closest("#sr")&&!e.target.closest(".ptabs,.rsq,.rsqh"))rsqAdd()},true);
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="qi"){rsqAdd();e.target.blur()}});
 const seg={home:"series",act:"me",me:"perfil"};
 const SEGS={home:[["series","Series"],["rev","Reseñas"],["lst","Listas"],["jr","Diario"]],act:[["fr","Amigos"],["me","Tú"],["in","Entrantes"]],me:[["perfil","Perfil"],["diary","Diario"],["lst","Listas"],["pend","Pendientes"]]};
 let LEG=null;try{LEG={items:JSON.parse(localStorage.getItem(KEY)||"null")||[],lists:JSON.parse(localStorage.getItem("microboxd:lists")||"null")||[],prof:JSON.parse(localStorage.getItem("microboxd:prof")||"null")||{}}}catch(e){}
@@ -454,7 +465,7 @@ function sr(){
   const el=$("sr");if(!el)return;
   const pills=()=>`<div class="ptabs">${[["s","Series"],["r","Reseñas"],["l","Listas"],["m","Miembros"]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</div>`;
   if(!q.trim()&&sf&&!br.length){
-    el.innerHTML=pills()+(sq==="m"?'<div class="empty">Escribe un nombre para buscar miembros.</div>':sq==="s"?`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join(""):"");
+    el.innerHTML=pills()+(rsqH()||(sq==="m"?'<div class="empty">Escribe un nombre para buscar miembros.</div>':""));
   }else if(!q.trim()){
     el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join("");
   }else{
