@@ -435,6 +435,8 @@ let pendS=[],pendU=[];const save=()=>{adopt();sched()};
 const uname=()=>(prof.name||"").trim()||"tú",ini=()=>'<i class="mav"></i>';
 const setMe=()=>{const u=prof.avd||(prof.av?cvr(prof.av):"");document.documentElement.style.setProperty("--meav",u?`url("${u}")`:"none")};
 const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tkey=t=>String(t||"").replace(/[’‘`´′ʼ]/g,"'").replace(/\s+/g," ").trim().toLowerCase();
+const hasT=(i,v)=>(i.tropes||[]).some(t=>tkey(t)===tkey(v));
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
 const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
 const get=id=>items.find(i=>i.id===id)||cache[id];
@@ -525,9 +527,9 @@ const brPush=(t,v)=>{br.push({t,v});render();$("mn").scrollTop=0};
 const brBack=()=>{br.pop();render();$("mn").scrollTop=0};
 function brBody(){const n=br[br.length-1],rows=(a,t)=>a.map(([l,c])=>`<div class="br" data-v="${esc(l)}" onclick="brPush('${t}',this.dataset.v)">${esc(l)}<span>${c} ›</span></div>`).join("");
   if(n.t==="apps")return rows(APPS.map(a=>[a,catAll().filter(i=>i.app===a).length]),"app");
-  if(n.t==="tropes"){const tr=[...new Set(catAll().flatMap(i=>i.tropes))];return tr.length?rows(tr.map(t=>[t,catAll().filter(i=>i.tropes.includes(t)).length]),"trope"):'<div class="empty">Aún no hay tropos.</div>'}
+  if(n.t==="tropes"){const tm=new Map();catAll().forEach(i=>{const seen=new Set();(i.tropes||[]).forEach(t=>{const k=tkey(t);if(!k)return;if(!tm.has(k))tm.set(k,{l:t.trim(),n:0});if(!seen.has(k)){seen.add(k);tm.get(k).n++}})});const tr=[...tm.values()];return tr.length?rows(tr.map(x=>[x.l,x.n]),"trope"):'<div class="empty">Aún no hay tropos.</div>'}
   if(n.t==="app")return grid(catAll().filter(i=>i.app===n.v),"g3");
-  if(n.t==="trope")return grid(catAll().filter(i=>i.tropes.includes(n.v)),"g3");
+  if(n.t==="trope")return grid(catAll().filter(i=>hasT(i,n.v)),"g3");
   if(n.t==="pop")return grid([...catAll()].sort((a,b)=>((com[key(b)]||[]).length+(b.rating?1:0))-((com[key(a)]||[]).length+(a.rating?1:0))||b.watched-a.watched),"g3");
   if(n.t==="top")return grid(items.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating),"g3");
   if(n.t==="recent")return grid(catAll(),"g3");
@@ -601,7 +603,7 @@ function dt(i){
   if(dtab==="inf")return [["App",i.app],["Episodios",i.eps]].map(([a,b])=>`<div class="dr"><span>${a}</span><b>${esc(b)}</b></div>`).join("");
   return i.tropes.length?i.tropes.map(t=>`<div class="br" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}<span>›</span></div>`).join(""):'<div class="empty">Esta serie no tiene tropos.</div>';
 }
-const simSec=i=>{const sim=items.filter(x=>x.id!==i.id).map(x=>({x,s:x.tropes.filter(t=>i.tropes.includes(t)).length*2+(x.app===i.app?1:0)})).filter(o=>o.s).sort((a,b)=>b.s-a.s).map(o=>o.x);return sim.length?`<div class="simh">Series parecidas<span>›</span></div><div style="margin:0 -14px"><div class="hrow">${sim.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div></div>`:""};
+const simSec=i=>{const sim=items.filter(x=>x.id!==i.id).map(x=>({x,s:x.tropes.filter(t=>hasT(i,t)).length*2+(x.app===i.app?1:0)})).filter(o=>o.s).sort((a,b)=>b.s-a.s).map(o=>o.x);return sim.length?`<div class="simh">Series parecidas<span>›</span></div><div style="margin:0 -14px"><div class="hrow">${sim.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div></div>`:""};
 const lstSec=i=>{const ls=lists.filter(l=>l.ids.includes(i.id));return ls.length?`<h3 class="sec" style="margin-left:0;margin-right:0">En tus listas</h3>`+ls.map(l=>`<div class="br" style="padding-left:0;padding-right:0" onclick="$('det').classList.remove('open');openList(${l.id})">${esc(l.name)}<span>›</span></div>`).join(""):""};
 function show(id,keep){
   const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
@@ -758,7 +760,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   const ap=APPS.map(a=>{const x=A.filter(i=>i.app===a),r=x.filter(i=>i.rating);return{a,n:x.length,r:r.length?(r.reduce((t,i)=>t+i.rating,0)/r.length).toFixed(1).replace(".",","):""}}).filter(x=>x.n).sort((x,y)=>y.n-x.n),am=Math.max(1,...ap.map(x=>x.n));
   if(ap.length)h+=sec("Por app",`<div class="stw">${ap.map((x,k)=>`<div class="stb ${k?"":"top"}"><span>${esc(x.a)}</span><u><i style="width:${x.n/am*100}%;min-width:4px"></i></u><em><b>${x.n}</b>${x.r?` · ★ ${x.r}`:""}</em></div>`).join("")}</div>`);
   // tropos
-  const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>{const key=t.replace(/[’‘`´]/g,"'").trim().toLowerCase();if(!key)return;(tc[key]=tc[key]||{t:t.trim(),n:0}).n++}));const tp=Object.values(tc).sort((x,y)=>y.n-x.n||x.t.localeCompare(y.t)).slice(0,6),tm2=Math.max(1,...tp.map(x=>x.n));
+  const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>{const key=tkey(t);if(!key)return;(tc[key]=tc[key]||{t:t.trim(),n:0}).n++}));const tp=Object.values(tc).sort((x,y)=>y.n-x.n||x.t.localeCompare(y.t)).slice(0,6),tm2=Math.max(1,...tp.map(x=>x.n));
   if(tp.length)h+=sec("Tropos favoritos",`<div class="stw">${tp.map((x,k)=>`<div class="stb ${k?"":"top"}"><span>${esc(x.t)}</span><u><i style="width:${x.n/tm2*100}%;min-width:4px"></i></u><em><b>${x.n}</b></em></div>`).join("")}</div>`);
   // mejor valoradas
   const tr=[...rt].sort((x,y)=>y.rating-x.rating||(+!!y.liked)-(+!!x.liked)).slice(0,5);
