@@ -45,6 +45,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 .row .poster{width:60px;flex:none}.row b{color:var(--tx)}
 .act{display:flex;gap:12px;padding:11px 14px;font-size:14.5px;line-height:1.35;background:var(--pan);border-bottom:1px solid var(--bg);align-items:flex-start}
 .act{color:var(--mute)}.act b{color:var(--tx)}.act span.t{margin-left:auto;font-size:12px;flex:none;white-space:nowrap}.act>div:nth-child(2){flex:1;min-width:0}.act .av,.act .av2{width:32px!important;height:32px!important}
+.act.fa{padding:13px 14px;font-size:16px;line-height:1.4;gap:12px}.act.fa .av{width:36px!important;height:36px!important}.act.fa .fxnm{color:var(--mute)}.act.fa b{font-weight:700}.act.fa.rich{background:var(--bg)}.act.fa .fxft{color:var(--tx);font-weight:800;font-size:22px;line-height:1.2;margin-top:6px}.act.fa .fxft small{font-size:15px;font-weight:500;color:var(--mute)}.act.fa .fxfs{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:18px;letter-spacing:1px}.act.fa .fxst{color:#00e054}.act.fa .fxhr{color:#ff8000}.act.fa .fxfb{display:flex;gap:12px;margin-top:12px;align-items:flex-start}.act.fa .fxfb .poster{width:90px;flex:none}.act.fa .fxfb p{margin:0;color:var(--mute);font-size:17px;line-height:1.45;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;min-width:0;flex:1}.act.fa .fxfb p i{font-style:normal}
 .av{width:36px;height:36px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--g),var(--b));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
 .big{width:110px;height:110px;font-size:44px;margin:20px auto 8px;display:flex;justify-self:center}
 .dmh{background:var(--pan);color:var(--mute);font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:0 16px;height:27px;display:flex;align-items:center}
@@ -429,7 +430,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
   <div class="fcg"><div id="fcl"></div><button type="button" class="fca" id="fca">＋ Añadir personaje</button></div>
   <label class="fl" for="f-eps">Episodios</label>
   <input id="f-eps" type="number" min="1" inputmode="numeric" placeholder="60">
-  <div class="fs"><button class="btn p" id="save">Guardar serie</button><button class="btn d" id="fdel" style="display:none;margin-top:6px" onclick="askDel(editId)">Eliminar serie</button></div>
+  <div class="fxfs"><button class="btn p" id="save">Guardar serie</button><button class="btn d" id="fdel" style="display:none;margin-top:6px" onclick="askDel(editId)">Eliminar serie</button></div>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -527,7 +528,7 @@ const LOGO=`<svg viewBox="0 0 24 24" width="26" height="26"><defs><clipPath id="
 function poster(i){
   const h=hue(i.title);
   return `<div class="poster" onclick="show(${i.id})">${i.cover?`<img src="${i.cover}" alt="">`:
-  `<div class="fb" style="background:linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))"><small>${esc(i.app)}</small><b>${esc(short(i.title))}</b></div>`}<div class="pb"><i style="width:${i.watched/i.eps*100}%"></i></div></div>`;
+  `<div class="fxfb" style="background:linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))"><small>${esc(i.app)}</small><b>${esc(short(i.title))}</b></div>`}<div class="pb"><i style="width:${i.watched/i.eps*100}%"></i></div></div>`;
 }
 const cell=i=>`<div>${poster(i)}<div class="ss">${S(i.rating)}</div></div>`;
 const grid=(l,c)=>l.length?`<div class="grid ${c||""}">${l.map(cell).join("")}</div>`:'<div class="empty">Nada por aquí todavía.</div>';
@@ -1296,10 +1297,35 @@ const meActH=()=>{if(!sb||!U)return meActLocal();
     const x=o.x,it=sCache(x.series),r=+x.rating||0,v=[x.rewatch?"volviste a ver":"viste"];if(x.liked)v.push("marcaste con me gusta");if(r)v.push("puntuaste");if(x.review)v.push("reseñaste");
     return `<div class="act" onclick="openReview('${x.id}')" style="cursor:pointer">${av}<div>${join(v)} <b>${esc(short(it.title))}</b>${r?" "+S(r):""} el ${adt(x.watched_on,o.ts)}</div><span class="t">${rel(o.ts)}</span></div>`}).join("")};
 async function loadFeed(){if(!FW.size){FEED=[];if(tab==="act")render();return}
-  try{const{data,error}=await sb.from("diary_entries").select(RSEL+",series(*)").in("user_id",[...FW]).order("created_at",{ascending:false}).limit(40);if(error)throw error;FEED=data}catch(e){console.error(e);FEED=[]}if(tab==="act")render()}
+  try{const ids=[...FW];
+    const[e,f,l]=await Promise.all([
+      sb.from("diary_entries").select(RSEL+",series(*)").in("user_id",ids).order("created_at",{ascending:false}).limit(40),
+      sb.from("follows").select("follower_id,followee_id,created_at").in("follower_id",ids).order("created_at",{ascending:false}).limit(20),
+      sb.from("review_likes").select("entry_id,user_id,created_at").in("user_id",ids).order("created_at",{ascending:false}).limit(20)]);
+    if(e.error)throw e.error;
+    const out=e.data.map(x=>({k:"e",ts:Date.parse(x.created_at),x}));
+    const need=new Set(),pm={};
+    if(!f.error)f.data.forEach(x=>{need.add(x.follower_id);need.add(x.followee_id)});
+    if(!l.error)l.data.forEach(x=>need.add(x.user_id));
+    e.data.forEach(x=>{if(x.profiles)pm[x.user_id]=x.profiles});
+    const miss=[...need].filter(i=>!pm[i]);
+    if(miss.length){const p=await sb.from("profiles").select("id,username,display_name,avatar_path").in("id",miss);(p.data||[]).forEach(q=>pm[q.id]=q)}
+    if(!f.error)f.data.forEach(x=>{if(x.followee_id===U.id)return;const a=pm[x.follower_id],t=pm[x.followee_id];if(a&&t)out.push({k:"f",ts:Date.parse(x.created_at),a,uid:x.followee_id,t:pname(t)})});
+    if(!l.error&&l.data.length){const d=await sb.from("diary_entries").select(RSEL+",series(*)").in("id",l.data.map(x=>x.entry_id)),dm={};(d.data||[]).forEach(q=>dm[q.id]=q);
+      l.data.forEach(x=>{const q=dm[x.entry_id],a=pm[x.user_id];if(q&&a&&q.user_id!==x.user_id)out.push({k:"l",ts:Date.parse(x.created_at),a,x:q})})}
+    FEED=out.sort((a,b)=>b.ts-a.ts).slice(0,50)}catch(e){console.error(e);FEED=[]}if(tab==="act")render()}
+const L2=(es,en)=>LANG==="es"?es:en;
+const feedVerb=x=>{const v=[x.rewatch?L2("volvió a ver","rewatched"):L2("vio","watched")];if(x.liked)v.push(L2("marcó con me gusta","liked"));if(+x.rating)v.push(L2("puntuó","rated"));if(x.review)v.push(L2("reseñó","reviewed"));
+  return v.length>1?v.slice(0,-1).join(", ")+L2(" y "," and ")+v[v.length-1]:v[0]};
 const feedH=()=>{if(FEED===null){FEED=0;loadFeed()}if(FEED===0)return loadingH;
   if(!FEED.length)return FW.size?EMP("users","Todo tranquilo por aquí","Las personas que sigues aún no han registrado nada."):EMP("users","Sigue a otros miembros","Verás aquí lo que ven y puntúan los demás.","Buscar miembros","go('search')");
-  return FEED.map(x=>{nrm(x);const it=sCache(x.series),n=pname(x.profiles);return `<div class="act" onclick="openReview('${x.id}')" style="cursor:pointer">${av2(n,36,x.profiles&&x.profiles.avatar_path)}<div><b>${esc(n)}</b> ${x.rating?"puntuó":"vio"} <b>${esc(short(it.title))}</b>${x.rating?" "+S(+x.rating):""} el ${adt(x.watched_on,Date.parse(x.created_at))}</div><span class="t">${rel(Date.parse(x.created_at))}</span></div>`}).join("")};
+  return FEED.map(o=>{const t=`<span class="t">${rel(o.ts)}</span>`;
+    if(o.k==="f")return `<div class="act fa" onclick="openUser('${o.uid}')" style="cursor:pointer">${av2(pname(o.a),36,o.a.avatar_path)}<div><span class="fxnm">${esc(pname(o.a))}</span> ${L2("siguió a","followed")} <b>${esc(o.t)}</b></div>${t}</div>`;
+    if(o.k==="l"){const r=nrm(o.x),it=sCache(o.x.series);return `<div class="act fa" onclick="openReview('${r.id}')" style="cursor:pointer">${av2(pname(o.a),36,o.a.avatar_path)}<div><span class="fxnm">${esc(pname(o.a))}</span> ${LANG==="es"?"dio like a la reseña de "+esc(r.u)+(r.r?" "+S(r.r):"")+" sobre ":"liked "+esc(r.u)+"’s "+(r.r?S(r.r)+" ":"")+"review of "}<b>${esc(short(it.title))}</b></div>${t}</div>`}
+    const x=o.x,r=nrm(x),it=sCache(x.series),n=pname(x.profiles),A=av2(n,36,x.profiles&&x.profiles.avatar_path),ti=esc(short(it.title));
+    if(x.review){const body=x.spoilers?`<i>⚠ ${L2("Contiene spoilers","Contains spoilers")}</i>`:esc(x.review.slice(0,300));
+      return `<div class="act fa rich" onclick="openReview('${x.id}')" style="cursor:pointer">${A}<div><span class="fxnm">${esc(n)}</span> ${x.rewatch?L2("volvió a ver","rewatched"):L2("vio","watched")}<div class="fxft">${ti}${it.app?` <small>${esc(it.app)}</small>`:""}</div><div class="fxfs">${r.r?`<span class="fxst">${S(r.r)}</span>`:""}${r.hl?'<span class="fxhr">♥</span>':""}</div><div class="fxfb">${nop(it)}<p>${body}</p></div></div>${t}</div>`}
+    return `<div class="act fa" onclick="openReview('${x.id}')" style="cursor:pointer">${A}<div><span class="fxnm">${esc(n)}</span> ${feedVerb(x)} <b>${ti}</b>${r.r?` <span class="fxst">${S(r.r)}</span>`:""} ${L2("el","on")} ${adt(x.watched_on,o.ts)}</div>${t}</div>`}).join("")};
 async function loadInc(){try{
   const[f,m]=await Promise.all([sb.from("follows").select("follower_id,created_at,profiles!follows_follower_id_fkey(username,display_name,avatar_path)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select(RSEL+",series(*)").eq("user_id",U.id).neq("review","").limit(100)]);
   if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:"f",uid:x.follower_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>{nrm(x);tt[x.id]=x.series&&x.series.title});
@@ -1379,7 +1405,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794755286";
+const BUILD="1794756831";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
