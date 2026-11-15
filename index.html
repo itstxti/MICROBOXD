@@ -500,7 +500,7 @@ function render(){
       <div class="lbl">Favoritas</div><div class="grid" onpointerdown="pfDrag(event)">${fav.map((i,k)=>`<div class="fvq" data-k="${k}">${cell(i)}</div>`).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-fav.length)}</div><div class="lbl">Actividad reciente</div>${grid(rec)}
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
-      <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(i=>i.status==="want").length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Estadísticas","","openStats(null)")}</div>`;
+      <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(i=>i.status==="want").length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
     }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(i=>i.status==="want");h=w.length?grid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
   }
   $("mn").innerHTML=h;if(tab==="search")sr();else sfx();setNh();
@@ -976,6 +976,21 @@ function subX(){const s=$("sub");if(subH.length)s.innerHTML=subH.pop();else s.cl
 const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rvh"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" onclick="event.stopPropagation();openUser('${r.uid}')" style="cursor:pointer">${esc(r.u)}${av2(r.u,32,r.ap)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
 const rvItem2=r=>`<div class="rvi2" onclick="openReview('${r.id}')"><div class="rvh2"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</span><span class="rvu" onclick="event.stopPropagation();openUser('${r.uid}')" style="cursor:pointer">${esc(r.u)}${av2(r.u,26,r.ap)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt2">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
 
+/* Siguiendo / Seguidores */
+let MYFO=null;
+async function loadMyFo(){if(!sb||!U)return;
+  try{const r=await sb.from("follows").select("*",{count:"exact",head:true}).eq("followee_id",U.id);if(r.error)throw r.error;MYFO=r.count||0;const c=$("myfo");if(c)c.textContent=MYFO}catch(e){console.error(e)}}
+async function openFol(uid,k){const ing=k==="ing",me=uid===U.id,t=ing?"Siguiendo":"Seguidores";
+  subOpen(subBar(t)+'<div class="empty ld">Cargando…</div>');
+  try{const a=await sb.from("follows").select(ing?"followee_id":"follower_id").eq(ing?"follower_id":"followee_id",uid).limit(1000);if(a.error)throw a.error;
+    const ids=a.data.map(x=>ing?x.followee_id:x.follower_id);let ps=[];
+    if(ids.length){const b=await sb.from("profiles").select("id,username,display_name,avatar_path").in("id",ids);if(b.error)throw b.error;ps=b.data}
+    ps.sort((x,y)=>pname(x).localeCompare(pname(y)));
+    const row=q=>{const n=pname(q);UN[q.id]=n;return `<div class="mbr" onclick="openUser('${q.id}')">${av2(n,33,apOf(q.id,q))}<span class="mbn">${esc(n)}</span><span></span><span></span><span></span></div>`};
+    const emp=ing?EMP("users",me?"Aún no sigues a nadie":"Aún no sigue a nadie",me?"Las personas que sigas aparecerán aquí.":""):EMP("users","Aún no hay seguidores",me?"Cuando alguien te siga, aparecerá aquí.":"");
+    if($("sub").classList.contains("open"))subRe(subBar(t)+(ps.length?`<div class="mbl">${ps.map(row).join("")}</div>`:emp))}
+  catch(e){console.error(e);if($("sub").classList.contains("open"))subRe(subBar(t)+'<div class="empty">No se pudo cargar la lista.</div>')}}
+
 /* Sinopsis: expandir/colapsar con animación */
 function synTog(el){const c=el.classList;if(!c.contains("cl")&&!c.contains("open"))return;
   const col=parseFloat(getComputedStyle(el).lineHeight)*3;
@@ -1125,11 +1140,10 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    `<div class="uhd"><button class="ufl ${isF?"on":""}" id="fbtn" onclick="fbClick('${uid}')">${isF?"Siguiendo":"Seguir"}</button>${av2(nm,90,P.avatar_path)}<span></span></div>
    <div class="uin">${P.location||wu?`<div class="ulk">${P.location?`<span>${svg(PIN,17)}${esc(P.location)}</span>`:""}${wu?`<a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${svg(LINK,17)}${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a>`:""}</div>`:""}${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}</div>
    <div class="stats"><div><b>${I.length}</b>Series</div><div><b>${I.reduce((a,i)=>a+(i.watched||0),0)}</b>Episodios</div><div><b>${avg}</b>Nota media</div></div>
-   <div class="stats"><div><b>${fg.count||0}</b>Siguiendo</div><div><b id="ufo">${fo.count||0}</b>Seguidores</div></div>
    ${fv.length?`<div class="ulb">Favoritas</div><div class="uph">${fv.map(i=>`<div>${poster(i)}</div>`).join("")}</div>`:""}
    ${act.length?`<div class="ulb">Actividad reciente</div><div class="uph">${act.slice(0,4).map(uCell).join("")}</div><div class="umore" onclick="userAct('${uid}')"><span>Más actividad</span><span class="wbc">›</span></div>`:""}
    ${rt.length?`<div class="uh2"><span class="hs">★</span><div class="bars">${hb.map(n=>`<u title="${n}" style="height:${Math.max(4,n/hm*100)}%"></u>`).join("")}</div><span class="hs">★★★★★</span></div>`:""}
-   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(i=>i.status==="want").length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>
+   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(i=>i.status==="want").length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Siguiendo",fg.count||0,`openFol('${uid}','ing')`)}${row("Seguidores",`<span id="ufo">${fo.count||0}</span>`,`openFol('${uid}','ers')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>
    ${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.map(rvItem).join("")}</div>`:""}`))}
   catch(e){console.error(e);subRe(bar("")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
 function uPg(uid,k){const D=UD[uid];if(!D)return;const I=D.items,nm=(UN[uid]||"").split(" ")[0];
@@ -1245,7 +1259,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794743457";
+const BUILD="1794743612";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
