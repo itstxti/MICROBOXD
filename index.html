@@ -234,6 +234,13 @@ button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cu
 .ar{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}.ar .poster{width:40px;flex:none}.ar .pb{display:none}.ar b{color:var(--tx);font-size:16px;font-weight:600}.ar small{display:block;color:var(--mute);font-size:12px}
 .ww{display:flex;align-items:center;justify-content:space-between;color:var(--tx);font-size:17px;padding:14px 0}.ww span{display:flex;gap:6px;align-items:center;color:var(--mute)}.ab{width:26px;height:26px;border-radius:6px;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}.tile{border-radius:4px;padding:12px;color:#fff;font-size:13px;line-height:1.35}.tile svg{display:block;margin-bottom:8px}.tile b{display:block;font-size:14px}.tile.g{background:#00a33a}.tile.m{background:#667788}.tile.bl{background:#1b8fc4}
+.sty{display:flex;gap:8px;overflow-x:auto;padding:14px 14px 0;scrollbar-width:none}.sty::-webkit-scrollbar{display:none}.sty button{flex:none;border:0;background:var(--pan);color:var(--mute);font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:999px;cursor:pointer}.sty button.on{background:var(--g);color:#fff}
+.stk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px 14px 0}.stk>div{background:var(--pan);border-radius:12px;padding:14px 4px 12px;text-align:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mute)}.stk b{display:block;color:var(--tx);font-size:22px;letter-spacing:0;margin-bottom:4px}
+.stn{margin:10px 14px 0;color:var(--mute);font-size:12px;text-align:center;line-height:1.5}
+.stc{display:flex;align-items:flex-end;gap:4px;height:120px;padding:0 14px;margin-top:14px}.stc>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:3px}.stc em{font-style:normal;font-size:11px;color:var(--mute);line-height:1}.stc u{display:block;width:100%;background:var(--tab);border-radius:3px 3px 0 0;text-decoration:none}.stc u.mx{background:var(--g)}
+.stl{display:flex;gap:4px;padding:6px 14px 0;font-size:11px;color:var(--mute)}.stl span{flex:1;text-align:center}
+.stt{display:flex;justify-content:space-between;gap:10px;margin:0 14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer}.stt span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stt span:last-child{color:var(--g);flex:none;letter-spacing:1px}
+.stb em{white-space:nowrap;margin-left:auto}
 .stb{display:flex;align-items:center;gap:10px;margin:8px 14px;font-size:13px}.stb span{width:84px;flex:none;color:var(--tx)}.stb i{display:block;height:10px;border-radius:5px;background:var(--g)}.stb em{font-style:normal;color:var(--mute);font-size:12px}
 .gate{position:fixed;inset:0 0 auto 0;height:var(--H,100%);z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;color:var(--mute)}.gate h2{font-family:inherit;font-size:32px;font-weight:800;margin:0}.gate p{max-width:300px;margin:0;font-size:15px}.gate svg{width:56px;height:56px}
 .gb{display:flex;align-items:center;gap:10px;background:#fff;color:#14181c;border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}.gb b{font-size:20px;background:linear-gradient(90deg,#4285f4 25%,#ea4335 25% 50%,#fbbc05 50% 75%,#34a853 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -664,8 +671,37 @@ const openRev=()=>sheet("Reseñas",rvl(items.filter(i=>i.review)));
 const openLikes=()=>sheet("Me gusta",grid(items.filter(i=>i.liked)));
 function openTags(){const t=tagsAll();sheet("Etiquetas",t.length?t.map(x=>`<div class="br" data-v="${esc(x)}" onclick="openTag(this.dataset.v)">${esc(x)}<span>${items.filter(i=>(i.rtags||[]).includes(x)).length} ›</span></div>`).join(""):'<div class="empty">Aún no usas etiquetas en tus entradas.</div>')}
 const openTag=x=>sheet(esc(x),grid(items.filter(i=>(i.rtags||[]).includes(x)),"g3"));
-function openStats(){const eps=items.reduce((a,i)=>a+i.watched,0),rt=items.filter(i=>i.rating),m=Math.max(1,...APPS.map(a=>items.filter(i=>i.app===a).length));
-  sheet("Estadísticas",`<div class="stats" style="margin:22px 0"><div><b>${items.length}</b>Series</div><div><b>${eps}</b>Episodios</div><div><b>${items.filter(i=>i.status==="done").length}</b>Vistas</div><div><b>${rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1):"–"}</b>Nota media</div></div><div class="lbl">Por app</div>`+APPS.map(a=>{const n=items.filter(i=>i.app===a).length;return `<div class="stb"><span>${a}</span><i style="width:${n/m*60}%;min-width:${n?4:0}px"></i><em>${n}</em></div>`}).join("")+myHist())}
+let stY=0;
+function stGo(y){stY=y;const sc=$("lst").scrollTop;openStats();$("lst").scrollTop=sc}
+function openStats(){
+  const yo=i=>i.watchedOn?new Date(i.watchedOn).getFullYear():0,ys=[...new Set(items.map(yo).filter(Boolean))].sort((a,b)=>b-a);
+  if(stY&&!ys.includes(stY))stY=0;
+  const A=stY?items.filter(i=>yo(i)===stY):items,dn=A.filter(i=>i.status==="done"),rt=A.filter(i=>i.rating),eps=A.reduce((a,i)=>a+(i.watched||0),0),
+    avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",mins=Math.round(eps*1.5),tm=mins>=60?Math.floor(mins/60)+"h "+(mins%60)+"m":mins+"m",
+    k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="lbl">${t}</div>${b}`;
+  let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||"Todo"}</button>`).join("")}</div>`:"";
+  h+=`<div class="stk">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(tm,"Tiempo est.")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,"Me gusta")}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
+  const en=stY?0:items.filter(i=>i.status!=="done"&&i.status!=="want"&&i.watched>0).length,pd=stY?0:items.filter(i=>i.status==="want").length;
+  h+=`<div class="stn">${stY?"":`${en} en curso · ${pd} pendientes<br>`}Tiempo estimado a 1,5 min por episodio</div>`;
+  if(!A.length){sheet("Estadísticas",h+`<div class="empty">${stY?"No hay actividad en "+stY+".":"Registra tu primera serie para ver aquí tus estadísticas."}</div>`);return}
+  // actividad por mes
+  const now=new Date(),ms=[];
+  if(stY)for(let m=0;m<12;m++)ms.push([stY,m]);else for(let m=11;m>=0;m--){const d=new Date(now.getFullYear(),now.getMonth()-m,1);ms.push([d.getFullYear(),d.getMonth()])}
+  const cnt=ms.map(([y,m])=>A.filter(i=>{if(!i.watchedOn)return false;const d=new Date(i.watchedOn);return d.getFullYear()===y&&d.getMonth()===m}).length),cm=Math.max(1,...cnt);
+  if(cnt.some(n=>n))h+=sec(stY?"Actividad en "+stY:"Últimos 12 meses",`<div class="stc">${cnt.map(n=>`<div>${n?`<em>${n}</em>`:""}<u class="${n===cm?"mx":""}" style="height:${n?Math.max(6,n/cm*78):2}%"></u></div>`).join("")}</div><div class="stl">${ms.map(([y,m])=>`<span>${"EFMAMJJASOND"[m]}</span>`).join("")}</div>`);
+  // valoraciones
+  if(rt.length){const b=Array(10).fill(0);rt.forEach(i=>{const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++});const bm=Math.max(1,...b),top=b.indexOf(Math.max(...b));
+    h+=sec("Valoraciones",`<div class="stc" style="height:110px">${b.map((n,j)=>`<div>${n?`<em>${n}</em>`:""}<u class="${j===top?"mx":""}" style="height:${n?Math.max(6,n/bm*78):2}%"></u></div>`).join("")}</div><div class="stl">${b.map((n,j)=>`<span>${j%2?(j+1)/2+"★":""}</span>`).join("")}</div><div class="stn">Nota más habitual: ${S((top+1)/2)} · ${b[top]} ${b[top]===1?"serie":"series"}</div>`)}
+  // por app
+  const ap=APPS.map(a=>{const x=A.filter(i=>i.app===a),r=x.filter(i=>i.rating);return{a,n:x.length,r:r.length?(r.reduce((t,i)=>t+i.rating,0)/r.length).toFixed(1).replace(".",","):""}}).filter(x=>x.n).sort((x,y)=>y.n-x.n),am=Math.max(1,...ap.map(x=>x.n));
+  if(ap.length)h+=sec("Por app",ap.map(x=>`<div class="stb"><span>${esc(x.a)}</span><i style="width:${x.n/am*50}%;min-width:4px"></i><em>${x.n}${x.r?` · ★ ${x.r}`:""}</em></div>`).join(""));
+  // tropos
+  const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>tc[t]=(tc[t]||0)+1));const tp=Object.entries(tc).sort((x,y)=>y[1]-x[1]).slice(0,6),tm2=Math.max(1,...tp.map(x=>x[1]));
+  if(tp.length)h+=sec("Tropos favoritos",tp.map(([t,n])=>`<div class="stb"><span style="width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t)}</span><i style="width:${n/tm2*40}%;min-width:4px"></i><em>${n}</em></div>`).join(""));
+  // mejor valoradas
+  const tr=[...rt].sort((x,y)=>y.rating-x.rating||(+!!y.liked)-(+!!x.liked)).slice(0,5);
+  if(tr.length)h+=sec("Mejor valoradas",tr.map(i=>`<div class="stt" onclick="show(${i.id})"><span>${esc(short(i.title))}</span><span>${S(i.rating)}${i.liked?" ♥":""}</span></div>`).join(""));
+  sheet("Estadísticas",h+'<div style="height:30px"></div>')}
 function meOpts(){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${esc(uname())}</b><span>Perfil</span></div><button class="oi" onclick="closeOv();openSet()">Editar perfil</button><button class="oi" onclick="closeOv();shrP()">Compartir perfil</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 async function shrP(){const t=`${uname()} en Microboxd · ${items.length} series · ${items.reduce((a,i)=>a+i.watched,0)} episodios`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast("Copiado al portapapeles")}}catch(e){}}
 function openAll(){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open');render()">‹ ${esc(uname())}</button><b>Series</b><span style="min-width:44px"></span></div>${grid(items)}`;$("lst").classList.add("open")}
