@@ -693,7 +693,7 @@ function cancelLog(){const{add,...rest}=lg;if(JSON.stringify(Object.assign({},lg
 const ldate=()=>{const t=fmt(new Date((lg.d||new Date().toISOString().slice(0,10))+"T12:00:00").getTime());return t.charAt(0).toUpperCase()+t.slice(1)};
 function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div class="lh"><button onclick="cancelLog()">Cancelar</button><b>He visto…</b><button class="sv" onclick="saveLog()">Guardar</button></div>
   <div class="lt"><div class="ltp">${nop(i)}</div><span>${esc(short(i.title))}</span><small>${esc(i.app)}</small></div>
-  <label class="lr ldt"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" onchange="lg.d=this.value;drawLog()"></label>
+  <label class="lr ldt"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" onclick="try{this.showPicker()}catch(e){}" onchange="if(this.value){lg.d=this.value;drawLog()}"></label>
   <div class="lrx"><div><div class="lb">Valoración</div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
   <textarea placeholder="Añade una reseña…" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
   <div class="tgr" onclick="openTagEd()">${tagArr(lg.g).length?tagArr(lg.g).map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):'<span class="tgph">Añadir etiquetas…</span>'}</div>
