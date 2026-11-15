@@ -739,7 +739,7 @@ const openTagTop=x=>{openTag(x);$("lst").classList.add("top")};
 const openTag=x=>sheet(`<span class="tgc" style="height:30px;font-size:15px">${esc(x)}</span>`,grid(items.filter(i=>(i.rtags||[]).some(t=>t.toLowerCase()===x.toLowerCase())),"g3"));
 let stY=0;
 function stGo(y){stY=y;if(STXI){STXR=1;openStats();STXR=0;return}const sc=$("lst").scrollTop;openStats();$("lst").scrollTop=sc}
-let STXR=0;const stOut=(h)=>STXI?(STXR?subRe:subOpen)(subBar("Estadísticas")+h):sheet("Estadísticas",h);
+let STXR=0;const stOut=(h)=>STXI?(STXR?subRe:subOpen)(U2(STXN,subBar("Estadísticas")+h)):sheet("Estadísticas",h);
 let STXI=null,STXN="";
 function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=src;STXN=nm||"";stY=0}const IT=STXI||items;
   const yo=i=>i.watchedOn?new Date(i.watchedOn).getFullYear():0,ys=[...new Set(IT.map(yo).filter(Boolean))].sort((a,b)=>b-a);
@@ -1060,7 +1060,7 @@ function openReview(id,re){const r=RX[id];if(!r)return;const i=get(idOf(r.sid)),
   const dots='<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg>';
   const h=`<div class="lbar"><button onclick="subX()">‹ Atrás</button><b>Reseña</b><button aria-label="Más" onclick="rvMenu('${id}')" style="min-width:44px;display:flex;justify-content:flex-end">${dots}</button></div><div class="in rvx">
   <div class="rvtop"><div style="flex:1;min-width:0"><div class="lown" ${mine?"":`onclick="openUser('${r.uid}')" style="cursor:pointer"`}>${av2(r.u,28,r.ap)}<span>${esc(r.u)}</span></div>
-  <h2 class="rvti" ${i?`onclick="subX();show(${i.id})" style="cursor:pointer"`:""}>${esc(i?short(i.title):"")}${i?` <small>${esc(i.app)}</small>`:""}</h2><div class="rvsr">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</div><div class="rvwd">Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</div></div>${i?`<div class="rvpo">${nop(i)}</div>`:""}</div>
+  <h2 class="rvti" ${i?`onclick="subX();show(${i.id})" style="cursor:pointer"`:""}>${esc(i?short(i.title):"")}${i?` <small>${esc(i.app)}</small>`:""}</h2><div class="rvsr">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</div><div class="rvwd">Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</div></div>${i?`<div class="rvpo" onclick="subX();show(${i.id})" style="cursor:pointer">${nop(i)}</div>`:""}</div>
   ${r.t?`<p class="rvbody">${esc(r.t)}</p>`:""}${r.g&&r.g.length?`<div class="tgs">${r.g.map(t=>mine?`<span class="tgc" data-v="${esc(t)}" onclick="openTagTop(this.dataset.v)" style="cursor:pointer">${esc(t)}</span>`:`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}
   <div class="rvlk">${mine?`<button class="hb2" aria-label="Me gusta" onclick="toast('No puedes dar like a tu propia reseña')" style="display:flex">${svg(HEART,28)}</button>`:`<button class="hb2 ${r.me?"on":""}" aria-label="Me gusta" onclick="likeRev('${r.id}')" style="display:flex">${svg(HEART,28)}</button>`}<span>${r.lk?`${r.lk} ${r.lk===1?"like":"likes"}`:"Aún sin likes"}</span></div>
   <div class="rvhr"></div>${i?`<div class="rvpl"><button class="pill" onclick="subX();show(${i.id})">Serie ›</button></div>`:""}</div>`;
@@ -1090,8 +1090,10 @@ async function uLoad(uid,P){const c=UD[uid];if(c&&Date.now()-c.t<45000)return c;
   const mk=(row,o)=>Object.assign({},sCache(row),{status:"",watched:0,rating:0,liked:false,watchedOn:undefined,review:"",spoil:false,rewatch:false,rtags:[],deid:undefined,fresh:false},o);
   us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?"want":x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked})});
   de.data.forEach(x=>{const i=by[x.series_id]||(by[x.series_id]=mk(x.series,{rating:+x.rating||0,liked:!!x.liked}));if(!i.watchedOn)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review||"",spoil:!!x.spoilers,rewatch:!!x.rewatch,rtags:x.tags||[],eid:x.id})});
-  const pr=P?Object.assign({},P):null,rows=de.data,L=ls.data.map(l=>({id:l.id,name:l.name,desc:l.description||"",rank:!!l.ranked,tags:l.tags||[],its:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>x.series&&(by[x.series.id]||mk(x.series,{}))).filter(Boolean)}));
+  if(P)de.data.forEach(x=>nrm(Object.assign({},x,{profiles:P})));const pr=P?Object.assign({},P):null,rows=de.data,L=ls.data.map(l=>({id:l.id,name:l.name,desc:l.description||"",rank:!!l.ranked,tags:l.tags||[],its:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>x.series&&(by[x.series.id]||mk(x.series,{}))).filter(Boolean)}));
   return UD[uid]={t:Date.now(),items:Object.values(by),rows,lists:L,P:pr}}
+const U2=(uid,h)=>h.replace(/onclick="show\((\d+)\)"/g,`onclick="uGo('${uid}',$1)"`);
+function uGo(uid,id){const D=UD[uid],it=D&&D.items.find(i=>i.id===id);if(it&&it.eid&&RX[it.eid])openReview(it.eid);else show(id)}
 async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go("me");return}
   const bar=(t,m)=>`<div class="upb"><button class="ub" onclick="subX()">‹ Atrás</button><b>${esc(t||"")}</b>${m||"<span></span>"}</div>`;
   subOpen(bar("")+'<div class="empty ld">Cargando…</div>');
@@ -1104,7 +1106,7 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
     rt=I.filter(x=>x.rating),hb=Array(10).fill(0);rt.forEach(x=>{const j=Math.round(x.rating*2)-1;if(j>=0&&j<10)hb[j]++});const hm=Math.max(1,...hb);
    const yr=new Date().getFullYear(),thisYr=a=>a.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,dn=I.filter(i=>i.status==="done"),avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1):"–";
    const row=(l,n,a)=>`<div class="link r" onclick="${a}">${l}<span>${n} ›</span></div>`,tgn=new Set(I.flatMap(i=>i.rtags||[]).concat(D.lists.flatMap(l=>l.tags)).map(t=>t.toLowerCase())).size;
-   subRe(bar(nm,`<button class="um" aria-label="Más" onclick="uMenu('${uid}')">•••</button>`)+
+   subRe(U2(uid,bar(nm,`<button class="um" aria-label="Más" onclick="uMenu('${uid}')">•••</button>`)+
    `<div class="uhd"><button class="ufl ${isF?"on":""}" id="fbtn" onclick="fbClick('${uid}')">${isF?"Siguiendo":"Seguir"}</button>${av2(nm,90,P.avatar_path)}<span></span></div>
    <div class="uin">${P.location||wu?`<div class="ulk">${P.location?`<span>${svg(PIN,17)}${esc(P.location)}</span>`:""}${wu?`<a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${svg(LINK,17)}${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a>`:""}</div>`:""}${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}</div>
    <div class="stats"><div><b>${I.length}</b>Series</div><div><b>${I.reduce((a,i)=>a+(i.watched||0),0)}</b>Episodios</div><div><b>${avg}</b>Nota media</div></div>
@@ -1112,15 +1114,15 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    ${fv.length?`<div class="ulb">Favoritas</div><div class="uph">${fv.map(i=>`<div>${poster(i)}</div>`).join("")}</div>`:""}
    ${act.length?`<div class="ulb">Actividad reciente</div><div class="uph">${act.slice(0,4).map(uCell).join("")}</div><div class="umore" onclick="userAct('${uid}')"><span>Más actividad</span><span class="wbc">›</span></div>`:""}
    ${rt.length?`<div class="uh2"><span class="hs">★</span><div class="bars">${hb.map(n=>`<u title="${n}" style="height:${Math.max(4,n/hm*100)}%"></u>`).join("")}</div><span class="hs">★★★★★</span></div>`:""}
-   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Pendientes",I.filter(i=>i.status==="want").length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'')`)}</div>
-   ${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.map(rvItem).join("")}</div>`:""}`)}
+   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Pendientes",I.filter(i=>i.status==="want").length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>
+   ${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.map(rvItem).join("")}</div>`:""}`))}
   catch(e){console.error(e);subRe(bar("")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
 function uPg(uid,k){const D=UD[uid];if(!D)return;const I=D.items,nm=(UN[uid]||"").split(" ")[0];
   const T={all:["Series",()=>grid(I.filter(i=>i.status==="done"))],diary:["Diario",()=>diary(I)],lst:["Listas",()=>uLv(uid)],rev:["Reseñas",()=>{const a=D.rows.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:D.P})));return a.length?`<div style="padding:0 14px">${a.map(rvItem).join("")}</div>`:EMP("chat","Sin reseñas","Todavía no ha escrito ninguna reseña.")}],pend:["Pendientes",()=>grid(I.filter(i=>i.status==="want"))],lk:["Me gusta",()=>grid(I.filter(i=>i.liked))]}[k];
-  subOpen(subBar(T[0])+T[1]())}
+  subOpen(U2(uid,subBar(T[0])+T[1]()))}
 function uLv(uid){const D=UD[uid];return D.lists.length?D.lists.map((l,k)=>`<div class="lst2" onclick="uList('${uid}',${k})"><div class="lh2"><b>${esc(l.name)}</b><span>${l.its.length} ${l.its.length===1?"serie":"series"}</span></div><div class="strip">${l.its.slice(0,7).map(nop).join("")}</div>${l.desc?`<div class="ss" style="margin-top:8px;min-height:0">${esc(l.desc)}</div>`:""}</div>`).join(""):EMP("list","Sin listas","Todavía no ha creado ninguna lista.")}
 function uList(uid,k){const l=UD[uid].lists[k];if(!l)return;
-  subOpen(subBar(esc(l.name))+`<div class="in">${l.desc?`<p class="pbio" style="margin:0 0 12px">${esc(l.desc)}</p>`:""}${l.tags.length?`<div class="tgs" style="margin:0 0 14px">${l.tags.map(t=>`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}</div>${l.its.length?grid(l.its,"g3"):'<div class="empty">Lista vacía.</div>'}`)}
+  subOpen(U2(uid,subBar(esc(l.name))+`<div class="in">${l.desc?`<p class="pbio" style="margin:0 0 12px">${esc(l.desc)}</p>`:""}${l.tags.length?`<div class="tgs" style="margin:0 0 14px">${l.tags.map(t=>`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}</div>${l.its.length?grid(l.its,"g3"):'<div class="empty">Lista vacía.</div>'}`))}
 function uTags(uid,re){const D=UD[uid];if(!D)return;const st=UT[uid]=UT[uid]||{tab:"s",srt:"n"},L=st.tab==="l",m={};
   (L?D.lists:D.items).forEach(x=>((L?x.tags:x.rtags)||[]).forEach(t=>{const k=t.toLowerCase();m[k]=m[k]||{t,n:0};m[k].n++}));
   const a=Object.values(m).sort(st.srt==="n"?(x,y)=>y.n-x.n||x.t.localeCompare(y.t):(x,y)=>x.t.localeCompare(y.t));
@@ -1130,8 +1132,8 @@ function uTags(uid,re){const D=UD[uid];if(!D)return;const st=UT[uid]=UT[uid]||{t
   re?subRe(h):subOpen(h)}
 function uTag(uid,t){const D=UD[uid],st=UT[uid],k=t.toLowerCase(),L=st.tab==="l",chip=`<span class="tgc" style="height:30px;font-size:15px">${esc(t)}</span>`;
   if(L){const f=D.lists.map((l,i)=>[l,i]).filter(([l])=>l.tags.some(x=>x.toLowerCase()===k));subOpen(subBar(chip)+f.map(([l,i])=>`<div class="lst2" onclick="uList('${uid}',${i})"><div class="lh2"><b>${esc(l.name)}</b><span>${l.its.length} ${l.its.length===1?"serie":"series"}</span></div><div class="strip">${l.its.slice(0,7).map(nop).join("")}</div></div>`).join(""))}
-  else subOpen(subBar(chip)+grid(D.items.filter(i=>(i.rtags||[]).some(x=>x.toLowerCase()===k)),"g3"))}
-function userAct(uid){const a=UA[uid]||[];subOpen(subBar("Actividad de "+esc((UN[uid]||"").split(" ")[0]))+`<div class="grid g3">${a.map(uCell).join("")}</div>`)}
+  else subOpen(U2(uid,subBar(chip)+grid(D.items.filter(i=>(i.rtags||[]).some(x=>x.toLowerCase()===k)),"g3")))}
+function userAct(uid){const a=UA[uid]||[];subOpen(U2(uid,subBar("Actividad de "+esc((UN[uid]||"").split(" ")[0]))+`<div class="grid g3">${a.map(uCell).join("")}</div>`))}
 function fbClick(uid){FW.has(uid)?askUnfollow(uid):toggleFollow(uid)}
 function askUnfollow(uid){const n=(UN[uid]||"").split(" ")[0];$("ov").style.setProperty("--bgi","none");
   $("ov").innerHTML=`<div class="card"><button class="oi" style="border-top:0;font-size:20px;padding:18px;color:#ff453a" onclick="closeOv();toggleFollow('${uid}')">Dejar de seguir${n?" a "+esc(n):""}</button></div><button class="card" style="color:var(--b)" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
@@ -1228,7 +1230,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794737993";
+const BUILD="1794738350";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
