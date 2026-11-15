@@ -98,7 +98,7 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
 .wbb{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--tab);border:2px solid var(--bg);font-size:11px;font-weight:400;display:flex;align-items:center;justify-content:center;color:#fff}
 #lgs .w{display:flex;flex-direction:column;min-height:100%}#lgs .lh{padding-top:14px}
 .lt{padding:10px 16px;font-size:17px}.lt .ltp{width:32px;flex:none}.lt .ltp .pb{display:none}.lt small{color:var(--mute);font-weight:400;font-size:13px;margin-top:2px}
-.ldt{position:relative;padding:14px 16px;cursor:pointer;gap:12px}.ldt .ldv{color:var(--mute);font-size:16px;text-align:right}#lgs .ldt input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0}
+.ldt{position:relative;padding:14px 16px;cursor:pointer;gap:12px}.ldt .ldv{color:var(--mute);font-size:16px;text-align:right}#lgs .ldt input{position:absolute;right:16px;top:100%;width:1px;height:1px;opacity:0;pointer-events:none;margin:0;padding:0;border:0;color-scheme:dark}@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) #lgs .ldt input{color-scheme:light}}
 #lgs textarea{flex:1;min-height:150px}
 #lgs .tgi{border-bottom:0}
 .tg{margin-top:auto;border-top:1px solid var(--line);padding:16px 8px calc(16px + env(safe-area-inset-bottom,0px))}.tg button{width:33%;text-align:center;font-size:12px;line-height:1.25}.tg button svg{opacity:.8}
@@ -693,7 +693,7 @@ function cancelLog(){const{add,...rest}=lg;if(JSON.stringify(Object.assign({},lg
 const ldate=()=>{const t=fmt(new Date((lg.d||new Date().toISOString().slice(0,10))+"T12:00:00").getTime());return t.charAt(0).toUpperCase()+t.slice(1)};
 function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div class="lh"><button onclick="cancelLog()">Cancelar</button><b>He visto…</b><button class="sv" onclick="saveLog()">Guardar</button></div>
   <div class="lt"><div class="ltp">${nop(i)}</div><span>${esc(short(i.title))}</span><small>${esc(i.app)}</small></div>
-  <label class="lr ldt"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" onclick="try{this.showPicker()}catch(e){}" onchange="if(this.value){lg.d=this.value;drawLog()}"></label>
+  <label class="lr ldt" onclick="const e=this.querySelector('input');try{e.showPicker()}catch(_){}"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" tabindex="-1" onchange="if(this.value){lg.d=this.value;drawLog()}"></label>
   <div class="lrx"><div><div class="lb">Valoración</div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
   <textarea placeholder="Añade una reseña…" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
   <div class="tgr" onclick="openTagEd()">${tagArr(lg.g).length?tagArr(lg.g).map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):'<span class="tgph">Añadir etiquetas…</span>'}</div>
