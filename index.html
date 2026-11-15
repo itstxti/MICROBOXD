@@ -724,16 +724,15 @@ function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!=
 /* Volver a pulsar «Vista» la quita: borra también nota, me gusta y entradas del diario */
 async function unwatch(id){const i=get(id);if(!i)return;
   if(hasAct(i)){POP="";toast(esc(short(i.title))+" no se puede quitar de tus series, porque tiene actividad");return}
-  if(lk(i)&&!confirm("Se borrarán también tu puntuación, me gusta y entradas del diario de esta serie. ¿Continuar?"))return;
+  if(i.liked||i.wl){log=log.filter(e=>e.id!==id);Object.assign(i,{status:i.wl?"want":"",watched:0,wl:false});RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render();return}
   if(sb&&i.sid&&U){try{const{error}=await sb.from("diary_entries").delete().eq("user_id",U.id).eq("series_id",i.sid);if(error)throw error}catch(e){console.error(e);toast("No se pudo quitar");return}}
   dq=dq.filter(e=>e.series!==i);
-  if(i.wl){comRate(i,0);log=log.filter(e=>e.id!==id);Object.assign(i,{status:"want",watched:0,rating:0,liked:false,wl:false,dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]})}
-  else{drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});}
+  drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});
   RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render()}
 let POP="";function qv(id,k,sl){POP=k;const i=get(id);
-  if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i)}
+  if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i);else if(!i.status&&!i.rating&&items.includes(i))drop(id)}
   else if(k==="v"){if(i.status==="done"){unwatch(id);return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="done";i.watched=i.eps;addLog("done",i)}}
-  else{if(i.status==="want")drop(id);else if(i.status==="done"){i.wl=!i.wl}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
+  else{if(i.status==="want"){if(i.liked){i.status="";i.watched=0}else drop(id)}else if(i.status==="done"){i.wl=!i.wl}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
   save();if(!sl)opts(id);refresh(id)}
 const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
 /* actualiza al instante el histograma de la comunidad con tu cambio de nota */
@@ -959,7 +958,7 @@ async function pull(){
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
    sb.from("follows").select("followee_id").eq("follower_id",uid)]);
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));const dc={};b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
-  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?"want":r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
+  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?(r.watchlist===false?"":"want"):r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);pendS.forEach(x=>{if(!CAT.includes(x))CAT.unshift(x)});
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
@@ -984,7 +983,7 @@ async function push(){
     const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
     pendU=pendU.filter(x=>x!==i);if(!r.data||!r.data.length)throw new Error("No tienes permiso para editar esta serie");
     if(oc&&oc!==i.cp)try{await sb.storage.from("covers").remove([oc])}catch(e){}}
-   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)}:{})}})}
+   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":(i.liked?"watching":"want")),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)||i.status==="watching"}:{})}})}
    if(rows.length){await upUS(rows.map(r=>r.row));rows.forEach(r=>{shadow[r.i.id]={st:r.st,sid:r.i.sid};statAt[r.i.sid]=0});if(curDet&&$("det").classList.contains("open")){const c=get(curDet);if(c)loadStat(c)}}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
    if(gone.length){await ck(sb.from("user_series").delete().eq("user_id",uid).in("series_id",gone.map(k=>shadow[k].sid)));gone.forEach(k=>delete shadow[k])}
@@ -1231,7 +1230,7 @@ async function uLoad(uid,P){const c=UD[uid];if(c&&Date.now()-c.t<45000)return c;
   const R=await Promise.all([sb.from("user_series").select("*,series(*)").eq("user_id",uid).limit(2000),sb.from("diary_entries").select("*,series(*),review_likes(user_id)").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).limit(2000),sb.from("lists").select("*,list_items(position,series(*))").eq("user_id",uid).order("created_at",{ascending:false}).limit(200)]);
   R.forEach(x=>{if(x.error)throw x.error});const[us,de,ls]=R,by={};
   const mk=(row,o)=>Object.assign({},sCache(row),{status:"",watched:0,rating:0,liked:false,watchedOn:undefined,review:"",spoil:false,rewatch:false,rtags:[],deid:undefined,fresh:false},o);
-  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?"want":x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked,wl:!!x.watchlist})});
+  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?(x.watchlist===false?"":"want"):x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked,wl:!!x.watchlist})});
   de.data.forEach(x=>{const i=by[x.series_id]||(by[x.series_id]=mk(x.series,{rating:+x.rating||0,liked:!!x.liked}));if(!i.watchedOn)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review||"",spoil:!!x.spoilers,rewatch:!!x.rewatch,rtags:x.tags||[],eid:x.id})});
   if(P)de.data.forEach(x=>nrm(Object.assign({},x,{profiles:P})));const pr=P?Object.assign({},P):null,rows=de.data,L=ls.data.map(l=>({id:l.id,name:l.name,desc:l.description||"",rank:!!l.ranked,tags:l.tags||[],its:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>x.series&&(by[x.series.id]||mk(x.series,{}))).filter(Boolean)}));
   return UD[uid]={t:Date.now(),items:Object.values(by),rows,lists:L,P:pr}}
