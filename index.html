@@ -831,10 +831,11 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   const EN=stEn(),eyr=e=>+(e.wd||"").slice(0,4),ys=[...new Set(EN.map(eyr).filter(Boolean))].sort((a,b)=>b-a);
   if(stY&&!ys.includes(stY))stY=0;
   const EA=stY?EN.filter(e=>eyr(e)===stY):EN,ids=new Set(EA.map(e=>e.iid)),A=stY?IT.filter(i=>ids.has(i.id)):IT,dn=A.filter(i=>i.status==="done"),rt=A.filter(i=>i.rating),eps=A.reduce((a,i)=>a+(i.watched||0),0),
-    avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",
+    nl=stY?[]:IT.filter(i=>!EN.some(e=>e.iid===i.id)),RTx=[...EA.filter(e=>e.r).map(e=>e.r),...nl.filter(i=>i.rating).map(i=>i.rating)],LKx=EA.filter(e=>e.hl).length+nl.filter(i=>i.liked).length,RVn=EA.filter(e=>e.t).length+nl.filter(i=>i.review).length,
+    avg=RTx.length?(RTx.reduce((a,r)=>a+r,0)/RTx.length).toFixed(1).replace(".",","):"–",
     k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||L2("Todo","All")}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"))}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,L2("Me gusta","Likes"))}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"))}${k(avg,"Nota media")}${k(LKx,L2("Me gusta","Likes"))}${k(RVn,"Reseñas")}</div>`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
@@ -842,7 +843,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   const cnt=ms.map(([y,m])=>EA.filter(e=>{const d=new Date((e.wd||"")+"T12:00:00");return d.getFullYear()===y&&d.getMonth()===m}).length),cm=Math.max(1,...cnt);
   if(cnt.some(n=>n))h+=sec(stY?"Actividad en "+stY:"Últimos 12 meses",`<div class="stc">${cnt.map(n=>`<div>${n?`<em>${n}</em>`:""}<u class="${n===cm?"mx":""}" style="height:${n?Math.max(6,n/cm*78):2}%"></u></div>`).join("")}</div><div class="stl">${ms.map(([y,m])=>`<span>${new Date(2000,m,1).toLocaleDateString(LANG,{month:"narrow"}).toUpperCase()}</span>`).join("")}</div>`);
   // valoraciones
-  if(rt.length){const b=Array(10).fill(0);rt.forEach(i=>{const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++});const bm=Math.max(1,...b),top=b.indexOf(Math.max(...b));
+  if(RTx.length){const b=Array(10).fill(0);RTx.forEach(r=>{const j=Math.round(r*2)-1;if(j>=0&&j<10)b[j]++});const bm=Math.max(1,...b),top=b.indexOf(Math.max(...b));
     h+=sec("Valoraciones",`<div class="stc" style="height:110px">${b.map((n,j)=>`<div>${n?`<em>${n}</em>`:""}<u class="${j===top?"mx":""}" style="height:${n?Math.max(6,n/bm*78):2}%"></u></div>`).join("")}</div><div class="stl">${b.map((n,j)=>`<span>${j%2?(j+1)/2+"★":""}</span>`).join("")}</div><div class="stn">Nota más habitual: ${S((top+1)/2)} · ${b[top]} ${b[top]===1?"serie":"series"}</div>`)}
   // por app
   const ap=APPS.map(a=>{const x=A.filter(i=>i.app===a),r=x.filter(i=>i.rating);return{a,n:x.length,r:r.length?(r.reduce((t,i)=>t+i.rating,0)/r.length).toFixed(1).replace(".",","):""}}).filter(x=>x.n).sort((x,y)=>y.n-x.n),am=Math.max(1,...ap.map(x=>x.n));
@@ -1447,7 +1448,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794776209";
+const BUILD="1794776224";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
