@@ -190,7 +190,7 @@ button.card{font-size:17px;color:var(--tx)}
 .rt{border-top:1px solid var(--bg);padding:12px;text-align:center}.rt .sr{justify-content:center}
 .oi{display:block;width:100%;background:none;border:0;border-top:1px solid var(--bg);color:var(--tx);font:inherit;font-size:17px;padding:15px;cursor:pointer}.oi.d{color:var(--o)}
 button.card{border:0;font:inherit;font-weight:700;font-size:17px;padding:15px;cursor:pointer;width:100%}
-#lgs{z-index:35;background:var(--pan)}#sub{z-index:26}#lgs .w{max-width:680px;margin:0 auto}
+#lgs{z-index:35;background:var(--pan)}#tgs{z-index:38;background:var(--pan)}#sub{z-index:26}#lgs .w{max-width:680px;margin:0 auto}
 .lh{display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;color:var(--tx);font-size:17px}
 .lh button{background:none;border:0;font:inherit;color:var(--mute);cursor:pointer}.lh .sv{color:#4ddc6f;font-weight:700}
 .lt{display:flex;gap:12px;align-items:center;background:var(--bg);padding:12px 16px;color:var(--tx);font-weight:700;font-size:18px}
@@ -370,6 +370,10 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .tgc{display:inline-flex;align-items:center;height:34px;padding:0 20px 0 12px;background:var(--tab);color:#cfd9e2;font-size:16px;border-radius:5px 0 0 5px;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,0 100%);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .tgs{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}.rvx .tgs{margin:22px 0 4px}
 #lgs .tgc,#tgs .tgc{background:var(--bg)}
+.tgr{display:flex;flex-wrap:wrap;gap:10px;align-items:center;min-height:62px;padding:14px 16px;border-top:1px solid var(--line);cursor:pointer}.tgph{color:var(--st);font-size:17px}
+.tgb{gap:8px}.tgb b{flex:1;text-align:center}.tgth{width:34px;flex:none}.tgth .poster{width:30px;border-radius:3px}.tgth .poster>.pb{display:none}.tgac{display:flex;align-items:center;gap:14px}.tgac button{background:none;border:0;color:var(--mute);font:inherit;cursor:pointer;display:flex;padding:0}.tgac .sv{color:#4ddc6f;font-weight:700;font-size:17px}
+.tgf{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);min-height:68px}.tgf input{flex:1;min-width:90px;background:none;border:0;outline:0;color:var(--tx);font:inherit;font-size:19px;caret-color:#fff;padding:6px 0}
+.tgli{display:flex;justify-content:space-between;align-items:center;margin-left:16px;padding:18px 16px 18px 0;border-bottom:1px solid var(--line);color:var(--tx);font-size:20px;cursor:pointer}.tgli span.on{color:#4ddc6f}.tgli b{font-weight:400;color:var(--st);font-size:18px}
 </style>
 </head>
 <body>
@@ -377,7 +381,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 <main id="mn"></main>
 <nav id="tb"></nav>
 <div class="sheet" id="ad"></div><div class="sheet" id="lst"></div><div class="sheet" id="det"></div><div class="sheet" id="sub"></div><div class="sheet" id="le"></div><div class="sheet" id="fp"></div><div class="sheet" id="set"></div>
-<div class="sheet" id="lgs"></div><div class="gate" id="gate"></div><div class="toast" id="toast"></div><div class="ov" id="ov" onclick="if(event.target===this)closeOv()"></div>
+<div class="sheet" id="lgs"></div><div class="sheet" id="tgs"></div><div class="gate" id="gate"></div><div class="toast" id="toast"></div><div class="ov" id="ov" onclick="if(event.target===this)closeOv()"></div>
 <div class="sheet" id="form"><div class="in fm">
   <div class="lh"><button id="cancel">Cancelar</button><b id="ftl">Nueva serie</b><span></span></div>
   <div class="fr">
@@ -674,8 +678,25 @@ function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div cl
   <label class="lr ldt"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" onchange="lg.d=this.value;drawLog()"></label>
   <div class="lrx"><div><div class="lb">Valoración</div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
   <textarea placeholder="Añade una reseña…" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
-  <input class="tgi" placeholder="Añadir etiquetas…" value="${esc(lg.g)}" oninput="lg.g=this.value">
+  <div class="tgr" onclick="openTagEd()">${tagArr(lg.g).length?tagArr(lg.g).map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):'<span class="tgph">Añadir etiquetas…</span>'}</div>
   <div class="tg"><button class="${lg.re?"on":""}" onclick="lg.re=!lg.re;drawLog()">${svg(EYE,34)}<span>Ya la había visto</span></button><button class="${lg.sp?"on":""}" onclick="lg.sp=!lg.sp;drawLog()">${svg(WARN,34)}<span>${lg.sp?"Con spoilers":"Sin spoilers"}</span></button></div></div>`}
+const tagArr=g=>(g||"").split(",").map(s=>s.trim()).filter(Boolean);
+let tg={sel:[],q:"",srt:"n"};
+function openTagEd(){const i=get(lg.id);tg={sel:tagArr(lg.g),q:"",srt:tg.srt||"n",i};drawTagEd();$("tgs").classList.add("open");setTimeout(()=>{const e=$("tgi2");e&&e.focus()},60)}
+function tgCounts(){const m={};items.forEach(i=>(i.rtags||[]).forEach(t=>{const k=t.toLowerCase();m[k]=m[k]||{t,n:0};m[k].n++}));return Object.values(m)}
+function drawTagEd(keep){const i=tg.i,ql=tg.q.trim().toLowerCase(),has=t=>tg.sel.some(x=>x.toLowerCase()===t.toLowerCase());
+  let all=tgCounts();tg.sel.forEach(t=>{if(!all.some(a=>a.t.toLowerCase()===t.toLowerCase()))all.push({t,n:0})});
+  all=all.filter(a=>!ql||a.t.toLowerCase().includes(ql));all.sort(tg.srt==="n"?(a,b)=>b.n-a.n||a.t.localeCompare(b.t):(a,b)=>a.t.localeCompare(b.t));
+  const mk=ql&&!all.some(a=>a.t.toLowerCase()===ql);
+  const list=(mk?`<div class="tgli" onclick="tgAdd(tg.q)"><span>Crear “${esc(tg.q.trim())}”</span></div>`:"")+all.map(a=>`<div class="tgli" data-t="${esc(a.t)}" onclick="tgTog(this.dataset.t)"><span class="${has(a.t)?"on":""}">${esc(a.t)}</span><b>${a.n||""}</b></div>`).join("");
+  const body=`<div class="tgf" onclick="$('tgi2').focus()">${tg.sel.map(t=>`<span class="tgc" data-t="${esc(t)}" onclick="event.stopPropagation();tgTog(this.dataset.t)">${esc(t)}</span>`).join("")}<input id="tgi2" enterkeyhint="done" autocomplete="off" autocapitalize="none" value="${esc(tg.q)}" oninput="tg.q=this.value;tgRefresh()" onkeydown="tgKey(event)"></div><div id="tgl">${list}</div>`;
+  if(keep){$("tgl").outerHTML=`<div id="tgl">${list}</div>`;return}
+  $("tgs").innerHTML=`<div class="lbar tgb"><span class="tgth">${i?nop(i):""}</span><b>Editar etiquetas</b><span class="tgac"><button aria-label="Ordenar" onclick="tg.srt=tg.srt==='n'?'a':'n';drawTagEd(1)">${svg('<path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/>',24)}</button><button class="sv" onclick="tgDone()">Hecho</button></span></div>${body}`}
+function tgRefresh(){drawTagEd(1)}
+function tgKey(e){if(e.key==="Enter"||e.key===","){e.preventDefault();tgAdd(tg.q)}else if(e.key==="Backspace"&&!tg.q&&tg.sel.length){tg.sel.pop();drawTagEd();setTimeout(()=>$("tgi2").focus(),0)}}
+function tgAdd(t){t=(t||"").replace(/,/g," ").trim();if(!t)return;if(!tg.sel.some(x=>x.toLowerCase()===t.toLowerCase())){if(tg.sel.length>=20){toast("Máximo 20 etiquetas");return}tg.sel.push(t)}tg.q="";drawTagEd();setTimeout(()=>$("tgi2").focus(),0)}
+function tgTog(t){const k=t.toLowerCase(),n=tg.sel.findIndex(x=>x.toLowerCase()===k);if(n>=0)tg.sel.splice(n,1);else{if(tg.sel.length>=20){toast("Máximo 20 etiquetas");return}tg.sel.push(t)}tg.q="";drawTagEd();setTimeout(()=>$("tgi2").focus(),0)}
+function tgDone(){if(tg.q.trim())tgAdd(tg.q);lg.g=tg.sel.join(", ");document.activeElement&&document.activeElement.blur();$("tgs").classList.remove("open");drawLog()}
 function lgr(v){lg.r=lg.r===v?0:v;drawLog()}
 function saveLog(){const i=get(lg.id),ts=lg.d?new Date(lg.d+"T12:00:00").getTime():Date.now();
   comRate(i,lg.r);i.rating=lg.r;i.liked=lg.l;i.review=lg.t||"";i.rtags=(lg.g||"").split(",").map(s=>s.trim()).filter(Boolean);i.rewatch=lg.re;i.spoil=lg.sp;i.watchedOn=ts;i.status="done";i.watched=i.eps;
@@ -1166,7 +1187,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794737407";
+const BUILD="1794737444";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
