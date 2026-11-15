@@ -377,7 +377,14 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .tgrw{display:flex;align-items:center;gap:10px;margin-left:16px;padding:14px 16px 14px 0;border-bottom:1px solid var(--line);cursor:pointer}.tgrw .tgc{height:36px;font-size:17px;max-width:70%}.tgrw b{margin-left:auto;font-weight:400;color:var(--st);font-size:19px}.tgrw i{font-style:normal;color:var(--st);font-size:26px;line-height:1}
 .tgtabs{margin:12px 14px 6px}
 .ltg{margin:10px 0 4px;gap:8px}.ltg .tgc{height:28px;font-size:14px;padding:0 16px 0 10px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
-.lta .tgr{gap:8px;padding:10px 0!important;min-height:52px!important;align-content:center}.lta .tgr .tgc{height:28px;font-size:14px;padding:0 16px 0 10px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+#le .tgc{background:var(--bg)}
+#le .leh{padding:14px 16px 12px}#le .leh button,#le .leh b{font-size:16px}#le .leh .bk .rvch{font-size:26px}
+#le .lel{padding:10px 16px 0;font-size:12px}
+#le .lei .len{font-size:16px;padding:8px 16px 10px 0}
+#le .lei textarea{font-size:15px;min-height:84px;padding:10px 16px 6px 0;line-height:1.35}
+#le .lea{font-size:16px;padding:12px 16px}#le .lec{font-size:13px}
+#le .leg{gap:10px 8px;padding:0 16px 14px}#le .lgp{width:calc((100% - 32px)/5)}
+#le .leb{padding:14px 8px calc(14px + env(safe-area-inset-bottom,0px))}#le .leb button{font-size:12px;gap:6px}#le .leb svg{width:28px;height:28px}
 #sub .tgtabs,#lst .tgtabs{margin:10px 14px 4px}#sub .tgtabs button,#lst .tgtabs button{font-size:14px;padding:5px 12px}#sub .tgrw,#lst .tgrw{gap:8px;margin-left:14px;padding:10px 14px 10px 0}#sub .tgrw .tgc,#lst .tgrw .tgc{height:28px;font-size:14px;padding:0 16px 0 10px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}#sub .tgrw b,#lst .tgrw b{font-size:15px}#sub .tgrw i,#lst .tgrw i{font-size:20px}
 #tgs .tgb b{font-size:15px}#tgs .tgth{width:28px}#tgs .tgth .poster{width:24px}#tgs .tgac{gap:12px}#tgs .tgac svg{width:20px;height:20px}#tgs .tgac .sv{font-size:15px}
 #tgs .tgf{gap:7px;padding:10px 14px;min-height:50px}#tgs .tgf input{font-size:15px;height:28px;line-height:28px;padding:0;margin:0;min-width:70px;align-self:center;box-sizing:border-box}#tgs .tgc{line-height:28px;padding-bottom:1px}
@@ -808,7 +815,7 @@ function leForm(){const ok=!!(le.name||"").trim(),ent=le.ids.map(get).filter(Boo
   <button class="lea" onclick="lePg('p')"><span>${ent.length?"Editar series…":"Añadir series…"}</span>${ent.length?`<span class="lec">${ent.length}</span>`:""}</button>
   <div class="leg">${ent.map((i,k)=>`<div class="lgp">${nop(i)}${le.rank?`<span class="lgb">${k+1}</span>`:""}</div>`).join("")}</div>
   <div class="lee"></div>
-  <div class="lei lta"><div class="tgr" style="border:0;padding:0;min-height:40px" onclick="openTagEd('list')">${le.tags.length?le.tags.map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):'<span class="tgph">Añadir etiquetas…</span>'}</div></div>
+  <div class="tgr" onclick="openTagEd('list')">${le.tags.length?le.tags.map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):'<span class="tgph">Añadir etiquetas…</span>'}</div>
   <div class="leb"><button onclick="toast('Las listas son públicas')">${svg(GLOBE,38)}<span>Pública</span></button><button class="${le.rank?"on":""}" onclick="le.rank=!le.rank;drawLe()">${svg(TROPHY,38)}<span>${le.rank?"Con ranking":"Sin ranking"}</span></button><button onclick="le.rep=(le.rep+1)%3;drawLe()">${svg(BUB,38)}<span>${REPL[le.rep]}</span></button></div></div>`}
 function lePick(){return `<div class="lef"><div class="leh"><button class="bk" onclick="lePg('f')"><span class="rvch">‹</span> ${le.id?"Editar lista":"Nueva lista"}</button><b>Series</b><button class="lso" aria-label="Invertir orden" onclick="lRev()">${svg(SORT,26)}</button></div>
   <div class="lpb" id="lpw"><div class="lps">${svg(IC.search,20)}<input id="lpi" placeholder="Añadir una serie" autocomplete="off" value="${esc(le.q||"")}" onfocus="$('lpw').classList.add('f');lpl()" oninput="le.q=this.value;lpl()"></div><button class="lpc" onclick="lpCancel()">Cancelar</button></div><div class="lpd"></div><div id="lpr"></div></div>`}
