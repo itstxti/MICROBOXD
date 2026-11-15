@@ -376,6 +376,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .tgli{display:flex;justify-content:space-between;align-items:center;margin-left:16px;padding:18px 16px 18px 0;border-bottom:1px solid var(--line);color:var(--tx);font-size:20px;cursor:pointer}.tgli span.on{color:#4ddc6f}.tgli b{font-weight:400;color:var(--st);font-size:18px}
 .tgrw{display:flex;align-items:center;gap:10px;margin-left:16px;padding:14px 16px 14px 0;border-bottom:1px solid var(--line);cursor:pointer}.tgrw .tgc{height:36px;font-size:17px;max-width:70%}.tgrw b{margin-left:auto;font-weight:400;color:var(--st);font-size:19px}.tgrw i{font-style:normal;color:var(--st);font-size:26px;line-height:1}
 .tgtabs{margin:12px 14px 6px}
+#lst.top{z-index:30}
 </style>
 </head>
 <body>
@@ -724,7 +725,7 @@ const diary=()=>{const d=items.filter(i=>i.watchedOn).sort((a,b)=>b.watchedOn-a.
   return d.map(i=>{const t=new Date(i.watchedOn),k=t.toLocaleDateString("es",{month:"long",year:"numeric"}).replace(" de "," "),hd=k!==m?(m=k,`<div class="dmh">${k}</div>`):"";
    return hd+`<div class="de" onclick="show(${i.id})"><div class="ddn">${t.getDate()}</div>${poster(i).replace(/onclick="[^"]*"/,"")}<div class="dti"><div class="dtl"><b>${esc(short(i.title))}</b> <small>${esc(i.app)}</small></div><div class="dst">${i.rating?`<span class="dsr">${S(i.rating)}</span>`:""}${i.liked?'<i class="dhe">♥</i>':""}${i.rewatch?'<i class="drw">↻</i>':""}${i.review?'<i class="drv">☰</i>':""}</div></div></div>`}).join("")};
 const tagsAll=()=>[...new Set(items.flatMap(i=>i.rtags||[]))];
-function sheet(t,b,rt){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open');render()">‹ ${esc(uname())}</button><b>${t}</b>${rt||'<span style="min-width:44px"></span>'}</div>${b}`;$("lst").classList.add("open");$("lst").scrollTop=0}
+function sheet(t,b,rt){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open','top');render()">‹ ${esc(uname())}</button><b>${t}</b>${rt||'<span style="min-width:44px"></span>'}</div>${b}`;$("lst").classList.add("open");$("lst").scrollTop=0}
 const openRev=()=>sheet("Reseñas",rvl(items.filter(i=>i.review)));
 const openLikes=()=>sheet("Me gusta",grid(items.filter(i=>i.liked)));
 let tsrt="n",ttab="s";
@@ -734,6 +735,7 @@ function openTags(){const L=ttab==="l",m={};(L?lists:items).forEach(i=>((L?i.tag
   const h=tabs+(a.length?a.map(x=>`<div class="tgrw" data-v="${esc(x.t)}" onclick="${L?"openListTag":"openTag"}(this.dataset.v)"><span class="tgc">${esc(x.t)}</span><b>${x.n}</b><i>›</i></div>`).join(""):EMP("book",L?"Aún no etiquetas tus listas":"Aún no usas etiquetas",L?"Añádelas al crear o editar una lista.":"Añádelas al registrar una serie en tu diario para organizarlas."));
   const wasOpen=$("lst").classList.contains("open"),y=$("lst").scrollTop;sheet("Etiquetas",h,sb);if(wasOpen)$("lst").scrollTop=y}
 const openListTag=x=>sheet(`<span class="tgc" style="height:30px;font-size:15px">${esc(x)}</span>`,lv(lists.filter(l=>(l.tags||[]).some(t=>t.toLowerCase()===x.toLowerCase())),0,"Ninguna lista con esta etiqueta."));
+const openTagTop=x=>{openTag(x);$("lst").classList.add("top")};
 const openTag=x=>sheet(`<span class="tgc" style="height:30px;font-size:15px">${esc(x)}</span>`,grid(items.filter(i=>(i.rtags||[]).some(t=>t.toLowerCase()===x.toLowerCase())),"g3"));
 let stY=0;
 function stGo(y){stY=y;const sc=$("lst").scrollTop;openStats();$("lst").scrollTop=sc}
@@ -1057,7 +1059,7 @@ function openReview(id,re){const r=RX[id];if(!r)return;const i=get(idOf(r.sid)),
   const h=`<div class="lbar"><button onclick="subX()">‹ Atrás</button><b>Reseña</b><button aria-label="Más" onclick="rvMenu('${id}')" style="min-width:44px;display:flex;justify-content:flex-end">${dots}</button></div><div class="in rvx">
   <div class="rvtop"><div style="flex:1;min-width:0"><div class="lown" ${mine?"":`onclick="openUser('${r.uid}')" style="cursor:pointer"`}>${av2(r.u,28,r.ap)}<span>${esc(r.u)}</span></div>
   <h2 class="rvti" ${i?`onclick="subX();show(${i.id})" style="cursor:pointer"`:""}>${esc(i?short(i.title):"")}${i?` <small>${esc(i.app)}</small>`:""}</h2><div class="rvsr">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">↻</i>':""}</div><div class="rvwd">Visto el ${fsh(Date.parse(r.wd+"T12:00:00"))}</div></div>${i?`<div class="rvpo">${nop(i)}</div>`:""}</div>
-  ${r.t?`<p class="rvbody">${esc(r.t)}</p>`:""}${r.g&&r.g.length?`<div class="tgs">${r.g.map(t=>`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}
+  ${r.t?`<p class="rvbody">${esc(r.t)}</p>`:""}${r.g&&r.g.length?`<div class="tgs">${r.g.map(t=>mine?`<span class="tgc" data-v="${esc(t)}" onclick="openTagTop(this.dataset.v)" style="cursor:pointer">${esc(t)}</span>`:`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}
   <div class="rvlk">${mine?`<button class="hb2" aria-label="Me gusta" onclick="toast('No puedes dar like a tu propia reseña')" style="display:flex">${svg(HEART,28)}</button>`:`<button class="hb2 ${r.me?"on":""}" aria-label="Me gusta" onclick="likeRev('${r.id}')" style="display:flex">${svg(HEART,28)}</button>`}<span>${r.lk?`${r.lk} ${r.lk===1?"like":"likes"}`:"Aún sin likes"}</span></div>
   <div class="rvhr"></div>${i?`<div class="rvpl"><button class="pill" onclick="subX();show(${i.id})">Serie ›</button></div>`:""}</div>`;
   re?subRe(h):subOpen(h)}
