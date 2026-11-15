@@ -714,7 +714,7 @@ function opts(id){const i=get(id),dn=i.status==="done",log_=!!(i.watchedOn||i.de
   $("ov").innerHTML=`<div class="otl"><b>${esc(short(i.title))}</b><span>${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</span></div><div class="card">
   <div class="qa"><button class="kv ${dn?"on":""}" onclick="qv(${id},'v')">${svg((i.dcount||0)>1?EYEN(i.dcount):EYE,34)}${dn?(log_?"Registrada":"Vista"):"Ver"}</button><button class="kl ${i.liked?"on":""}" onclick="qv(${id},'l')">${svg(HEART,34)}Me gusta</button><button class="kw ${i.status==="want"?"on":""}" onclick="qv(${id},'w')">${svg(i.status==="want"?CLOCKC:CLOCKP,34)}Watchlist</button></div>
   <div class="rt" style="border-top:1px solid var(--bg)"><div class="pl">${i.rating?"Puntuada":"Puntúa"}</div><div class="sr big5" data-s="qr:${id}" style="justify-content:center">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
-  ${i.rating||dn?`<button class="oi" onclick="showAct(${id},'${U.id}')">Mostrar tu actividad</button>`:""}
+  ${(i.dcount>0||log_)?`<button class="oi" onclick="showAct(${id},'${U.id}')">Mostrar tu actividad</button>`:""}
   <button class="oi" onclick="openLog(${id})">${log_?"Reseñar o registrar otra vez":"Reseñar o registrar"}</button><button class="oi" onclick="pickList(${id})">Añadir a listas</button><button class="oi" onclick="shr(${id})">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
 const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
 function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
