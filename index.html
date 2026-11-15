@@ -726,7 +726,9 @@ async function unwatch(id){const i=get(id);if(!i)return;
   if(hasAct(i)){POP="";toast(esc(short(i.title))+" no se puede quitar de tus series, porque tiene actividad");return}
   if(lk(i)&&!confirm("Se borrarán también tu puntuación, me gusta y entradas del diario de esta serie. ¿Continuar?"))return;
   if(sb&&i.sid&&U){try{const{error}=await sb.from("diary_entries").delete().eq("user_id",U.id).eq("series_id",i.sid);if(error)throw error}catch(e){console.error(e);toast("No se pudo quitar");return}}
-  dq=dq.filter(e=>e.series!==i);drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});
+  dq=dq.filter(e=>e.series!==i);
+  if(i.wl){comRate(i,0);log=log.filter(e=>e.id!==id);Object.assign(i,{status:"want",watched:0,rating:0,liked:false,wl:false,dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]})}
+  else{drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});}
   RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render()}
 let POP="";function qv(id,k,sl){POP=k;const i=get(id);
   if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i)}
