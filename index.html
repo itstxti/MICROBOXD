@@ -835,7 +835,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
     avg=RTx.length?(RTx.reduce((a,r)=>a+r,0)/RTx.length).toFixed(1).replace(".",","):"–",
     k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||L2("Todo","All")}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"))}${k(avg,"Nota media")}${k(LKx,L2("Me gusta","Likes"))}${k(RVn,"Reseñas")}</div>`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"))}${k(avg,"Nota media")}${k(LKx,L2("Me gusta","Likes"))}${k(RVn,"Reseñas")}</div>${eps?`<div class="stn" style="padding:10px 14px 0">≈ ${eps*1.5>=90?Math.round(eps*1.5/60*10)/10+" h":Math.round(eps*1.5)+" min"} ${L2("de episodios vistos (≈1,5 min por episodio)","of episodes watched (≈1.5 min per episode)")}</div>`:""}`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
@@ -1448,7 +1448,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794776224";
+const BUILD="1794776239";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
