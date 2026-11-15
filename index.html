@@ -41,7 +41,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 .row .poster{width:60px;flex:none}.row b{color:var(--tx)}
 .act{display:flex;gap:12px;padding:11px 14px;font-size:14.5px;line-height:1.35;background:var(--pan);border-bottom:1px solid var(--bg);align-items:flex-start}
 .act{color:var(--mute)}.act b{color:var(--tx)}.act span.t{margin-left:auto;font-size:12px;flex:none;white-space:nowrap}.act>div:nth-child(2){flex:1;min-width:0}.act .av,.act .av2{width:32px!important;height:32px!important}
-.act.fa{padding:13px 14px;font-size:16px;line-height:1.4;gap:12px}.act.fa .av{width:36px!important;height:36px!important}.act.fa .fxnm{color:var(--mute)}.act.fa b{font-weight:700}.act.fa.rich{background:var(--bg)}.act.fa .fxft{color:var(--tx);font-weight:800;font-size:22px;line-height:1.2;margin-top:6px}.act.fa .fxft small{font-size:15px;font-weight:500;color:var(--mute)}.act.fa .fxfs{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:18px;letter-spacing:1px}.act.fa .fxst{color:#00e054}.act.fa .fxhr{color:#ff8000}.act.fa .fxfb{display:flex;gap:12px;margin-top:12px;align-items:flex-start}.act.fa .fxfb .poster{width:90px;flex:none}.act.fa .fxfb p{margin:0;color:var(--mute);font-size:17px;line-height:1.45;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;min-width:0;flex:1}.act.fa .fxfb p i{font-style:normal}
+.act.fa{padding:13px 14px;font-size:16px;line-height:1.4;gap:12px}.act.fa .av{width:36px!important;height:36px!important}.act.fa .fxnm{color:var(--mute)}.act.fa b{font-weight:700}.act.fa.rich{background:var(--bg)}.act.fa .fxft{color:var(--tx);font-weight:800;font-size:22px;line-height:1.2;margin-top:6px}.act.fa .fxft small{display:inline!important;margin-left:6px;font-size:15px;font-weight:500;color:var(--mute)}.act.fa .fxfs{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:18px;letter-spacing:1px}.act.fa .fxst{color:var(--g)}.act.fa .fxhr{color:var(--o)}.act.fa .fxfb{display:flex;gap:12px;margin-top:12px;align-items:flex-start}.act.fa .fxfb .poster{width:90px;flex:none}.act.fa .fxfb p{margin:0;color:var(--mute);font-size:17px;line-height:1.45;white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;min-width:0;flex:1}.act.fa .fxfb p i{font-style:normal}
 .av{width:36px;height:36px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--g),var(--b));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
 .big{width:110px;height:110px;font-size:44px;margin:20px auto 8px;display:flex;justify-self:center}
 .dmh{background:var(--pan);color:var(--mute);font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:0 16px;height:27px;display:flex;align-items:center}
@@ -1311,13 +1311,18 @@ const meActH=()=>{if(!sb||!U)return meActLocal();
   if(MYACT===null||MYACTs){const first=MYACT===null;if(first)MYACT=0;loadMyAct()}
   if(MYACT===0)return loadingH;
   if(!MYACT.length)return EMP("bolt","Todavía no hay actividad","Cuando puntúes, reseñes o añadas series, aparecerá aquí.");
-  const av=av2(uname(),32,prof.avd||prof.av),join=v=>{const t=v.length>1?v.slice(0,-1).join(", ")+" y "+v[v.length-1]:v[0];return t.charAt(0).toUpperCase()+t.slice(1)};
-  return MYACT.map(o=>{
-    if(o.k==="w")return `<div class="act" onclick="show(${o.it.id})" style="cursor:pointer">${av}<div>${L2("Añadiste","You added")} <b>${esc(short(o.it.title))}</b> ${L2("a tu watchlist","to your watchlist")}</div><span class="t">${rel(o.ts)}</span></div>`;
-    if(o.k==="f")return `<div class="act" onclick="openUser('${o.uid}')" style="cursor:pointer">${av}<div>Seguiste a <b>${esc(o.n)}</b></div><span class="t">${rel(o.ts)}</span></div>`;
-    if(o.k==="l")return `<div class="act" onclick="openReview('${o.r.id}')" style="cursor:pointer">${av}<div>Diste like a la reseña de ${esc(o.r.u)}${o.r.r?" "+S(o.r.r):""} sobre <b>${esc(short(o.it.title))}</b></div><span class="t">${rel(o.ts)}</span></div>`;
-    const x=o.x,it=sCache(x.series),r=+x.rating||0,v=[x.rewatch?"volviste a ver":"viste"];if(x.liked)v.push("marcaste con me gusta");if(r)v.push("puntuaste");if(x.review)v.push("reseñaste");
-    return `<div class="act" onclick="openReview('${x.id}')" style="cursor:pointer">${av}<div>${join(v)} <b>${esc(short(it.title))}</b>${r?" "+S(r):""} el ${adt(x.watched_on,o.ts)}</div><span class="t">${rel(o.ts)}</span></div>`}).join("")};
+  const av=av2(uname(),36,prof.avd||prof.av),T=o=>`<span class="t">${rel(o.ts)}</span>`,Y=L2("","You ");
+  const join=v=>v.length>1?v.slice(0,-1).join(", ")+L2(" y "," and ")+v[v.length-1]:v[0];
+  return MYACT.map(o=>{const t=T(o);
+    if(o.k==="w")return `<div class="act fa" onclick="show(${o.it.id})" style="cursor:pointer">${av}<div>${L2("Añadiste","You added")} <b>${esc(short(o.it.title))}</b> ${L2("a tu watchlist","to your watchlist")}</div>${t}</div>`;
+    if(o.k==="f")return `<div class="act fa" onclick="openUser('${o.uid}')" style="cursor:pointer">${av}<div>${L2("Seguiste a","You followed")} <b>${esc(o.n)}</b></div>${t}</div>`;
+    if(o.k==="l")return `<div class="act fa" onclick="openReview('${o.r.id}')" style="cursor:pointer">${av}<div>${LANG==="es"?"Diste like a la reseña de "+esc(o.r.u)+(o.r.r?" "+S(o.r.r):"")+" sobre ":"You liked "+esc(o.r.u)+"’s "+(o.r.r?S(o.r.r)+" ":"")+"review of "}<b>${esc(short(o.it.title))}</b></div>${t}</div>`;
+    const x=o.x,it=sCache(x.series),r=+x.rating||0;
+    if(x.review){const body=x.spoilers?`<i>⚠ ${L2("Contiene spoilers","Contains spoilers")}</i>`:esc(x.review.slice(0,300));
+      return `<div class="act fa rich" onclick="openReview('${x.id}')" style="cursor:pointer">${av}<div>${x.rewatch?L2("Volviste a ver","You rewatched"):L2("Viste","You watched")}<div class="fxft">${esc(short(it.title))}${it.app?` <small>${esc(it.app)}</small>`:""}</div><div class="fxfs">${r?`<span class="fxst">${S(r)}</span>`:""}${x.liked?'<span class="fxhr">♥</span>':""}</div><div class="fxfb">${nop(it)}<p>${body}</p></div></div>${t}</div>`}
+    const v=[x.rewatch?L2("volviste a ver","rewatched"):L2("viste","watched")];if(x.liked)v.push(L2("marcaste con me gusta","liked"));if(r)v.push(L2("puntuaste","rated"));
+    const sent=Y+join(v);
+    return `<div class="act fa" onclick="openReview('${x.id}')" style="cursor:pointer">${av}<div>${LANG==="es"?sent.charAt(0).toUpperCase()+sent.slice(1):sent} <b>${esc(short(it.title))}</b>${r?` <span class="fxst">${S(r)}</span>`:""} ${L2("el","on")} ${adt(x.watched_on,o.ts)}</div>${t}</div>`}).join("")};
 async function loadFeed(){if(!FW.size){FEED=[];if(tab==="act")render();return}
   try{const ids=[...FW];
     const[e,f,l,w,pf]=await Promise.all([
@@ -1433,7 +1438,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794774442";
+const BUILD="1794774764";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
