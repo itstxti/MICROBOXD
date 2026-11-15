@@ -913,6 +913,8 @@ let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},WLOK=true,shadowL={
 const key=i=>norm(short(i.title));
 const idOf=u=>parseInt(String(u).replace(/-/g,"").slice(0,12),16);
 const sidOf=id=>{const i=get(id);return i&&i.sid};
+/* En BD, "sin estado" se guarda como 'none'. 'watching' es solo de filas antiguas (ver migración 0011; al aplicarla se puede quitar esa rama). */
+const stIn=r=>r.status==="none"?"":r.status==="watching"?(r.watchlist===false?"":"want"):r.status;
 const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked,!!i.wl]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
 const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
@@ -939,7 +941,7 @@ async function pull(){
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
    sb.from("follows").select("followee_id").eq("follower_id",uid)]);
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));const dc={};b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
-  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?(r.watchlist===false?"":"want"):r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
+  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:stIn(r),watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);pendS.forEach(x=>{if(!CAT.includes(x))CAT.unshift(x)});
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
@@ -964,7 +966,7 @@ async function push(){
     const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
     pendU=pendU.filter(x=>x!==i);if(!r.data||!r.data.length)throw new Error("No tienes permiso para editar esta serie");
     if(oc&&oc!==i.cp)try{await sb.storage.from("covers").remove([oc])}catch(e){}}
-   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":(i.liked?"watching":"want")),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)||i.status==="watching"}:{})}})}
+   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":(i.liked?"none":"want")),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)}:{})}})}
    if(rows.length){await upUS(rows.map(r=>r.row));rows.forEach(r=>{shadow[r.i.id]={st:r.st,sid:r.i.sid};statAt[r.i.sid]=0});if(curDet&&$("det").classList.contains("open")){const c=get(curDet);if(c)loadStat(c)}}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
    if(gone.length){await ck(sb.from("user_series").delete().eq("user_id",uid).in("series_id",gone.map(k=>shadow[k].sid)));gone.forEach(k=>delete shadow[k])}
@@ -1215,7 +1217,7 @@ async function uLoad(uid,P){const c=UD[uid];if(c&&Date.now()-c.t<45000)return c;
   const R=await Promise.all([sb.from("user_series").select("*,series(*)").eq("user_id",uid).limit(2000),sb.from("diary_entries").select("*,series(*),review_likes(user_id)").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).limit(2000),sb.from("lists").select("*,list_items(position,series(*))").eq("user_id",uid).order("created_at",{ascending:false}).limit(200)]);
   R.forEach(x=>{if(x.error)throw x.error});const[us,de,ls]=R,by={};
   const mk=(row,o)=>Object.assign({},sCache(row),{status:"",watched:0,rating:0,liked:false,watchedOn:undefined,review:"",spoil:false,rewatch:false,rtags:[],deid:undefined,fresh:false},o);
-  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?(x.watchlist===false?"":"want"):x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked,wl:!!x.watchlist})});
+  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:stIn(x),watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked,wl:!!x.watchlist})});
   de.data.forEach(x=>{const i=by[x.series_id]||(by[x.series_id]=mk(x.series,{rating:+x.rating||0,liked:!!x.liked}));if(!i.watchedOn)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review||"",spoil:!!x.spoilers,rewatch:!!x.rewatch,rtags:x.tags||[],eid:x.id})});
   if(P)de.data.forEach(x=>nrm(Object.assign({},x,{profiles:P})));const pr=P?Object.assign({},P):null,rows=de.data,L=ls.data.map(l=>({id:l.id,name:l.name,desc:l.description||"",rank:!!l.ranked,tags:l.tags||[],its:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>x.series&&(by[x.series.id]||mk(x.series,{}))).filter(Boolean)}));
   return UD[uid]={t:Date.now(),items:Object.values(by),rows,lists:L,P:pr}}
