@@ -67,7 +67,7 @@ h3.sec{color:var(--tx);font-size:19px;margin:22px 14px 10px}
 #det,#lst,#sub{height:auto;bottom:var(--nh,0px);padding-bottom:0}
 .sbw{position:sticky;top:0;z-index:2;background:var(--hd);padding:2px 0 10px}.sbw .sb{margin:0 14px}
 .sbx{background:none;border:0;color:var(--mute);font-size:22px;line-height:1;padding:4px 8px;cursor:pointer}
-nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
+nav button.on svg{filter:none}.br span{color:var(--mute);font-size:13px}
 #set{z-index:23;top:calc(env(safe-area-inset-top,0px) + 10px);height:calc(var(--H,100%) - env(safe-area-inset-top,0px) - 10px);padding-top:0;padding-bottom:0;border-radius:14px 14px 0 0;background:var(--pan)}
 #set::before{content:"";position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 10px);background:var(--hd);z-index:-1}
 #set .sgrp{background:none}#set .srow{border-bottom:0;position:relative;min-height:54px;font-size:18px}#set .srow::after{content:"";position:absolute;left:16px;right:0;bottom:0;border-bottom:1px solid rgba(0,0,0,.28)}
@@ -104,7 +104,7 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:15px}
 .link{display:flex;justify-content:space-between;padding:16px 14px;color:var(--tx);font-size:17px;border-top:1px solid var(--line);margin-top:10px;cursor:pointer}
 .sb{margin:14px;display:flex;align-items:center;background:var(--tab);border-radius:10px;padding:0 10px;color:var(--mute)}
 .sb input{flex:1;background:none;border:0;color:var(--tx);font:inherit;padding:11px 8px;margin:0;outline:0}
-.br{display:flex;justify-content:space-between;padding:14px;color:var(--mute);font-size:17px;border-bottom:1px solid var(--line);cursor:pointer}
+.br{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;color:var(--mute);font-size:15px;border-bottom:1px solid var(--line);cursor:pointer}
 select,input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--pan);border:1px solid var(--line);border-radius:4px;padding:9px;margin-bottom:8px}
 .sheet{position:fixed;inset:0 0 auto 0;height:var(--H,100%);background:var(--bg);overflow-y:auto;z-index:20;display:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--kb,0px))}
 .sheet.open{display:block;animation:mbIn .26s cubic-bezier(.2,.8,.2,1)}#form.open{animation-name:mbUp}.sheet.out{animation:mbOut .2s ease-in forwards;pointer-events:none}
@@ -1444,7 +1444,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794775847";
+const BUILD="1794775921";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
