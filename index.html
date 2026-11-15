@@ -379,8 +379,8 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 @keyframes mbxRise{from{opacity:0;transform:translateY(10px)}}
 @keyframes mbxGY{from{transform:scaleY(0)}}
 @keyframes mbxGX{from{transform:scaleX(0)}}
-#mn>.mbx-f{animation:mbxFade .22s ease-out}
-#mn .mbx-s{animation:mbxRise .3s cubic-bezier(.2,.8,.2,1) backwards}
+#mn>.mbx-f{animation:mbxFade .28s cubic-bezier(.4,0,.2,1)}
+#mn .mbx-s{animation:mbxRise .28s cubic-bezier(.4,0,.2,1) backwards}
 #mn .mbx-gy,#det.fr .bars u,#sub .bars u,#lst .bars u{transform-origin:bottom;animation:mbxGY .5s cubic-bezier(.2,.8,.2,1) backwards}
 #det.fr .bars u:nth-child(2){animation-delay:0.03s}#det.fr .bars u:nth-child(3){animation-delay:0.06s}#det.fr .bars u:nth-child(4){animation-delay:0.09s}#det.fr .bars u:nth-child(5){animation-delay:0.12s}#det.fr .bars u:nth-child(6){animation-delay:0.15s}#det.fr .bars u:nth-child(7){animation-delay:0.18s}#det.fr .bars u:nth-child(8){animation-delay:0.21s}#det.fr .bars u:nth-child(9){animation-delay:0.24s}#det.fr .bars u:nth-child(10){animation-delay:0.27s}
 #mn .mbx-gx,#lst .stb>u i,#sub .stb>u i{transform-origin:left;animation:mbxGX .6s cubic-bezier(.2,.8,.2,1) backwards}
@@ -1500,10 +1500,10 @@ chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk(
     if(!pend||loading)return;
     pend=false;
     clearTimeout(tmM);clean(mn);
-    const kids=[...mn.children],it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,14),
+    const kids=[...mn.children],it=[...mn.querySelectorAll(".hp,.grid>*,.row,.act,.de,.logrow,.lrw,.lst2,.mrow")].slice(0,12),
       gy=[...mn.querySelectorAll(".bars u")],gx=[...mn.querySelectorAll(".stb>u i")];
     kids.forEach(e=>e.classList.add("mbx-f"));
-    it.forEach((e,n)=>{e.style.animationDelay=(n*24)+"ms";e.classList.add("mbx-s")});
+    it.forEach((e,n)=>{e.style.animationDelay=(n*20)+"ms";e.classList.add("mbx-s")});
     gy.forEach((e,n)=>{e.style.animationDelay=(n%10*30)+"ms";e.classList.add("mbx-gy")});
     gx.forEach(e=>e.classList.add("mbx-gx"));
     tmM=setTimeout(()=>{[...kids,...it,...gy,...gx].forEach(e=>{e.classList.remove("mbx-f","mbx-s","mbx-gy","mbx-gx");e.style.animationDelay=""})},900);
