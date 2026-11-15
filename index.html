@@ -567,7 +567,7 @@ function opts(id){const i=get(id),dn=i.status==="done",log_=!!(i.watchedOn||i.de
   ${i.rating||dn?`<button class="oi" onclick="closeOv();$('det').classList.remove('open');seg.act='me';go('act')">Mostrar tu actividad</button>`:""}
   <button class="oi" onclick="openLog(${id})">${log_?"Reseñar o registrar otra vez":"Reseñar o registrar"}</button><button class="oi" onclick="pickList(${id})">Añadir a listas</button><button class="oi" onclick="shr(${id})">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
 const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
-function drop(id){const d=get(id);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
+function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
 /* Volver a pulsar «Vista» la quita: borra también nota, me gusta y entradas del diario */
 async function unwatch(id){const i=get(id);if(!i)return;
   if(lk(i)&&!confirm("Se borrarán también tu puntuación, me gusta y entradas del diario de esta serie. ¿Continuar?"))return;
@@ -580,7 +580,9 @@ function qv(id,k,sl){const i=get(id);
   else{if(i.status==="want")drop(id);else if(i.status==="done"&&lk(i)){toast("Está marcada como vista y tiene actividad");return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
   save();if(!sl)opts(id);refresh(id)}
 const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
-function setR(i,v){i.rating=v;if(v){mark(i);addLog("rate",i)}}
+/* actualiza al instante el histograma de la comunidad con tu cambio de nota */
+const comRate=(i,v)=>{const c=com[key(i)];if(!c)return;if(i.rating){const o=c.indexOf(i.rating);if(o>=0)c.splice(o,1)}if(v)c.push(v)};
+function setR(i,v){comRate(i,v);i.rating=v;if(v){mark(i);addLog("rate",i)}}
 function qr(id,v,d){const i=get(id);setR(i,d?v:(i.rating===v?0:v));save();opts(id);refresh(id)}
 async function shr(id){const i=get(id),t=`${short(i.title)} (${i.app})${i.rating?" "+S(i.rating):""} · Microboxd`;try{if(navigator.share)await navigator.share({text:t});else await navigator.clipboard.writeText(t)}catch(e){}}
 let lg={},lg0="";
@@ -604,7 +606,7 @@ function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div cl
   <div class="tg"><button class="${lg.re?"on":""}" onclick="lg.re=!lg.re;drawLog()">${svg(EYE,34)}<span>Ya la había visto</span></button><button class="${lg.sp?"on":""}" onclick="lg.sp=!lg.sp;drawLog()">${svg(WARN,34)}<span>${lg.sp?"Con spoilers":"Sin spoilers"}</span></button></div></div>`}
 function lgr(v){lg.r=lg.r===v?0:v;drawLog()}
 function saveLog(){const i=get(lg.id),ts=lg.d?new Date(lg.d+"T12:00:00").getTime():Date.now();
-  i.rating=lg.r;i.liked=lg.l;i.review=lg.t||"";i.rtags=(lg.g||"").split(",").map(s=>s.trim()).filter(Boolean);i.rewatch=lg.re;i.spoil=lg.sp;i.watchedOn=ts;i.status="done";i.watched=i.eps;
+  comRate(i,lg.r);i.rating=lg.r;i.liked=lg.l;i.review=lg.t||"";i.rtags=(lg.g||"").split(",").map(s=>s.trim()).filter(Boolean);i.rewatch=lg.re;i.spoil=lg.sp;i.watchedOn=ts;i.status="done";i.watched=i.eps;
   addLog("done",i);log[0].ts=ts;if(i.rating){addLog("rate",i);log[0].ts=ts}
   {const eid=(i.deid&&!lg.re)?i.deid:crypto.randomUUID();i.deid=eid;dq.push({id:eid,series:i,row:{watched_on:lg.d||new Date().toISOString().slice(0,10),rating:lg.r||null,liked:!!lg.l,rewatch:!!lg.re,review:lg.t||"",spoilers:!!lg.sp,tags:i.rtags}})}
   delete drafts[i.id];pers();save();$("lgs").classList.remove("open");
@@ -618,7 +620,7 @@ function ep(id,d){const i=get(id),was=i.status;i.watched=Math.max(0,Math.min(i.e
 function rate(id,n,d){const i=get(id);setR(i,d?n:(i.rating===n?0:n));save();show(id,true)}
 function setSt(id,s){const i=get(id),was=i.status;i.status=s;if(s==="done"){i.watched=i.eps;if(was!=="done")addLog("done",i)}save();show(id,true)}
 function rev(id,v){get(id).review=v;save()}
-function del(id){const d=get(id);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id);save();closeDet()}
+function del(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id);save();closeDet()}
 
 const rvl=r=>r.length?r.map(i=>`<div class="row" onclick="show(${i.id})" style="cursor:pointer">${poster(i)}<div><b>${esc(short(i.title))}</b><div class="ss">${S(i.rating)}${i.liked?" ♥":""}</div>${i.spoil?"<i>⚠ Contiene spoilers</i>":esc(i.review)}</div></div>`).join(""):'<div class="empty">Sin resultados.</div>';
 const nop=i=>poster(i).replace(/onclick="[^"]*"/,"");
@@ -1037,7 +1039,7 @@ addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true}
   const nv=document.querySelector("nav").getBoundingClientRect();
   alert(["innerH "+innerHeight,"outerH "+outerHeight,"screenH "+screen.height,"availH "+screen.availHeight,"vv "+(window.visualViewport?Math.round(visualViewport.height):"-"),"100vh "+m("height:100vh"),"100dvh "+m("height:100dvh"),"100lvh "+m("height:100lvh"),"100% "+m("height:100%"),"fixed inset0 "+m("inset:0;height:auto"),"envTop "+m("height:env(safe-area-inset-top,0px)"),"envBottom "+m("height:env(safe-area-inset-bottom,0px)"),"nav bottom "+Math.round(nv.bottom),"standalone "+(navigator.standalone||matchMedia("(display-mode:standalone)").matches),"dpr "+devicePixelRatio].join("\n"))})})();
 
-const BUILD="1794860000";
+const BUILD="1794870000";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
