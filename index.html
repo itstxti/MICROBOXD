@@ -824,19 +824,22 @@ let stY=0;
 function stGo(y){stY=y;if(STXI){STXR=1;openStats();STXR=0;return}const sc=$("lst").scrollTop;openStats();$("lst").scrollTop=sc}
 let STXR=0;const stOut=(h)=>STXI?(STXR?subRe:subOpen)(U2(STXN,subBar("Estadísticas")+h)):sheet("Estadísticas",h);
 let STXI=null,STXN="";
+const stEn=()=>{if(STXI){const D=UD[STXN];return D?D.rows.map(x=>({iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||""})):[]}
+  const en=DEN.map(e=>({iid:e.iid,wd:e.wd,r:e.r,hl:e.hl,rw:e.rw,t:e.t}));
+  items.forEach(i=>{if(i.watchedOn&&!en.some(e=>e.iid===i.id))en.push({iid:i.id,wd:new Date(i.watchedOn).toISOString().slice(0,10),r:i.rating||0,hl:!!i.liked,rw:!!i.rewatch,t:i.review||""})});return en};
 function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=src;STXN=nm||"";stY=0}const IT=STXI||items;
-  const yo=i=>i.watchedOn?new Date(i.watchedOn).getFullYear():0,ys=[...new Set(IT.map(yo).filter(Boolean))].sort((a,b)=>b-a);
+  const EN=stEn(),eyr=e=>+(e.wd||"").slice(0,4),ys=[...new Set(EN.map(eyr).filter(Boolean))].sort((a,b)=>b-a);
   if(stY&&!ys.includes(stY))stY=0;
-  const A=stY?IT.filter(i=>yo(i)===stY):IT,dn=A.filter(i=>i.status==="done"),rt=A.filter(i=>i.rating),eps=A.reduce((a,i)=>a+(i.watched||0),0),
+  const EA=stY?EN.filter(e=>eyr(e)===stY):EN,ids=new Set(EA.map(e=>e.iid)),A=stY?IT.filter(i=>ids.has(i.id)):IT,dn=A.filter(i=>i.status==="done"),rt=A.filter(i=>i.rating),eps=A.reduce((a,i)=>a+(i.watched||0),0),
     avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",
     k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||L2("Todo","All")}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(IT.filter(inWl).length,"Watchlist")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,L2("Me gusta","Likes"))}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"))}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,L2("Me gusta","Likes"))}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
   if(stY)for(let m=0;m<12;m++)ms.push([stY,m]);else for(let m=11;m>=0;m--){const d=new Date(now.getFullYear(),now.getMonth()-m,1);ms.push([d.getFullYear(),d.getMonth()])}
-  const cnt=ms.map(([y,m])=>A.filter(i=>{if(!i.watchedOn)return false;const d=new Date(i.watchedOn);return d.getFullYear()===y&&d.getMonth()===m}).length),cm=Math.max(1,...cnt);
+  const cnt=ms.map(([y,m])=>EA.filter(e=>{const d=new Date((e.wd||"")+"T12:00:00");return d.getFullYear()===y&&d.getMonth()===m}).length),cm=Math.max(1,...cnt);
   if(cnt.some(n=>n))h+=sec(stY?"Actividad en "+stY:"Últimos 12 meses",`<div class="stc">${cnt.map(n=>`<div>${n?`<em>${n}</em>`:""}<u class="${n===cm?"mx":""}" style="height:${n?Math.max(6,n/cm*78):2}%"></u></div>`).join("")}</div><div class="stl">${ms.map(([y,m])=>`<span>${new Date(2000,m,1).toLocaleDateString(LANG,{month:"narrow"}).toUpperCase()}</span>`).join("")}</div>`);
   // valoraciones
   if(rt.length){const b=Array(10).fill(0);rt.forEach(i=>{const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++});const bm=Math.max(1,...b),top=b.indexOf(Math.max(...b));
@@ -1444,7 +1447,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794776191";
+const BUILD="1794776209";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
