@@ -449,6 +449,7 @@ const VB=s=>s.replace(/volviste a ver/g,"rewatched").replace(/marcaste con me gu
 const RXS=[
 [/^Dejar de seguir a (.*)$/,"Unfollow $1"],
 [/^Mostrar (\d+) más$/,"Show $1 more"],
+[/^(.*) no se puede quitar de tus series, porque tiene actividad$/,"$1 can't be removed from your series, because there is activity on it"],
 [/^¿Eliminar “(.*)”\?$/,"Delete “$1”?"],
 [/^(\d+) \/ (\d+) este año$/,"$1 / $2 this year"],
 [/^(.*) · (\d+) episodios$/,(m,a,n)=>(D.get(a)||a)+" · "+n+" episodes"],
@@ -570,8 +571,8 @@ function render(){
       <div class="lbl">Favoritas</div><div class="grid" onpointerdown="pfDrag(event)">${fav.map((i,k)=>`<div class="fvq" data-k="${k}">${cell(i)}</div>`).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-fav.length)}</div><div class="lbl">Actividad reciente</div>${grid(rec)}
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
-      <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(i=>i.status==="want").length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
-    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(i=>i.status==="want");h=w.length?grid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
+      <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(inWl).length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
+    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(inWl);h=w.length?grid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
   }
   $("mn").innerHTML=h;if(tab==="search")sr();else sfx();setNh();
 }
@@ -698,7 +699,7 @@ const setDt=(k,id)=>{dtab=k;show(id,true)};
 const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv=i._rv!=null?i._rv:(i.review?1:0),ls=i._ls!=null?i._ls:lists.filter(l=>l.ids.includes(i.id)).length;
   return `<div class="tiles"><div class="tile g" onclick="openMem(${i.id})" style="cursor:pointer">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m" onclick="openRevs(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl" onclick="openLsts(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
 const wbSec=i=>{
-  const wt=i.status==="want"?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
+  const wt=inWl(i)?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" ${x.id?`onclick="event.stopPropagation();openReview('${x.id}')"`:""}><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (ps.length?`<div class="wbs"><div class="wbh" onclick="openMem(${i.id},'fr')" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
   return wt};
 const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg d">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${k==="pop"?"on":""}" disabled>${t}</button>`).join("")}</div><div class="rvlb">Reseñas populares</div><div class="rvi" onclick="openLog(${i.id})"><div class="rvh"><span class="rvst">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</span><span class="rvu">${esc(uname())}<div class="av" style="width:25px;height:25px;font-size:12px">${ini()}</div></span></div>${i.spoil?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt">${esc(i.review)}</p>`}</div></div>`};
@@ -712,14 +713,17 @@ const CLOCKP='<circle cx="11" cy="11" r="8"/><path d="M11 6.5V11l3 1.8"/><circle
 function opts(id){const i=get(id),dn=i.status==="done",log_=!!(i.watchedOn||i.deid);
   {const h=hue(i.app);$("ov").style.setProperty("--bgi",i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`)}
   $("ov").innerHTML=`<div class="otl"><b>${esc(short(i.title))}</b><span>${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</span></div><div class="card">
-  <div class="qa"><button class="kv ${dn?"on":""}" onclick="qv(${id},'v')">${svg((i.dcount||0)>1?EYEN(i.dcount):EYE,34)}${dn?(log_?"Registrada":"Vista"):"Ver"}</button><button class="kl ${i.liked?"on":""}" onclick="qv(${id},'l')">${svg(HEART,34)}${i.liked?"Te gustó":"Me gusta"}</button><button class="kw ${i.status==="want"?"on":""}" onclick="qv(${id},'w')">${svg(i.status==="want"?CLOCKC:CLOCKP,34)}Watchlist</button></div>
+  <div class="qa"><button class="kv ${dn?"on":""}" onclick="qv(${id},'v')">${svg((i.dcount||0)>1?EYEN(i.dcount):EYE,34)}${dn?(log_?"Registrada":"Vista"):"Ver"}</button><button class="kl ${i.liked?"on":""}" onclick="qv(${id},'l')">${svg(HEART,34)}${i.liked?"Te gustó":"Me gusta"}</button><button class="kw ${inWl(i)?"on":""}" onclick="qv(${id},'w')">${svg(inWl(i)?CLOCKC:CLOCKP,34)}Watchlist</button></div>
   <div class="rt" style="border-top:1px solid var(--bg)"><div class="pl">${i.rating?"Puntuada":"Puntúa"}</div><div class="sr big5" data-s="qr:${id}" style="justify-content:center">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
   ${(i.dcount>0||log_)?`<button class="oi" onclick="showAct(${id},'${U.id}')">Mostrar tu actividad</button>`:""}
   <button class="oi" onclick="openLog(${id})">${log_?"Reseñar o registrar otra vez":"Reseñar o registrar"}</button><button class="oi" onclick="pickList(${id})">Añadir a listas</button><button class="oi" onclick="shr(${id})">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
 const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
-function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
+const inWl=i=>i.status==="want"||!!i.wl;
+const hasAct=i=>!!(i.rating||i.review||i.watchedOn||i.deid||(i.dcount||0)>0);
+function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false,wl:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
 /* Volver a pulsar «Vista» la quita: borra también nota, me gusta y entradas del diario */
 async function unwatch(id){const i=get(id);if(!i)return;
+  if(hasAct(i)){POP="";toast(esc(short(i.title))+" no se puede quitar de tus series, porque tiene actividad");return}
   if(lk(i)&&!confirm("Se borrarán también tu puntuación, me gusta y entradas del diario de esta serie. ¿Continuar?"))return;
   if(sb&&i.sid&&U){try{const{error}=await sb.from("diary_entries").delete().eq("user_id",U.id).eq("series_id",i.sid);if(error)throw error}catch(e){console.error(e);toast("No se pudo quitar");return}}
   dq=dq.filter(e=>e.series!==i);drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});
@@ -727,7 +731,7 @@ async function unwatch(id){const i=get(id);if(!i)return;
 let POP="";function qv(id,k,sl){POP=k;const i=get(id);
   if(k==="l"){i.liked=!i.liked;if(i.liked)mark(i)}
   else if(k==="v"){if(i.status==="done"){unwatch(id);return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="done";i.watched=i.eps;addLog("done",i)}}
-  else{if(i.status==="want")drop(id);else if(i.status==="done"&&lk(i)){toast("Está marcada como vista y tiene actividad");return}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
+  else{if(i.status==="want")drop(id);else if(i.status==="done"){i.wl=!i.wl}else{if(!items.includes(i)){items.unshift(i);delete cache[id]}i.status="want";i.watched=0}}
   save();if(!sl)opts(id);refresh(id)}
 const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("done",i)}};
 /* actualiza al instante el histograma de la comunidad con tu cambio de nota */
@@ -796,7 +800,7 @@ function ep(id,d){const i=get(id),was=i.status;i.watched=Math.max(0,Math.min(i.e
 function rate(id,n,d){const i=get(id);setR(i,d?n:(i.rating===n?0:n));save();show(id,true)}
 function setSt(id,s){const i=get(id),was=i.status;i.status=s;if(s==="done"){i.watched=i.eps;if(was!=="done")addLog("done",i)}save();show(id,true)}
 function rev(id,v){get(id).review=v;save()}
-function del(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id);save();closeDet()}
+function del(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false,wl:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id);save();closeDet()}
 
 const rvl=r=>r.length?r.map(i=>`<div class="row" onclick="show(${i.id})" style="cursor:pointer">${poster(i)}<div><b>${esc(short(i.title))}</b><div class="ss">${S(i.rating)}${i.liked?" ♥":""}</div>${i.spoil?"<i>⚠ Contiene spoilers</i>":esc(i.review)}</div></div>`).join(""):'<div class="empty">Sin resultados.</div>';
 const nop=i=>poster(i).replace(/onclick="[^"]*"/,"");
@@ -828,7 +832,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
     avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1).replace(".",","):"–",
     k=(v,l)=>`<div><b>${v}</b>${l}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||"Todo"}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(IT.filter(i=>i.status==="want").length,"Watchlist")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,"Me gusta")}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas")}${k(eps,"Episodios")}${k(IT.filter(inWl).length,"Watchlist")}${k(avg,"Nota media")}${k(A.filter(i=>i.liked).length,"Me gusta")}${k(A.filter(i=>i.review).length,"Reseñas")}</div>`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
@@ -922,12 +926,12 @@ function adl(){const n=norm(adq),el=$("adr");
 function adS(v){adq=v;$("adi").value=v;$("adx").style.display="";adl()}
 function adP(id){const t=adq.trim();if(t){rs=[t,...rs.filter(x=>x!==t)].slice(0,12);pers()}openLog(id,true)}
 const SB_URL="https://xmfpzbzctgnzqoidtqhs.supabase.co",SB_KEY="sb_publishable_PpbxqcCOPmTqqZPCnA1JSg_qAtziTjn";
-let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},shadowL={},shadowP="",dq=[],pushT=0,pushing=false,dirty=false,fails=0,statAt={};
+let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},WLOK=true,shadowL={},shadowP="",dq=[],pushT=0,pushing=false,dirty=false,fails=0,statAt={};
 const key=i=>norm(short(i.title));
 function castSet(id,v){get(id).castTxt=v;save();show(id,true)}
 const idOf=u=>parseInt(String(u).replace(/-/g,"").slice(0,12),16);
 const sidOf=id=>{const i=get(id);return i&&i.sid};
-const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked]);
+const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked,!!i.wl]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
 const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
 function catAll(){const m=new Map();[...CAT,...items].forEach(i=>m.set(i.id,i));return [...m.values()]}
@@ -939,6 +943,7 @@ function lxOf(l){const nt={};(l.list_items||[]).forEach(x=>{if(x.note||x.spoiler
   return loc||{}}
 const profState=()=>JSON.stringify([prof.name,prof.fam,prof.loc,prof.web,prof.pron,prof.bio,prof.av,!!prof.avd,(prof.fav||[]).map(sidOf)]);
 const ck=async p=>{const r=await p;if(r.error)throw r.error;return r};
+async function upUS(rs){let r=await sb.from("user_series").upsert(rs);if(r.error&&WLOK&&/watchlist/i.test(r.error.message||"")){WLOK=false;rs=rs.map(o=>{o=Object.assign({},o);delete o.watchlist;return o});r=await sb.from("user_series").upsert(rs)}if(r.error)throw r.error;return r}
 function adopt(){for(const k in cache){const i=cache[k];if(iState(i)!==i._b){items.unshift(i);delete cache[k]}}}
 function sched(){dirty=true;clearTimeout(pushT);pushT=setTimeout(push,500)}
 function applyStat(r){const v=[];(r.histogram||[]).forEach((n,j)=>{for(let k=0;k<Math.min(+n,200);k++)v.push((j+1)/2)});const i=get(idOf(r.series_id));if(!i)return false;const kk=key(i),o=JSON.stringify([com[kk],i._m,i._rv,i._ls]);com[kk]=v;i._m=+r.members;i._rv=+r.reviews;i._ls=+r.lists;return o!==JSON.stringify([com[kk],i._m,i._rv,i._ls])}
@@ -952,7 +957,7 @@ async function pull(){
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
    sb.from("follows").select("followee_id").eq("follower_id",uid)]);
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));const dc={};b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
-  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?"want":r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
+  items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:r.status==="watching"?"want":r.status,watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);pendS.forEach(x=>{if(!CAT.includes(x))CAT.unshift(x)});
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
@@ -977,8 +982,8 @@ async function push(){
     const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
     pendU=pendU.filter(x=>x!==i);if(!r.data||!r.data.length)throw new Error("No tienes permiso para editar esta serie");
     if(oc&&oc!==i.cp)try{await sb.storage.from("covers").remove([oc])}catch(e){}}
-   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked}})}
-   if(rows.length){await ck(sb.from("user_series").upsert(rows.map(r=>r.row)));rows.forEach(r=>{shadow[r.i.id]={st:r.st,sid:r.i.sid};statAt[r.i.sid]=0});if(curDet&&$("det").classList.contains("open")){const c=get(curDet);if(c)loadStat(c)}}
+   const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":"want"),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)}:{})}})}
+   if(rows.length){await upUS(rows.map(r=>r.row));rows.forEach(r=>{shadow[r.i.id]={st:r.st,sid:r.i.sid};statAt[r.i.sid]=0});if(curDet&&$("det").classList.contains("open")){const c=get(curDet);if(c)loadStat(c)}}
    const gone=Object.keys(shadow).filter(k=>!items.some(i=>String(i.id)===k));
    if(gone.length){await ck(sb.from("user_series").delete().eq("user_id",uid).in("series_id",gone.map(k=>shadow[k].sid)));gone.forEach(k=>delete shadow[k])}
    let dsent=0;while(dq.length){const e=dq[0];await ck(sb.from("diary_entries").upsert(Object.assign({id:e.id,user_id:uid,series_id:e.series.sid},e.row)));dq.shift();dsent=1}
@@ -1224,7 +1229,7 @@ async function uLoad(uid,P){const c=UD[uid];if(c&&Date.now()-c.t<45000)return c;
   const R=await Promise.all([sb.from("user_series").select("*,series(*)").eq("user_id",uid).limit(2000),sb.from("diary_entries").select("*,series(*),review_likes(user_id)").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).limit(2000),sb.from("lists").select("*,list_items(position,series(*))").eq("user_id",uid).order("created_at",{ascending:false}).limit(200)]);
   R.forEach(x=>{if(x.error)throw x.error});const[us,de,ls]=R,by={};
   const mk=(row,o)=>Object.assign({},sCache(row),{status:"",watched:0,rating:0,liked:false,watchedOn:undefined,review:"",spoil:false,rewatch:false,rtags:[],deid:undefined,fresh:false},o);
-  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?"want":x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked})});
+  us.data.forEach(x=>{by[x.series_id]=mk(x.series,{status:x.status==="watching"?"want":x.status,watched:x.watched_eps||0,rating:+x.rating||0,liked:!!x.liked,wl:!!x.watchlist})});
   de.data.forEach(x=>{const i=by[x.series_id]||(by[x.series_id]=mk(x.series,{rating:+x.rating||0,liked:!!x.liked}));if(!i.watchedOn)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review||"",spoil:!!x.spoilers,rewatch:!!x.rewatch,rtags:x.tags||[],eid:x.id})});
   if(P)de.data.forEach(x=>nrm(Object.assign({},x,{profiles:P})));const pr=P?Object.assign({},P):null,rows=de.data,L=ls.data.map(l=>({id:l.id,name:l.name,desc:l.description||"",rank:!!l.ranked,tags:l.tags||[],its:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>x.series&&(by[x.series.id]||mk(x.series,{}))).filter(Boolean)}));
   return UD[uid]={t:Date.now(),items:Object.values(by),rows,lists:L,P:pr}}
@@ -1249,11 +1254,11 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    ${fv.length?`<div class="ulb">Favoritas</div><div class="uph">${fv.map(i=>`<div>${poster(i)}</div>`).join("")}</div>`:""}
    ${act.length?`<div class="ulb">Actividad reciente</div><div class="uph">${act.slice(0,4).map(uCell).join("")}</div><div class="umore" onclick="userAct('${uid}')"><span>Más actividad</span><span class="wbc">›</span></div>`:""}
    ${rt.length?`<div class="uh2"><span class="hs">★</span><div class="bars">${hb.map(n=>`<u title="${n}" style="height:${Math.max(4,n/hm*100)}%"></u>`).join("")}</div><span class="hs">★★★★★</span></div>`:""}
-   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(i=>i.status==="want").length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Siguiendo",fg.count||0,`openFol('${uid}','ing')`)}${row("Seguidores",`<span id="ufo">${fo.count||0}</span>`,`openFol('${uid}','ers')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>
+   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(inWl).length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Siguiendo",fg.count||0,`openFol('${uid}','ing')`)}${row("Seguidores",`<span id="ufo">${fo.count||0}</span>`,`openFol('${uid}','ers')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>
    ${rv.length?`<div class="lbl">Reseñas</div><div style="padding:0 14px">${rv.map(rvItem).join("")}</div>`:""}`))}
   catch(e){console.error(e);subRe(bar("")+'<div class="empty">No se pudo cargar este perfil.</div>')}}
 function uPg(uid,k){const D=UD[uid];if(!D)return;const I=D.items,nm=(UN[uid]||"").split(" ")[0];
-  const T={all:["Series",()=>grid(I.filter(i=>i.status==="done"))],diary:["Diario",()=>diary(I)],lst:["Listas",()=>uLv(uid)],rev:["Reseñas",()=>{const a=D.rows.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:D.P})));return a.length?`<div style="padding:0 14px">${a.map(rvItem).join("")}</div>`:EMP("chat","Sin reseñas","Todavía no ha escrito ninguna reseña.")}],pend:["Watchlist",()=>{const w=I.filter(i=>i.status==="want");return w.length?grid(w):EMP("clock","Watchlist vacía","Todavía no ha añadido series a su watchlist.")}],lk:["Me gusta",()=>{const w=I.filter(i=>i.liked);return w.length?grid(w):EMP("book","Sin me gusta","Todavía no ha marcado ninguna serie con me gusta.")}]}[k];
+  const T={all:["Series",()=>grid(I.filter(i=>i.status==="done"))],diary:["Diario",()=>diary(I)],lst:["Listas",()=>uLv(uid)],rev:["Reseñas",()=>{const a=D.rows.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:D.P})));return a.length?`<div style="padding:0 14px">${a.map(rvItem).join("")}</div>`:EMP("chat","Sin reseñas","Todavía no ha escrito ninguna reseña.")}],pend:["Watchlist",()=>{const w=I.filter(inWl);return w.length?grid(w):EMP("clock","Watchlist vacía","Todavía no ha añadido series a su watchlist.")}],lk:["Me gusta",()=>{const w=I.filter(i=>i.liked);return w.length?grid(w):EMP("book","Sin me gusta","Todavía no ha marcado ninguna serie con me gusta.")}]}[k];
   subOpen(U2(uid,subBar(T[0])+T[1]()))}
 function uLv(uid){const D=UD[uid];return D.lists.length?D.lists.map((l,k)=>`<div class="lst2" onclick="uList('${uid}',${k})"><div class="lh2"><b>${esc(l.name)}</b><span>${l.its.length} ${l.its.length===1?"serie":"series"}</span></div><div class="strip">${l.its.slice(0,7).map(nop).join("")}</div>${l.desc?`<p class="ldc" style="margin:10px 0 0">${esc(l.desc)}</p>`:""}</div>`).join(""):EMP("list","Sin listas","Todavía no ha creado ninguna lista.")}
 function uList(uid,k){const l=UD[uid].lists[k];if(!l)return;
