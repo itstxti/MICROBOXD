@@ -913,8 +913,8 @@ let sb=null,U=null,com={},curDet=0,cache={},CAT=[],shadow={},WLOK=true,shadowL={
 const key=i=>norm(short(i.title));
 const idOf=u=>parseInt(String(u).replace(/-/g,"").slice(0,12),16);
 const sidOf=id=>{const i=get(id);return i&&i.sid};
-/* En BD, "sin estado" se guarda como 'none'. 'watching' es solo de filas antiguas (ver migración 0011; al aplicarla se puede quitar esa rama). */
-const stIn=r=>r.status==="none"?"":r.status==="watching"?(r.watchlist===false?"":"want"):r.status;
+/* En BD, "sin estado" se guarda como 'none' (ver migración 0010/0011). */
+const stIn=r=>r.status==="none"?"":r.status;
 const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked,!!i.wl]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
 const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};

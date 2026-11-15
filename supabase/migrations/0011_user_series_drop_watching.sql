@@ -1,5 +1,4 @@
--- Paso 2: aplicar DESPUÉS de desplegar el front con 'none' y cuando ya no queden clientes antiguos
--- (el service worker actualiza la app en el siguiente arranque, así que conviene esperar unos días).
+-- Paso 2: aplicar DESPUÉS de desplegar el front con 'none' y recargar la app (el cliente ya no entiende 'watching').
 -- Convierte las filas antiguas con la misma regla que usaba el cliente al leerlas:
 --   watching + watchlist = false -> 'none'    |    watching + watchlist = true -> 'want'
 update public.user_series
