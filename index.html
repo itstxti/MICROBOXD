@@ -420,8 +420,8 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
   <div class="fcg"><div id="fcl"></div><button type="button" class="fca" id="fca">＋ Añadir personaje</button></div>
   <label class="fl" for="f-eps">Episodios</label>
   <input id="f-eps" type="number" min="1" inputmode="numeric" placeholder="60">
-  <label class="fl" for="f-min">Duración por episodio (min) <span style="opacity:.6">· opcional</span></label>
-  <input id="f-min" type="number" min="0.5" max="600" step="0.5" inputmode="decimal" placeholder="1,5">
+  <label class="fl" for="f-min">Duración total (min) <span style="opacity:.6">· opcional</span></label>
+  <input id="f-min" type="number" min="1" max="20000" step="1" inputmode="decimal" placeholder="90">
   <div class="fxfs"><button class="btn p" id="save">Guardar serie</button><button class="btn d" id="fdel" style="display:none;margin-top:6px" onclick="askDel(editId)">Eliminar serie</button></div>
 </div></div>
 
@@ -840,7 +840,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
     pAvg=PY&&PY.some(e=>e.r)?PY.filter(e=>e.r).reduce((a,e)=>a+e.r,0)/PY.filter(e=>e.r).length:null,
     k=(v,l,d)=>`<div><b>${v}</b>${l}${d||""}</div>`,sec=(t,b)=>`<div class="sth">${t}</div>${b}`;
   let h=ys.length?`<div class="sty">${[0,...ys].map(y=>`<button class="${stY===y?"on":""}" onclick="stGo(${y})">${y||L2("Todo","All")}</button>`).join("")}</div>`:"";
-  h+=`<div class="stsum">${k(dn.length,"Series vistas",PY&&dl(dn.length,IT.filter(i=>i.status==="done"&&pids.has(i.id)).length))}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"),dl(EA.length,PY&&PY.length))}${k(avg,"Nota media",RTx.length&&pAvg!=null?dl(+(RTx.reduce((a,r)=>a+r,0)/RTx.length).toFixed(1),+pAvg.toFixed(1)):"")}${k(LKx,L2("Me gusta","Likes"),dl(LKx,PY&&PY.filter(e=>e.hl).length))}${k(RVn,"Reseñas",dl(RVn,PY&&PY.filter(e=>e.t).length))}</div>${eps?`<div class="stn" style="padding:10px 14px 0">${(()=>{const mn=A.reduce((t,i)=>t+(i.watched||0)*(i.epm||1.5),0),est=A.some(i=>(i.watched||0)&&!i.epm);return(est?"≈ ":"")+(mn>=90?Math.round(mn/60*10)/10+" h":Math.round(mn)+" min")+" "+(est?L2("de episodios vistos (1,5 min por episodio si no se indica la duración)","of episodes watched (1.5 min per episode when no duration is set)"):L2("de episodios vistos","of episodes watched"))})()}</div>`:""}`;
+  h+=`<div class="stsum">${k(dn.length,"Series vistas",PY&&dl(dn.length,IT.filter(i=>i.status==="done"&&pids.has(i.id)).length))}${k(eps,"Episodios")}${k(EA.length,L2("Registros","Logs"),dl(EA.length,PY&&PY.length))}${k(avg,"Nota media",RTx.length&&pAvg!=null?dl(+(RTx.reduce((a,r)=>a+r,0)/RTx.length).toFixed(1),+pAvg.toFixed(1)):"")}${k(LKx,L2("Me gusta","Likes"),dl(LKx,PY&&PY.filter(e=>e.hl).length))}${k(RVn,"Reseñas",dl(RVn,PY&&PY.filter(e=>e.t).length))}</div>${eps?`<div class="stn" style="padding:10px 14px 0">${(()=>{const mn=A.reduce((t,i)=>t+(i.epm?i.epm*Math.min(1,(i.watched||0)/Math.max(1,i.eps||1)):(i.watched||0)*1.5),0),est=A.some(i=>(i.watched||0)&&!i.epm);return(est?"≈ ":"")+(mn>=90?Math.round(mn/60*10)/10+" h":Math.round(mn)+" min")+" "+(est?L2("de episodios vistos (1,5 min por episodio si no se indica la duración total)","of episodes watched (1.5 min per episode when no total duration is set)"):L2("de episodios vistos","of episodes watched"))})()}</div>`:""}`;
   if(!A.length){stOut(h+`<div class="empty">${stY?"No hay actividad en "+stY+".":(STXI?"Todavía no hay datos para mostrar.":"Registra tu primera serie para ver aquí tus estadísticas.")}</div>`);return}
   // actividad por mes
   const now=new Date(),ms=[];
@@ -946,7 +946,7 @@ const sidOf=id=>{const i=get(id);return i&&i.sid};
 const stIn=r=>r.status==="none"?"":r.status;
 const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked,!!i.wl]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
-const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,epm:r.episode_minutes?+r.episode_minutes:null,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
+const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,epm:r.duration_minutes?+r.duration_minutes:null,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
 function catAll(){const m=new Map();[...CAT,...items].forEach(i=>m.set(i.id,i));return [...m.values()]}
 const listState=l=>JSON.stringify([l.name,l.desc||"",!!l.rank,l.ids.map(sidOf),l.tags||[],l.rep||0,l.ids.map(id=>{const x=(l.nt||{})[id];return x?[x.n||"",!!x.s]:["",false]})]);
 const XC={on:true};
@@ -988,11 +988,11 @@ async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.ca
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
-   pendS=pendS.filter(x=>x.fresh);for(const i of [...new Set([...items.filter(x=>x.fresh),...pendS])]){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,episode_minutes:i.epm||null,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
+   pendS=pendS.filter(x=>x.fresh);for(const i of [...new Set([...items.filter(x=>x.fresh),...pendS])]){try{await up(i,uid)}catch(e){console.error(e);i.cover="";i.cp="";toast("No se pudo subir la portada")}try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}await ck(sb.from("series").insert({id:i.sid,title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,duration_minutes:i.epm||null,cover_path:i.cp||null}));i.fresh=false;i.created_by=uid}
    for(const i of [...pendU]){if(i.fresh){pendU=pendU.filter(x=>x!==i);continue}
     const oc=i.cp,ocv=cvr(oc);try{await up(i,uid)}catch(e){console.error(e);i.cover=ocv;i.cp=oc;toast("No se pudo subir la portada")}
     try{await upCast(i,uid)}catch(e){console.error(e);(i.cast||[]).forEach(c=>{if(c.ph&&c.ph.startsWith("data:")){c.ph="";c.pp=""}});toast("No se pudieron subir algunas fotos")}
-    const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,episode_minutes:i.epm||null,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
+    const r=await ck(sb.from("series").update({title:i.title,app:i.app,synopsis:i.syn||"",tropes:i.tropes||[],cast_text:i.castTxt||"",cast_members:(i.cast||[]).map(c=>({name:c.a,role:c.p||"",photo:c.pp||null})),episodes:i.eps,duration_minutes:i.epm||null,cover_path:i.cp||null}).eq("id",i.sid).select("id"));
     pendU=pendU.filter(x=>x!==i);if(!r.data||!r.data.length)throw new Error("No tienes permiso para editar esta serie");
     if(oc&&oc!==i.cp)try{await sb.storage.from("covers").remove([oc])}catch(e){}}
    const rows=[];for(const i of items){const st=iState(i);if(!shadow[i.id]||shadow[i.id].st!==st)rows.push({i,st,row:{user_id:uid,series_id:i.sid,status:i.status||(i.rating?"done":(i.liked?"none":"want")),watched_eps:i.watched||0,rating:i.rating||null,liked:!!i.liked,...(WLOK?{watchlist:inWl(i)}:{})}})}
@@ -1433,7 +1433,7 @@ $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
   const im=new Image();im.onload=()=>{const w=240,h=Math.round(w*im.height/im.width),c=document.createElement("canvas");c.width=w;c.height=h;
    c.getContext("2d").drawImage(im,0,0,w,h);cover=c.toDataURL("image/jpeg",.75);$("prev").src=cover;$("prev").style.display="block"};
   im.src=URL.createObjectURL(f)};
-const epmv=()=>{const v=parseFloat(($("f-min").value||"").replace(",","."));return v>0&&v<=600?Math.round(v*10)/10:null};
+const epmv=()=>{const v=parseFloat(($("f-min").value||"").replace(",","."));return v>0&&v<=20000?Math.round(v*10)/10:null};
 $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
   if(editId){const i=get(editId);if(!canEdit(i)){$("form").classList.remove("open");return}
    const cs=fc.filter(r=>r.n.trim());
@@ -1457,7 +1457,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794820775";
+const BUILD="1794822186";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
