@@ -657,7 +657,7 @@ function dt(i){
   if(dtab==="cast"){const c=castList(i),sh=castAll?c:c.slice(0,10),ph=i.castPh||{};
     const rows=sh.map(([a,p,im0])=>{const k=a.trim().toLowerCase(),im=im0||ph[k],h=hue(a);return `<div class="cr"><div class="cav" style="${im?`background-image:url(${im})`:`background:linear-gradient(160deg,hsl(${h},55%,40%),hsl(${(h+50)%360},60%,22%))`}">${im?"":esc(a.trim().charAt(0).toUpperCase())}</div><div><b>${esc(a)}</b>${p?`<small>${esc(p)}</small>`:""}</div></div>`}).join("");
     return (c.length?rows+(c.length>10&&!castAll?`<div class="cmore" onclick="castAll=true;show(${i.id},true)">Mostrar ${c.length-10} más <span>⌄</span></div>`:""):'<div class="empty">Aún no hay personajes.</div>')}
-  if(dtab==="inf")return [["App",i.app],["Episodios",i.eps]].map(([a,b])=>`<div class="dr"><span>${a}</span><b>${esc(b)}</b></div>`).join("");
+  if(dtab==="inf")return [["App",i.app],["Episodios",i.eps],...(i.epm?[[L2("Duración","Duration"),Math.floor(i.epm/60)?Math.floor(i.epm/60)+" h"+(Math.round(i.epm%60)?" "+Math.round(i.epm%60)+" min":""):Math.round(i.epm)+" min"]]:[])].map(([a,b])=>`<div class="dr"><span>${a}</span><b>${esc(b)}</b></div>`).join("");
   return i.tropes.length?i.tropes.map(t=>`<div class="br" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}<span>›</span></div>`).join(""):'<div class="empty">Esta serie no tiene tropos.</div>';
 }
 const simList=i=>items.filter(x=>x.id!==i.id).map(x=>({x,s:x.tropes.filter(t=>hasT(i,t)).length*2+(x.app===i.app?1:0)})).filter(o=>o.s).sort((a,b)=>b.s-a.s).map(o=>o.x); function openSim(id){const i=get(id);if(!i)return;subOpen(subBar("Series parecidas")+`<div style="padding:0 14px 20px">${grid(simList(i))}</div>`)} const simSec=i=>{const sim=simList(i);return sim.length?`<div class="simh" style="cursor:pointer" onclick="openSim(${i.id})">Series parecidas<span>›</span></div><div style="margin:0 -14px"><div class="hrow">${sim.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div></div>`:""};
@@ -1457,7 +1457,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794822186";
+const BUILD="1794826419";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
