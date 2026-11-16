@@ -851,6 +851,9 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   // tropos
   const tc={};A.forEach(i=>(i.tropes||[]).forEach(t=>{const key=tkey(t);if(!key)return;(tc[key]=tc[key]||{t:t.trim(),n:0}).n++}));const tp=Object.values(tc).sort((x,y)=>y.n-x.n||x.t.localeCompare(y.t)).slice(0,6),tm2=Math.max(1,...tp.map(x=>x.n));
   if(tp.length)h+=sec("Tropos favoritos",`<div class="stw">${tp.map((x,k)=>`<div class="stb ${k?"":"top"}"><span>${esc(x.t)}</span><u><i style="width:${x.n/tm2*100}%;min-width:4px"></i></u><em><b>${x.n}</b></em></div>`).join("")}</div>`);
+  // más repetidas
+  const rc={};EA.forEach(e=>rc[e.iid]=(rc[e.iid]||0)+1);const rp=Object.entries(rc).filter(([id,n])=>n>1&&IT.some(i=>i.id===+id||i.id===id)).map(([id,n])=>[IT.find(i=>i.id===+id||i.id===id),n]).sort((x,y)=>y[1]-x[1]).slice(0,5);
+  if(rp.length)h+=sec(L2("Más repetidas","Most rewatched"),`<div class="stw">${rp.map(([i,n],k)=>`<div class="stt" onclick="show(${i.id})"><span><i class="rk">${k+1}</i><b>${esc(short(i.title))}</b></span><em>×${n}</em></div>`).join("")}</div>`);
   // mejor valoradas
   const tr=[...rt].sort((x,y)=>y.rating-x.rating||(+!!y.liked)-(+!!x.liked)).slice(0,5);
   if(tr.length)h+=sec("Mejor valoradas",`<div class="stw">${tr.map((i,k)=>`<div class="stt" onclick="show(${i.id})"><span><i class="rk">${k+1}</i><b>${esc(short(i.title))}</b></span><em>${S(i.rating)}${i.liked?" ♥":""}</em></div>`).join("")}</div>`);
@@ -1448,7 +1451,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794776239";
+const BUILD="1794814323";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
