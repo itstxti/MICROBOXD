@@ -663,12 +663,13 @@ function dt(i){
 const simList=i=>items.filter(x=>x.id!==i.id).map(x=>({x,s:x.tropes.filter(t=>hasT(i,t)).length*2+(x.app===i.app?1:0)})).filter(o=>o.s).sort((a,b)=>b.s-a.s).map(o=>o.x); function openSim(id){const i=get(id);if(!i)return;subOpen(subBar("Series parecidas")+`<div style="padding:0 14px 20px">${grid(simList(i))}</div>`)} const simSec=i=>{const sim=simList(i);return sim.length?`<div class="simh" style="cursor:pointer" onclick="openSim(${i.id})">Series parecidas<span>›</span></div><div style="margin:0 -14px"><div class="hrow">${sim.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div></div>`:""};
 const lstSec=i=>{const ls=lists.filter(l=>l.ids.includes(i.id));return ls.length?`<h3 class="sec" style="margin-left:0;margin-right:0">En tus listas</h3>`+ls.map(l=>`<div class="br" style="padding-left:0;padding-right:0" onclick="$('det').classList.remove('open');openList(${l.id})">${esc(l.name)}<span>›</span></div>`).join(""):""};
 function fitTr(d){const w=d.querySelector(".tpr"),po=d.querySelector(".hd2 .poster");if(!w||!po)return;
-  const b=[...w.querySelectorAll("button.tag")],lim=()=>po.getBoundingClientRect().bottom+0.5,over=()=>w.getBoundingClientRect().bottom>lim();
+  w.querySelectorAll(".tmore").forEach(x=>x.remove());
+  const b=[...w.querySelectorAll("button.tag")];b.forEach(x=>x.style.display="");
+  const lim=()=>po.getBoundingClientRect().bottom+0.5,over=()=>w.getBoundingClientRect().bottom>lim();
   if(!over())return;let hid=0;const m=document.createElement("button");m.className="tag tmore";
-  const set=()=>{m.textContent="+"+hid;m.onclick=()=>{b.forEach(x=>x.style.display="");m.remove()}};
-  w.appendChild(m);hid=0;set();
-  for(let k=b.length-1;k>0&&over();k--){b[k].style.display="none";hid++;set()}
-  if(over()){/* ni así cabe: deja solo el primero y el contador */}}
+  const set=()=>{m.textContent="+"+hid;m.setAttribute("aria-label",L2("Mostrar todos los tropos","Show all tropes"));m.onclick=()=>{b.forEach(x=>x.style.display="");m.textContent="−";m.setAttribute("aria-label",L2("Mostrar menos","Show fewer"));m.onclick=()=>fitTr(d)}};
+  w.appendChild(m);set();
+  for(let k=b.length-1;k>0&&over();k--){b[k].style.display="none";hid++;set()}}
 function show(id,keep){
   const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
   const bg=i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`;
@@ -1457,7 +1458,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794834912";
+const BUILD="1794835304";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
