@@ -130,7 +130,7 @@ h2{color:var(--tx);font-family:Georgia,serif;font-size:22px;margin:0 0 4px;line-
 .fm .fr{display:flex;gap:14px;align-items:flex-start;margin-bottom:4px}.fm .fc{flex:1;min-width:0;min-height:168px;display:flex;flex-direction:column;justify-content:space-between}.fm .fc .fl{margin-top:0}
 .fm .fl{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--mute);margin:14px 0 6px}.fm .fc .fl:first-child{margin-top:0}
 .fm input,.fm select,.fm textarea{border:1px solid transparent;border-radius:10px;padding:12px;margin:0;outline:0;transition:border-color .15s}
-.fm input:focus,.fm select:focus,.fm textarea:focus{border-color:var(--g)}
+.tmn{float:right;letter-spacing:0;text-transform:none;opacity:.8}.tmb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--pan);border-radius:10px;padding:8px 10px;min-height:48px;cursor:text}.tmb #tmc{display:contents}.tmx{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;background:#3a4452;color:#dfe6ee;font:inherit;font-size:14px;border:0}.tmx i{font-style:normal;color:var(--mute);padding:0 2px;cursor:pointer}.tmx.sg{background:none;border:1px solid var(--line);color:var(--mute);margin:0 6px 6px 0}.tmx.sg b{color:var(--g)}.fm .tmb input{flex:1;min-width:110px;background:none;border:0;padding:6px 2px;font-size:16px}.tmdd{background:#232a33;border:1px solid var(--line);border-radius:10px;margin-top:6px;overflow:hidden}.tmdd div{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);font-size:15px;color:#cfd8e2;cursor:pointer}.tmdd div:last-child{border:0}.tmdd .mk{color:var(--g)}.tmdd small{color:var(--mute)}.fm input:focus,.fm select:focus,.fm textarea:focus{border-color:var(--g)}
 .fm textarea{resize:none;line-height:1.4}
 .fm select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%239ab' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 .fm .warn{margin:6px 0 0}
@@ -414,8 +414,10 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
   </div>
   <label class="fl" for="f-syn">Sinopsis</label>
   <textarea id="f-syn" rows="4" placeholder="¿De qué va?"></textarea>
-  <label class="fl" for="f-tropes">Temas</label>
-  <input id="f-tropes" placeholder="venganza, CEO, hombre lobo…">
+  <label class="fl" for="f-tq">Temas <span id="tmn" class="tmn"></span></label>
+  <input id="f-tropes" type="hidden">
+  <div class="tmb" onclick="$('f-tq').focus()"><span id="tmc"></span><input id="f-tq" placeholder="Añadir tema…" autocomplete="off" autocapitalize="none" autocorrect="off" enterkeyhint="done" oninput="tmIn()" onkeydown="tmKey(event)" onblur="setTimeout(tmCommit,150)"></div>
+  <div id="tmd"></div><div id="tmp"></div>
   <label class="fl">Personajes</label>
   <div class="fcg"><div id="fcl"></div><button type="button" class="fca" id="fca">＋ Añadir personaje</button></div>
   <label class="fl" for="f-eps">Episodios</label>
@@ -1418,13 +1420,30 @@ drawFc();
 /* ===== Editar / eliminar serie (reutiliza el formulario de creación) ===== */
 let editId=null;
 const canEdit=i=>!!i&&(!!i.fresh||(!!U&&i.created_by===U.id));
-function fmReset(){["f-title","f-syn","f-tropes","f-eps","f-min","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none"}
+const TM_MAX=20;
+const tmGet=()=>($("f-tropes").value||"").split(",").map(t=>t.trim()).filter(Boolean);
+function tmSet(a){const seen=new Set(),o=[];a.forEach(t=>{const k=tkey(t);if(k&&!seen.has(k)&&o.length<TM_MAX){seen.add(k);o.push(t.trim())}});$("f-tropes").value=o.join(", ");tmDraw()}
+function tmCounts(){const m=new Map();catAll().forEach(i=>{const seen=new Set();(i.tropes||[]).forEach(t=>{const k=tkey(t);if(!k)return;if(!m.has(k))m.set(k,{l:t.trim(),n:0});if(!seen.has(k)){seen.add(k);m.get(k).n++}})});return [...m.entries()].map(([k,v])=>({k,...v})).sort((a,b)=>b.n-a.n||a.l.localeCompare(b.l))}
+function tmDraw(){const cur=tmGet(),ks=new Set(cur.map(tkey));
+  $("tmc").innerHTML=cur.map((t,i)=>`<span class="tmx">${esc(t)}<i onclick="event.stopPropagation();tmDel(${i})" aria-label="${L2("Quitar","Remove")}">×</i></span>`).join("");
+  $("tmn").textContent=cur.length?cur.length+" / "+TM_MAX:"";
+  const q=tkey($("f-tq").value),all=tmCounts();
+  if(q){const m=all.filter(x=>!ks.has(x.k)&&x.k.includes(q)).sort((a,b)=>(b.k.startsWith(q)-a.k.startsWith(q))||b.n-a.n).slice(0,5),exact=all.some(x=>x.k===q)||ks.has(q);
+    $("tmd").innerHTML=`<div class="tmdd">${m.map(x=>`<div data-t="${esc(x.l)}" onmousedown="event.preventDefault()" onclick="tmAdd(this.dataset.t)"><span>${esc(x.l)}</span><small>${x.n} ${LANG==="es"&&x.n===1?"serie":"series"}</small></div>`).join("")}${exact?"":`<div class="mk" data-t="${esc($("f-tq").value.trim())}" onmousedown="event.preventDefault()" onclick="tmAdd(this.dataset.t)"><span>${L2("Crear","Create")} “${esc($("f-tq").value.trim())}”</span></div>`}</div>`;$("tmp").innerHTML=""}
+  else{$("tmd").innerHTML="";const pop=all.filter(x=>!ks.has(x.k)).slice(0,8);
+    $("tmp").innerHTML=pop.length&&cur.length<TM_MAX?`<p class="fl" style="margin-top:14px">${L2("Populares","Popular")}</p>`+pop.map(x=>`<button type="button" class="tmx sg" data-t="${esc(x.l)}" onclick="tmAdd(this.dataset.t)"><b>+</b> ${esc(x.l)}</button>`).join(""):""}}
+function tmAdd(t){tmSet([...tmGet(),t]);$("f-tq").value="";tmDraw()}
+function tmDel(i){const a=tmGet();a.splice(i,1);tmSet(a)}
+function tmCommit(){const v=($("f-tq")||{}).value;if(v&&v.trim()){$("f-tq").value="";tmSet([...tmGet(),v.trim()])}}
+function tmIn(){const el=$("f-tq");if(el.value.includes(",")){const parts=el.value.split(",");el.value=parts.pop();tmSet([...tmGet(),...parts.map(x=>x.trim()).filter(Boolean)])}tmDraw()}
+function tmKey(e){if(e.key==="Enter"){e.preventDefault();tmCommit();tmDraw()}else if(e.key==="Backspace"&&!$("f-tq").value){const a=tmGet();if(a.length){a.pop();tmSet(a)}}}
+function fmReset(){["f-title","f-syn","f-tropes","f-tq","f-eps","f-min","f-img"].forEach(k=>$(k).value="");tmDraw();fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none"}
 function fmMode(ed){$("ftl").textContent=ed?"Editar serie":"Nueva serie";$("save").textContent=ed?"Guardar cambios":"Guardar serie";$("fdel").style.display=ed?"":"none";$("form").style.zIndex="35";$("form").scrollTop=0;$("form").classList.add("open")}
 function fmNew(t){editId=null;fmReset();$("f-title").value=t||"";fmMode(false)}
 function fmEdit(id){const i=get(id);if(!canEdit(i)){toast("Solo puedes editar las series que has creado");return}
   editId=id;fmReset();
   if(![...$("f-app").options].some(o=>o.value===i.app))$("f-app").add(new Option(i.app,i.app));
-  $("f-title").value=i.title;$("f-app").value=i.app;$("f-syn").value=i.syn||"";$("f-tropes").value=(i.tropes||[]).join(", ");$("f-eps").value=i.eps||"";$("f-min").value=i.epm||"";
+  $("f-title").value=i.title;$("f-app").value=i.app;$("f-syn").value=i.syn||"";$("f-tropes").value=(i.tropes||[]).join(", ");$("f-tq").value="";tmDraw();$("f-eps").value=i.eps||"";$("f-min").value=i.epm||"";
   fc=(i.cast||[]).map(c=>({n:c.a,r:c.p||"",img:c.ph||"",pp:c.pp||""}));drawFc();
   if(i.cover){$("prev").src=i.cover;$("prev").style.display="block"}
   fmMode(true)}
@@ -1445,7 +1464,7 @@ $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
    c.getContext("2d").drawImage(im,0,0,w,h);cover=c.toDataURL("image/jpeg",.75);$("prev").src=cover;$("prev").style.display="block"};
   im.src=URL.createObjectURL(f)};
 const epmv=()=>{const v=parseFloat(($("f-min").value||"").replace(",","."));return v>0&&v<=20000?Math.round(v*10)/10:null};
-$("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
+$("save").onclick=()=>{tmCommit();const title=$("f-title").value.trim();if(!title)return;
   if(editId){const i=get(editId);if(!canEdit(i)){$("form").classList.remove("open");return}
    const cs=fc.filter(r=>r.n.trim());
    Object.assign(i,{title,app:$("f-app").value,syn:$("f-syn").value.trim(),tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),
@@ -1457,7 +1476,7 @@ $("save").onclick=()=>{const title=$("f-title").value.trim();if(!title)return;
    tropes:$("f-tropes").value.split(",").map(s=>s.trim()).filter(Boolean),cast:fc.filter(r=>r.n.trim()).map(r=>({a:r.n.trim(),p:r.r.trim(),ph:r.img||"",pp:""})),castTxt:fc.filter(r=>r.n.trim()).map(r=>r.n.trim()+(r.r.trim()?" ("+r.r.trim()+")":"")).join(", "),eps:Math.max(1,parseInt($("f-eps").value)||1),epm:epmv(),
    watched:0,rating:0,review:"",status:"",cover,added:Date.now()};
   it._b=iState(it);cache[it.id]=it;pendS.push(it);CAT.unshift(it);addLog("add",it);
-  ["f-title","f-syn","f-tropes","f-eps","f-min","f-img"].forEach(k=>$(k).value="");fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
+  ["f-title","f-syn","f-tropes","f-tq","f-eps","f-min","f-img"].forEach(k=>$(k).value="");tmDraw();fc=[];drawFc();cover="";$("prev").style.display="none";$("dup").style.display="none";
   $("form").classList.remove("open");$("ad").classList.remove("open");save();render();show(it.id)};
 boot();
 (function(){const vv=window.visualViewport;if(!vv)return;const de=document.documentElement;
@@ -1468,7 +1487,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794877891";
+const BUILD="1794878134";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
