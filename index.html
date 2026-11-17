@@ -197,7 +197,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:15px;padding:12px;cu
 #lgs textarea{border:0;background:none;border-radius:0;padding:14px 16px;min-height:200px;margin:0;resize:none}
 .tg{display:flex;justify-content:space-around;padding:18px 0}.tg button{background:none;border:0;color:var(--st);font:inherit;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}.tg button.on{color:var(--tx)}
 .seg{overflow-x:auto;scrollbar-width:none}.seg button{flex:1 0 auto;padding:7px 12px;white-space:nowrap}
-#le{z-index:22}#ad{z-index:19}
+#le{z-index:22}#ad{z-index:31}
 .ca{display:flex;flex-wrap:wrap;gap:6px}.cp{background:var(--tab);color:var(--tx);border-radius:4px;padding:7px 10px;font-size:13px}.cp small{display:block;color:var(--mute);font-size:11px;margin-top:1px}
 .cr{display:flex;align-items:center;gap:14px;padding:9px 2px;border-bottom:1px solid var(--line)}
 .cr b{display:block;color:var(--tx);font-weight:500;font-size:17px;line-height:1.2}.cr small{display:block;color:var(--mute);font-size:14px;margin-top:1px}
@@ -1515,7 +1515,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794943828";
+const BUILD="1794944752";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
