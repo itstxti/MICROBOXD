@@ -695,7 +695,7 @@ function show(id,keep){
   ${revsSec(i)}
   <div class="seg d">${[["cast","Reparto"],["inf","Detalles"],["trp","Temas"]].map(([k,l])=>`<button class="${dtab===k?"on":""}" onclick="setDt('${k}',${i.id})">${l}</button>`).join("")}</div>
   ${dt(i)}${simSec(i)}${lstSec(i)}</div>`;
-  d.classList.add("open");d.scrollTop=keep?y:0;detSc();{const q=d.querySelector(".syn");if(q&&q.scrollHeight>q.clientHeight+2)q.classList.add("cl")}fitTr(d);loadStat(i);loadRevs(i);loadWb(i);
+  d.classList.add("open");d.scrollTop=keep?y:0;detSc();{const q=d.querySelector(".syn");if(q&&q.scrollHeight>q.clientHeight+2){q.style.transition="none";q.classList.add("cl");void q.offsetHeight;q.style.transition=""}}fitTr(d);loadStat(i);loadRevs(i);loadWb(i);
 }
 const detSc=()=>{const t=document.querySelector('#det .top');if(t)t.classList.toggle('sc',$('det').scrollTop>150)};$('det').addEventListener('scroll',detSc);
 const setDt=(k,id)=>{dtab=k;show(id,true)};
@@ -1505,7 +1505,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794878359";
+const BUILD="1794903100";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
