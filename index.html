@@ -410,7 +410,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
       <input id="f-title" placeholder="Ej. Mi CEO favorito" autocomplete="off">
       <div class="warn" id="dup"></div></div>
       <div><label class="fl" for="f-app">App</label>
-      <select id="f-app"></select><button type="button" id="f-appdel" class="link" style="display:none;margin-top:8px;background:none;border:0;padding:0;font:inherit;color:var(--g);text-align:left;cursor:pointer" onclick="appDel()"></button><input id="f-app2" maxlength="30" placeholder="Nombre de la plataforma" style="display:none;margin-top:8px;width:100%;box-sizing:border-box"></div>
+      <select id="f-app"></select><div class="link" style="margin-top:8px;cursor:pointer;font-size:14px" id="f-appmg" onclick="platOpen()">Gestionar plataformas</div><input id="f-app2" maxlength="30" placeholder="Nombre de la plataforma" style="display:none;margin-top:8px;width:100%;box-sizing:border-box"></div>
     </div>
   </div>
   <label class="fl" for="f-syn">Sinopsis</label>
@@ -516,14 +516,20 @@ const rel=ts=>{const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return LANG==="es"
 const adt=(wd,ts)=>fsh(wd?Date.parse(wd+"T12:00:00"):ts);
 const addLog=(t,i)=>{log.unshift({t,id:i.id,title:i.title,r:i.rating,ts:Date.now()});log=log.slice(0,100)};
 let appPrev="DramaBox";
-function fmApps(sel){const s=$("f-app"),o=appsAll();if(sel&&!o.some(x=>x.toLowerCase()===sel.toLowerCase()))o.push(sel);s.innerHTML=o.map(a=>`<option>${esc(a)}</option>`).join("")+`<option value="__new">＋ ${L2("Añadir plataforma…","Add platform…")}</option>`;s.value=sel&&o.includes(sel)?sel:o[0];appPrev=s.value;$("f-app2").style.display="none";appDelUi();$("f-app2").placeholder=L2("Nombre de la plataforma","Platform name")}
+function fmApps(sel){const s=$("f-app"),o=appsAll();if(sel&&!o.some(x=>x.toLowerCase()===sel.toLowerCase()))o.push(sel);s.innerHTML=o.map(a=>`<option>${esc(a)}</option>`).join("")+`<option value="__new">＋ ${L2("Añadir plataforma…","Add platform…")}</option>`;s.value=sel&&o.includes(sel)?sel:o[0];appPrev=s.value;$("f-app2").style.display="none";appDelUi();$("f-app2").placeholder=L2("Nombre de la plataforma","Platform name");$("f-appmg").textContent=L2("Gestionar plataformas","Manage platforms")}
 const appBase=a=>APPS0.some(x=>x.toLowerCase()===(a||"").toLowerCase());
-function appDelUi(){const v=$("f-app").value,b=$("f-appdel");b.style.display=v&&v!=="__new"&&!appBase(v)?"block":"none";b.textContent=L2("Eliminar plataforma “"+v+"”","Delete platform “"+v+"”")}
-async function appDel(){const s=$("f-app"),v=s.value;if(!v||v==="__new"||appBase(v))return;
-  const n=catAll().filter(i=>(i.app||"").trim().toLowerCase()===v.toLowerCase()).length;
-  if(n){toast(L2(n+(n===1?" serie usa":" series usan")+" esta plataforma","In use by "+n+" series"));return}
-  if(sb&&U){const r=await sb.from("platforms").delete().ilike("name",v.replace(/[%_\\]/g,"\\$&")).select("id");if(r.error||(PLT.some(x=>x.toLowerCase()===v.toLowerCase())&&!(r.data||[]).length)){toast(L2("Solo quien la creó puede eliminarla","Only its creator can delete it"));return}}
-  PLT=PLT.filter(x=>x.toLowerCase()!==v.toLowerCase());fmApps();toast(L2("Plataforma eliminada","Platform deleted"))}
+function appDelUi(){}
+const appN=v=>catAll().filter(i=>(i.app||"").trim().toLowerCase()===v.toLowerCase()).length;
+function platOpen(){const o=appsAll(),rows=o.map((a,k)=>{const n=appN(a),base=appBase(a),can=!base&&!n;
+  return `<div style="display:flex;align-items:center;gap:10px;padding:11px 15px;border-top:1px solid var(--bg)"><div style="flex:1;min-width:0"><div style="font-size:15px;color:var(--tx);overflow:hidden;text-overflow:ellipsis">${esc(a)}</div><small style="color:var(--mute)">${n} ${L2(n===1?"serie":"series","series")}${base?" · "+L2("fija","built-in"):""}</small></div>${can?`<button class="pdel" data-a="${esc(a)}" onclick="platDel(this.dataset.a)" style="background:none;border:0;color:var(--o);font:inherit;font-size:14px;padding:6px;cursor:pointer">${L2("Eliminar","Delete")}</button>`:!base?`<small style="color:var(--mute);text-align:right;max-width:120px">${L2("En uso","In use")}</small>`:""}</div>`}).join("");
+  $("ov").innerHTML=`<div class="card"><div class="ot"><b>${L2("Plataformas","Platforms")}</b><span>${L2("Solo se pueden eliminar si ninguna serie las usa","Can only be deleted when no series use them")}</span></div><div style="max-height:50vh;overflow-y:auto">${rows}</div><div style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--bg)"><input id="pl-n" maxlength="30" placeholder="${L2("Nueva plataforma","New platform")}" style="flex:1;min-width:0;background:var(--bg);border:0;border-radius:10px;padding:10px 12px;color:var(--tx);font:inherit;font-size:15px;outline:0" onkeydown="if(event.key==='Enter'){event.preventDefault();platAdd()}"><button onclick="platAdd()" style="background:var(--g);border:0;border-radius:10px;color:#fff;font:inherit;font-weight:700;padding:0 14px;cursor:pointer">${L2("Añadir","Add")}</button></div></div><button class="card" onclick="platClose()">${L2("Listo","Done")}</button>`;$("ov").classList.add("open")}
+function platClose(){const v=$("f-app").value;closeOv();fmApps(v==="__new"?"":v)}
+function platAdd(){const inp=$("pl-n"),v=inp.value.trim().replace(/\s+/g," ").slice(0,30);if(!v)return;
+  if(appsAll().some(x=>x.toLowerCase()===v.toLowerCase())){toast(L2("Ya existe","Already exists"));return}
+  PLT.push(v);if(sb&&U)sb.from("platforms").insert({name:v}).then(r=>{if(r.error)console.error(r.error)});platOpen()}
+async function platDel(v){if(appN(v)){toast(L2("Hay series con esta plataforma","Some series use this platform"));return}
+  if(sb&&U&&PLT.some(x=>x.toLowerCase()===v.toLowerCase())){const r=await sb.from("platforms").delete().ilike("name",v.replace(/[%_\\]/g,"\\$&")).select("id");if(r.error||!(r.data||[]).length){toast(L2("Solo quien la creó puede eliminarla","Only its creator can delete it"));return}}
+  PLT=PLT.filter(x=>x.toLowerCase()!==v.toLowerCase());platOpen();toast(L2("Plataforma eliminada","Platform deleted"))}
 function appCommit(){const s=$("f-app"),inp=$("f-app2"),v=inp.value.trim().replace(/\s+/g," ").slice(0,30);
   if(!v){s.value=appPrev;inp.style.display="none";return}
   const ex=[...s.options].find(o=>o.value!=="__new"&&o.value.toLowerCase()===v.toLowerCase());
@@ -1524,7 +1530,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794945722";
+const BUILD="1794946097";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
