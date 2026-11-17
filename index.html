@@ -410,7 +410,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
       <input id="f-title" placeholder="Ej. Mi CEO favorito" autocomplete="off">
       <div class="warn" id="dup"></div></div>
       <div><label class="fl" for="f-app">App</label>
-      <select id="f-app"></select><input id="f-app2" maxlength="30" placeholder="Nombre de la plataforma" style="display:none;margin-top:8px;width:100%;box-sizing:border-box"></div>
+      <select id="f-app"></select><button type="button" id="f-appdel" class="link" style="display:none;margin-top:8px;background:none;border:0;padding:0;font:inherit;color:var(--g);text-align:left;cursor:pointer" onclick="appDel()"></button><input id="f-app2" maxlength="30" placeholder="Nombre de la plataforma" style="display:none;margin-top:8px;width:100%;box-sizing:border-box"></div>
     </div>
   </div>
   <label class="fl" for="f-syn">Sinopsis</label>
@@ -478,7 +478,8 @@ if(navigator.share){const os=navigator.share.bind(navigator);navigator.share=d=>
 if(navigator.clipboard&&navigator.clipboard.writeText){const ow=navigator.clipboard.writeText.bind(navigator.clipboard);navigator.clipboard.writeText=t=>ow(T(t))}
 })();
 const APPS0=["DramaBox","ReelShort","ShortMax","GoodShort","FlexTV"];
-const appsAll=()=>{const o=[...APPS0];catAll().forEach(i=>{const a=(i.app||"").trim();if(a&&!o.some(x=>x.toLowerCase()===a.toLowerCase()))o.push(a)});return o};
+let PLT=[];
+const appsAll=()=>{const o=[...APPS0];PLT.forEach(a=>{if(!o.some(x=>x.toLowerCase()===a.toLowerCase()))o.push(a)});catAll().forEach(i=>{const a=(i.app||"").trim();if(a&&!o.some(x=>x.toLowerCase()===a.toLowerCase()))o.push(a)});return o};
 const KEY="microboxd:v1";
 let DEN=[];
 let prof={name:"",fam:"",email:"",loc:"",web:"",bio:"",pron:"",fav:[]},items=[],log=[],lists=[],sq="s",sf=0,adq="",tab="home",q="",cover="";
@@ -515,13 +516,20 @@ const rel=ts=>{const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return LANG==="es"
 const adt=(wd,ts)=>fsh(wd?Date.parse(wd+"T12:00:00"):ts);
 const addLog=(t,i)=>{log.unshift({t,id:i.id,title:i.title,r:i.rating,ts:Date.now()});log=log.slice(0,100)};
 let appPrev="DramaBox";
-function fmApps(sel){const s=$("f-app"),o=appsAll();if(sel&&!o.some(x=>x.toLowerCase()===sel.toLowerCase()))o.push(sel);s.innerHTML=o.map(a=>`<option>${esc(a)}</option>`).join("")+`<option value="__new">＋ ${L2("Añadir plataforma…","Add platform…")}</option>`;s.value=sel&&o.includes(sel)?sel:o[0];appPrev=s.value;$("f-app2").style.display="none";$("f-app2").placeholder=L2("Nombre de la plataforma","Platform name")}
+function fmApps(sel){const s=$("f-app"),o=appsAll();if(sel&&!o.some(x=>x.toLowerCase()===sel.toLowerCase()))o.push(sel);s.innerHTML=o.map(a=>`<option>${esc(a)}</option>`).join("")+`<option value="__new">＋ ${L2("Añadir plataforma…","Add platform…")}</option>`;s.value=sel&&o.includes(sel)?sel:o[0];appPrev=s.value;$("f-app2").style.display="none";appDelUi();$("f-app2").placeholder=L2("Nombre de la plataforma","Platform name")}
+const appBase=a=>APPS0.some(x=>x.toLowerCase()===(a||"").toLowerCase());
+function appDelUi(){const v=$("f-app").value,b=$("f-appdel");b.style.display=v&&v!=="__new"&&!appBase(v)?"block":"none";b.textContent=L2("Eliminar plataforma “"+v+"”","Delete platform “"+v+"”")}
+async function appDel(){const s=$("f-app"),v=s.value;if(!v||v==="__new"||appBase(v))return;
+  const n=catAll().filter(i=>(i.app||"").trim().toLowerCase()===v.toLowerCase()).length;
+  if(n){toast(L2(n+(n===1?" serie usa":" series usan")+" esta plataforma","In use by "+n+" series"));return}
+  if(sb&&U){const r=await sb.from("platforms").delete().ilike("name",v.replace(/[%_\\]/g,"\\$&")).select("id");if(r.error||(PLT.some(x=>x.toLowerCase()===v.toLowerCase())&&!(r.data||[]).length)){toast(L2("Solo quien la creó puede eliminarla","Only its creator can delete it"));return}}
+  PLT=PLT.filter(x=>x.toLowerCase()!==v.toLowerCase());fmApps();toast(L2("Plataforma eliminada","Platform deleted"))}
 function appCommit(){const s=$("f-app"),inp=$("f-app2"),v=inp.value.trim().replace(/\s+/g," ").slice(0,30);
   if(!v){s.value=appPrev;inp.style.display="none";return}
   const ex=[...s.options].find(o=>o.value!=="__new"&&o.value.toLowerCase()===v.toLowerCase());
-  if(ex)s.value=ex.value;else{s.add(new Option(v,v),s.options[s.options.length-1]);s.value=v}
-  appPrev=s.value;inp.value="";inp.style.display="none"}
-$("f-app").onchange=()=>{const s=$("f-app");if(s.value==="__new"){const inp=$("f-app2");inp.style.display="block";inp.value="";inp.focus()}else{appPrev=s.value;$("f-app2").style.display="none"}};
+  if(ex)s.value=ex.value;else{s.add(new Option(v,v),s.options[s.options.length-1]);s.value=v;if(sb&&U&&!PLT.some(x=>x.toLowerCase()===v.toLowerCase())&&!appBase(v)){PLT.push(v);sb.from("platforms").insert({name:v}).then(r=>{if(r.error)console.error(r.error)})}}
+  appPrev=s.value;appDelUi();inp.value="";inp.style.display="none"}
+$("f-app").onchange=()=>{const s=$("f-app");if(s.value==="__new"){const inp=$("f-app2");inp.style.display="block";inp.value="";inp.focus()}else{appPrev=s.value;$("f-app2").style.display="none";appDelUi()}};
 $("f-app2").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();appCommit()}};$("f-app2").onblur=appCommit;
 $("f-app").innerHTML=APPS0.map(a=>`<option>${a}</option>`).join("")+`<option value="__new">＋ Añadir plataforma…</option>`;
 
@@ -993,6 +1001,7 @@ async function pull(){
    sb.from("profiles").select("*").eq("id",uid).single(),
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
    sb.from("follows").select("followee_id").eq("follower_id",uid)]);
+  try{const pr=await sb.from("platforms").select("name");if(!pr.error)PLT=(pr.data||[]).map(x=>x.name)}catch(_){}
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));const dc={};DEN=b.data.map(x=>({id:x.id,iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers}));b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
   items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:stIn(r),watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
@@ -1515,7 +1524,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794944752";
+const BUILD="1794945722";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
