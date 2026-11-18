@@ -109,7 +109,7 @@ select,input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--p
 .sheet{position:fixed;inset:0 0 auto 0;height:var(--H,100%);background:var(--bg);overflow-y:auto;z-index:20;display:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--kb,0px))}
 .sheet.open{display:block;animation:mbIn .26s cubic-bezier(.2,.8,.2,1)}#form.open{animation-name:mbUp}.sheet.out{animation:mbOut .2s ease-in forwards;pointer-events:none}
 @keyframes mbSUp{from{transform:translateY(100%)}to{transform:none}}@keyframes mbSDn{to{transform:translateY(100%)}}
-#fp.bf.open{animation:mbSUp .34s cubic-bezier(.2,.8,.2,1)}#fp.bf.out{animation:mbSDn .26s cubic-bezier(.5,0,.8,.4) forwards;pointer-events:none}
+#fp.bf::before{display:none}#fp.bf.open{animation:mbSUp .34s cubic-bezier(.2,.8,.2,1)}#fp.bf.out{animation:mbSDn .26s cubic-bezier(.5,0,.8,.4) forwards;pointer-events:none}
 @keyframes mbIn{from{transform:translateX(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbUp{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbOut{to{transform:translateX(28px);opacity:0}}
@@ -1579,7 +1579,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794961257";
+const BUILD="1794961468";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
