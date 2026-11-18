@@ -1062,7 +1062,7 @@ let br=[];
 const BRR=[["apps","Aplicación"],["tropes","Tema"],["pop","Más populares"],["top","Mejor valoradas"],["recent","Añadidas recientemente"],["lists","Listas"],["all","Todas las series"]];
 const brTitle=n=>({apps:"Aplicación",tropes:"Tema",app:n.v,trope:n.v,pop:"Más populares",top:"Mejor valoradas",recent:"Añadidas recientemente",lists:"Listas",all:"Todas las series"}[n.t]);
 const brPush=(t,v)=>{br.push({t,v});render();$("mn").scrollTop=0};
-const brBack=()=>{br.pop();render();$("mn").scrollTop=0};
+const brBack=()=>{if(DSK()&&br.length<=1){br=[];go("home");return}br.pop();render();$("mn").scrollTop=0};
 function brBody(){const n=br[br.length-1],rows=(a,t)=>a.map(([l,c])=>`<div class="br" data-v="${esc(l)}" onclick="brPush('${t}',this.dataset.v)">${esc(l)}<span>${c} ›</span></div>`).join("");
   if(n.t==="apps")return rows(appsAll().map(a=>[a,catAll().filter(i=>i.app===a).length]),"app");
   if(n.t==="tropes"){const tm=new Map();catAll().forEach(i=>{const seen=new Set();(i.tropes||[]).forEach(t=>{const k=tkey(t);if(!k)return;if(!tm.has(k))tm.set(k,{l:t.trim(),n:0});if(!seen.has(k)){seen.add(k);tm.get(k).n++}})});const tr=[...tm.values()];return tr.length?rows(tr.map(x=>[x.l,x.n]),"trope"):EMP("tag",L2("Aún no hay temas","No themes yet"),L2("Los temas de tus series aparecerán aquí.","Themes from your series will show up here."))}
