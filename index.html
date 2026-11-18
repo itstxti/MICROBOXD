@@ -451,7 +451,55 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 /* feedback al pulsar en más elementos */
 .btn,.tag,.tile,.tgc,.emb,nav button,.hb2,.mfl,.oi{transition:transform .12s ease,opacity .12s,background-color .15s}
 @media (hover:none){.btn:active:not(:disabled),.tag:active,.tile:active,.tgc:active,nav button:active,.hb2:active,.mfl:active{transform:scale(.94)}.oi:active{opacity:.7}}
-.tpr{margin-top:10px}.tpr .tag{margin:0 4px 5px 0}@keyframes mbTin{from{opacity:0;transform:translateY(-5px) scale(.96)}to{opacity:1;transform:none}}.tpr .tag.tin{animation:mbTin .28s cubic-bezier(.2,.7,.2,1) both}.tpr .tmore{color:var(--tx);border-color:var(--mute)}.fb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:7px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}.fb b{font-family:Georgia,serif;font-size:12px;line-height:1.15}.fb small{font-size:8px;letter-spacing:1px;text-transform:uppercase;opacity:.85}.fm .fs{position:sticky;bottom:0;padding:18px 0 6px;margin-top:8px;background:linear-gradient(transparent,var(--bg) 40%)}.fm .fs .btn{width:100%;height:48px;font-size:16px;border-radius:10px}html.kbd .fm .fs{position:static;background:none}.strip .fb{padding:2px}.strip .fb b,.strip .fb small{display:none}</style>
+.tpr{margin-top:10px}.tpr .tag{margin:0 4px 5px 0}@keyframes mbTin{from{opacity:0;transform:translateY(-5px) scale(.96)}to{opacity:1;transform:none}}.tpr .tag.tin{animation:mbTin .28s cubic-bezier(.2,.7,.2,1) both}.tpr .tmore{color:var(--tx);border-color:var(--mute)}.fb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:7px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}.fb b{font-family:Georgia,serif;font-size:12px;line-height:1.15}.fb small{font-size:8px;letter-spacing:1px;text-transform:uppercase;opacity:.85}.fm .fs{position:sticky;bottom:0;padding:18px 0 6px;margin-top:8px;background:linear-gradient(transparent,var(--bg) 40%)}.fm .fs .btn{width:100%;height:48px;font-size:16px;border-radius:10px}html.kbd .fm .fs{position:static;background:none}.strip .fb{padding:2px}.strip .fb b,.strip .fb small{display:none}
+/* Escritorio: pantalla Explorar (va al final para ganar a las reglas móviles de .insr) */
+@media (min-width:1024px){
+ html.insr header{height:auto;overflow:visible;position:relative;padding:16px var(--dw) 10px;background:var(--bg)}
+ html.insr header .sbw{position:static;transform:none!important;height:auto;padding:0;display:block;background:none;transition:none}
+ html.insr header .sbw .sbr{width:100%;max-width:none;margin:0}
+ html.insr header .sbw .sb{height:44px!important;border-radius:10px}
+ html.insr header .sbw .sb input{font-size:16px}
+ html.insr header .sbc{display:none!important}
+ html.insr #dn .dns{display:none}
+ html.insr #spl{position:static;height:0;overflow:hidden;opacity:0;transition:none}
+ html.insr.sfoc #spl{height:56px;opacity:1}
+ #spl .ptabs,.ptabs{background:none;padding:0;height:56px;align-items:center}
+ .ptabs button{font-size:15px;padding:6px 14px}
+}
+
+/* Perfil (Letterboxd-like) */
+.dpf,.dpb{display:none}.dpo{display:contents}
+@media (min-width:1024px){
+ html.dpr header{display:none}html.dpr main{padding-top:0}
+ .dpf{display:block}
+ .dph{display:flex;align-items:flex-start;gap:26px;padding:36px 0 26px}
+ .dpf .av{width:124px;height:124px;border-radius:50%;flex:none;border:1px solid var(--line)}
+ .dpi{min-width:0;flex:1}.dpn{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.dpn h2{margin:0;color:var(--tx);font-size:30px;line-height:1.15}
+ .dpe{background:var(--tab);color:#fff;border:0;border-radius:3px;padding:8px 13px;font:inherit;font-size:11.5px;font-weight:700;letter-spacing:1.2px;cursor:pointer}.dpe:hover{filter:brightness(1.12)}
+ .dpm{width:32px;height:24px;border:0;border-radius:12px;background:var(--tab);color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0;letter-spacing:1px}.dpm:hover{filter:brightness(1.12)}
+ .dpx{display:flex;align-items:center;gap:6px;margin-top:10px;color:var(--mute);font-size:14px}.dpx a{color:var(--b);text-decoration:none}
+ .dpb2{margin:12px 0 0;color:var(--tx);font-size:15px;line-height:1.5;white-space:pre-wrap;max-width:520px}
+ .dps{display:flex;margin-left:auto;padding-top:4px}.dps>div{padding:0 18px;text-align:center;border-left:1px solid var(--line)}.dps>div:first-child{border-left:0}.dps .lk{cursor:pointer}.dps .lk:hover b{color:var(--g)}
+ .dps b{display:block;color:var(--tx);font-size:28px;line-height:1.15;font-weight:600}.dps span{font-size:10.5px;letter-spacing:1.3px;color:var(--mute)}
+ .dpt{display:flex;align-items:center;justify-content:center;gap:28px;border:1px solid var(--line);border-radius:4px;background:rgba(255,255,255,.03);padding:0 18px;position:relative;flex-wrap:wrap}
+ .dpt a{padding:15px 0 13px;font-size:15px;color:var(--mute);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s}.dpt a:hover{color:var(--tx)}.dpt a.on{color:var(--tx);border-bottom-color:var(--g)}
+ .dpt .dpn2{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+ .dpo{display:block;padding-top:6px}
+ .dpb{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start}
+ .dpl>.dsh:first-child,.dpsd>.dsh:first-child{margin-top:30px}
+ .dpsd .dsh a{font-size:12px;letter-spacing:1px}.dpl .dsh a{cursor:pointer}
+ .dfav{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0}
+ .dpf .dsh,.dpb .dsh{margin:34px 0 14px}.dpl>.dsh:first-child,.dpsd>.dsh:first-child{margin-top:30px}
+ .dpb .drv h4{font-family:Georgia,serif;font-size:21px}.dpb .drv .m{margin:5px 0 9px}.dpb .drv p{font-size:15px}.dpb .drp{flex:0 0 88px}
+ .dstrip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;border-radius:4px;overflow:hidden}.dstrip .poster{border-radius:0;border-width:0 0 0 0;outline:1px solid rgba(255,255,255,.12);outline-offset:-1px}.dstrip .poster:hover{outline:2px solid var(--g);outline-offset:-2px}
+ .dpem{color:var(--mute);font-size:14px}
+ .dpd{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}.dpd:last-child{border-bottom:0}
+ .dpd .cal{flex:none;width:42px;height:46px;border-radius:4px;background:var(--pan);display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;box-sizing:border-box;color:var(--mute);font-size:11px;letter-spacing:.5px}.dpd .cal small{font-size:11px}
+ .dpdl{flex:1;min-width:0}.dpe2{display:flex;gap:10px;padding:3px 0;font-size:14.5px;color:var(--tx);cursor:pointer}.dpe2 i{font-style:normal;color:var(--mute);width:20px;text-align:right;flex:none}.dpe2:hover span{color:var(--g)}
+ .dpsd .mh{padding:6px 0 0;align-items:flex-end}.dpsd .mh .bars{height:64px;gap:3px}
+ .dpl2{margin-bottom:16px;cursor:pointer}.dpln{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:14px;color:var(--tx)}.dpln span{color:var(--mute);font-size:12px;white-space:nowrap}.dpl2:hover .dpln b{color:var(--g)}
+}
+</style>
 </head>
 <body>
 <nav id="dn"></nav>
@@ -647,6 +695,7 @@ const SBH=()=>`<div class="sbw"><div class="sbr"><div class="sb">${svg(IC.search
 function sCancel(){q="";sf=0;const i=$("qi");if(i){i.value="";i.blur()}const c=document.querySelector(".sbc");if(c)c.classList.add("x");sr();setTimeout(()=>{if(tab==="search"&&!sf&&!q.trim()){if(c){c.style.display="none";c.classList.remove("x")}spl("")}},320)}
 function render(){
   document.documentElement.classList.toggle("dh",tab==="home");
+  document.documentElement.classList.toggle("dpr",tab==="me");
   const titles={home:LOGO+"Microboxd",search:"Buscar",act:"Actividad",me:esc(uname())};
   const sg=SEGS[tab];
   const bn=tab==="search"&&br.length&&!q.trim()?br[br.length-1]:null;
@@ -683,6 +732,7 @@ function render(){
       <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(inWl).length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
     }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(inWl);h=w.length?bfGrid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
   }
+  if(tab==="me"){if(MYFO===null)loadMyFo();h=dpfHead()+(seg.me==="perfil"?`<div class="mro">${h}</div>`+dprof():`<div class="dpo">${h}</div>`)}
   $("mn").innerHTML=h;if(tab==="search")sr();else sfx();setNh();
 }
 const spl=h=>{const e=$("spl");if(e)e.innerHTML=h};let SRL=null,SRM=null;
@@ -808,6 +858,35 @@ function fvDrag(e){const el=e.target.closest(".fvp[data-k]");if(!el||e.target.cl
    const r=box.getBoundingClientRect(),k1=Math.max(0,Math.min(sd.fav.length-1,Math.floor((ev.clientX-r.left)/(r.width/4))));if(ev.type==="pointerup"&&k1!==k0){const[m]=sd.fav.splice(k0,1);sd.fav.splice(k1,0,m)}drawSet()};
   addEventListener("pointermove",mv,{passive:false});addEventListener("pointerup",up);addEventListener("pointercancel",up)}
 function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>prof[k]=(sd[k]||"").trim());prof.fav=sd.fav.filter(id=>get(id));prof.av=sd.av||"";prof.avd=sd.avd||"";setMe();save();$("set").classList.remove("open");render()}
+const dFmt=(wd,o)=>{try{return new Date(wd+"T12:00:00").toLocaleDateString(LANG==="es"?"es-ES":"en-GB",o||{day:"numeric",month:"short",year:"numeric"})}catch(e){return wd}};
+function dpfHead(){
+  const yr=new Date().getFullYear(),dn=items.filter(i=>i.status==="done"||i.rating||(i.dcount||0)>0),ty=items.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,wu=typeof webUrl==="function"?webUrl(prof.web):"";
+  const nm=[prof.name,prof.fam].map(x=>(x||"").trim()).filter(Boolean).join(" ");
+  const st=(n,l,fn,id)=>`<div${fn?` class="lk" onclick="${fn}"`:""}><b${id?` id="${id}"`:""}>${n}</b><span>${l}</span></div>`;
+  const T=[["perfil",L2("Perfil","Profile"),"setSeg('perfil')"],["all",L2("Series","Series"),"openAll()"],["diary",L2("Diario","Diary"),"setSeg('diary')"],["rev",L2("Reseñas","Reviews"),"openRev()"],["pend","Watchlist","setSeg('pend')"],["lst",L2("Listas","Lists"),"setSeg('lst')"],["lk",L2("Me gusta","Likes"),"openLikes()"],["tg",L2("Etiquetas","Tags"),"openTags()"],["stt",L2("Estadísticas","Stats"),"openStats(null)"]];
+  return `<div class="dpf"><div class="dph"><div class="av big">${ini()}</div><div class="dpi"><div class="dpn"><h2>${esc(uname())}</h2><button class="dpe" onclick="openSet()">${L2("EDITAR PERFIL","EDIT PROFILE")}</button><button class="dpm" aria-label="${L2("Más","More")}" onclick="meOpts()">•••</button></div>${nm&&nm!==uname()?`<div class="dpx">${esc(nm)}</div>`:""}${prof.bio?`<p class="dpb2">${esc(prof.bio)}</p>`:""}${prof.loc?`<div class="dpx">${svg(PIN,14)}${esc(prof.loc)}</div>`:""}${wu?`<div class="dpx"><a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a></div>`:""}</div>
+  <div class="dps">${st(items.length,"SERIES","openAll()")}${st(ty,L2("ESTE AÑO","THIS YEAR"),"setSeg('diary')")}${st(lists.length,L2("LISTAS","LISTS"),"setSeg('lst')")}${st(FW.size,L2("SIGUIENDO","FOLLOWING"),"openFol('${U.id}','ing')")}${st(MYFO===null?"–":MYFO,L2("SEGUIDORES","FOLLOWERS"),"openFol('${U.id}','ers')","dpfo")}</div></div>
+  <div class="dpt">${T.map(([k,l,fn])=>`<a class="${seg.me===k?"on":""}" onclick="${fn}">${l}</a>`).join("")}${seg.me==="lst"?`<button class="dpe dpn2" onclick="editList()">＋ ${L2("NUEVA LISTA","NEW LIST")}</button>`:""}</div></div>`}
+function dprof(){
+  const pf=(prof.fav||[]).map(get).filter(Boolean).slice(0,4),
+   rec=[...new Set(log.map(e=>e.id))].map(get).filter(Boolean).slice(0,4),
+   sh=(t,r,fn)=>`<div class="dsh"><span>${t}</span>${r!=null?`<a${fn?` onclick="${fn}"`:""}>${r}</a>`:""}</div>`,
+   strip=l=>l.length?`<div class="dstrip">${l.slice(0,5).map(poster).join("")}</div>`:"",
+   cellD=i=>`<div>${poster(i)}<div class="ss">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}</div></div>`;
+  const fav=sh(L2("Series favoritas","Favorite series"),null)+`<div class="grid dfav" onpointerdown="pfDrag(event)">${pf.map((i,k)=>`<div class="fvq" data-k="${k}">${cell(i)}</div>`).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-pf.length)}</div>`;
+  const act=rec.length?sh(L2("Actividad reciente","Recent activity"),L2("TODA","ALL"),"go('act')")+`<div class="grid dfav">${rec.map(cellD).join("")}</div>`:"";
+  const rv=DEN.filter(e=>e.t).slice(0,4).map(e=>{const i=get(e.iid);if(!i)return"";return `<div class="drv" onclick="show(${i.id})"><div class="drp">${nop(i)}</div><div><h4>${esc(short(i.title))}</h4><div class="m">${e.r?`<span class="fxst">${S(e.r)}</span> `:""}${L2("Visto el ","Watched ")}${dFmt(e.wd)}</div><p>${e.sp?`<i>⚠ ${L2("Contiene spoilers","Contains spoilers")}</i>`:esc(e.t.slice(0,420))}</p></div></div>`}).join("");
+  const rvs=rv?sh(L2("Reseñas recientes","Recent reviews"),L2("MÁS","MORE"),"openRev()")+rv:"";
+  const wl=items.filter(inWl),
+   mo={},ent=DEN.filter(e=>get(e.iid)).slice(0,12);ent.forEach(e=>{const k=e.wd.slice(0,7);(mo[k]=mo[k]||[]).push(e)});
+  const dia=Object.keys(mo).slice(0,4).map(k=>`<div class="dpd"><div class="cal"><small>${dFmt(k+"-15",{month:"short"}).toUpperCase()}</small></div><div class="dpdl">${mo[k].slice(0,4).map(e=>`<div class="dpe2" onclick="show(${get(e.iid).id})"><i>${+e.wd.slice(8,10)}</i><span>${esc(short(get(e.iid).title))}</span></div>`).join("")}</div></div>`).join("");
+  const b=Array(10).fill(0);items.forEach(i=>{if(i.rating){const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++}});const bm=Math.max(1,...b),rn=b.reduce((a,x)=>a+x,0);
+  const ls=lists.slice(0,3).map(l=>{const its=l.ids.map(get).filter(Boolean),n=its.length;return `<div class="dpl2" onclick="openList(${l.id})">${strip(its)}<div class="dpln"><b>${esc(l.name)}</b><span>${n} ${n===1?L2("serie","series"):"series"}</span></div></div>`}).join("");
+  return `<div class="dpb"><div class="dpl">${fav}${act}${rvs}</div><aside class="dpsd">
+  ${sh(L2("Watchlist","Watchlist"),wl.length,"setSeg('pend')")}${wl.length?strip(wl):`<div class="dpem">${L2("Tu watchlist está vacía.","Your watchlist is empty.")}</div>`}
+  ${dia?sh(L2("Diario","Diary"),DEN.length,"setSeg('diary')")+dia:""}
+  ${rn?sh(L2("Valoraciones","Ratings"),rn)+`<div class="mh"><span>★</span><div class="bars">${b.map(n=>`<u title="${n}" style="height:${Math.max(4,n/bm*100)}%"></u>`).join("")}</div><span>★★★★★</span></div>`:""}
+  ${ls?sh(L2("Listas recientes","Recent lists"),lists.length,"setSeg('lst')")+ls:""}</aside></div>`}
 const myHist=()=>{const b=Array(10).fill(0);items.forEach(i=>{if(i.rating){const j=Math.round(i.rating*2)-1;if(j>=0&&j<10)b[j]++}});const m=Math.max(1,...b);return `<div class="lbl">Valoraciones</div><div class="mh"><span>★</span><div class="bars">${b.map(n=>`<u title="${n}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><span>★★★★★</span></div>`};
 const setNh=()=>document.documentElement.style.setProperty("--nh",Math.max(0,innerHeight-$("tb").getBoundingClientRect().top)+"px");addEventListener("resize",setNh);
 function setSeg(k){seg[tab]=k;FEED=INC=HR=null;render();$("mn").scrollTop=0}
@@ -1279,7 +1358,7 @@ async function showAct(id,uid){const i=get(id);if(!i)return;closeOv();actU=uid||
 /* Siguiendo / Seguidores */
 let MYFO=null;
 async function loadMyFo(){if(!sb||!U)return;
-  try{const r=await sb.from("follows").select("*",{count:"exact",head:true}).eq("followee_id",U.id);if(r.error)throw r.error;MYFO=r.count||0;const c=$("myfo");if(c)c.textContent=MYFO}catch(e){console.error(e)}}
+  try{const r=await sb.from("follows").select("*",{count:"exact",head:true}).eq("followee_id",U.id);if(r.error)throw r.error;MYFO=r.count||0;const c=$("myfo");if(c)c.textContent=MYFO;const d=$("dpfo");if(d)d.textContent=MYFO}catch(e){console.error(e)}}
 async function openFol(uid,k){const ing=k==="ing",me=uid===U.id,t=ing?"Siguiendo":"Seguidores";
   subOpen(subBar(t)+'<div class="empty ld">Cargando…</div>');
   try{const a=await sb.from("follows").select(ing?"followee_id":"follower_id").eq(ing?"follower_id":"followee_id",uid).limit(1000);if(a.error)throw a.error;
