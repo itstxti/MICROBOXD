@@ -647,6 +647,21 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .dax .lsl{padding-top:18px}
  .dax .empty{padding:36px 0}
 
+ /* Reseña (escritorio): como la página de reseña de Letterboxd */
+ .rvd-in{display:grid;grid-template-columns:188px minmax(0,1fr) 288px;gap:46px;align-items:start;padding:26px var(--dw) 70px}
+ .rvd-po{cursor:pointer}.rvd-po .poster{width:100%;border-radius:4px;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+ .rvd-m{min-width:0}
+ .rvd-by{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--mute);font-size:15px;cursor:pointer}.rvd-by b{color:var(--tx)}
+ .rvd-by .av{flex:none}
+ .rvd-ti{display:block;min-height:0;margin:18px 0 0;text-align:left;letter-spacing:0;font-family:Georgia,serif;font-size:32px;line-height:1.15;font-weight:700;color:var(--tx);cursor:pointer}
+ .rvd-ti small{font:400 22px Georgia,serif;color:var(--mute);margin-left:4px}
+ .rvd-sr{margin-top:12px;color:var(--g);font-size:22px;letter-spacing:2px;min-height:6px}.rvd-sr .rvhe{letter-spacing:0;margin-left:4px}
+ .rvd-wd{margin-top:10px;color:var(--mute);font-size:15px}
+ .rvd-tx{white-space:pre-wrap;margin:16px 0 0;font-family:Georgia,serif;font-size:19px;line-height:1.5;color:#b4c1cd}
+ .rvd .rvlk{margin-top:20px}
+ .rvd .tgs{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+ .rvd .tgc{height:26px;line-height:26px;font-size:13px;padding:0 15px 0 8px;background:var(--tab);color:#9ab;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%)}
+ .rvd-r .pnl{margin-bottom:0}
  /* Ficha de serie (escritorio): como la página de película de Letterboxd */
  .dbk{display:block;position:absolute;top:0;left:0;right:0;height:340px;overflow:hidden;pointer-events:none;z-index:0}
  .dbk i{position:absolute;inset:0;background-size:cover;background-position:center 22%;filter:blur(22px) brightness(.55) saturate(1.15);transform:scale(1.2)}
@@ -694,20 +709,39 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .lgd-tg{flex:1;min-width:0}
  .lgd-lb{font-size:15px;color:var(--tx);margin-bottom:8px;height:20px}.lgd-lb small{color:var(--mute);font-size:14px;margin-left:14px}
  .lgd .tgr{background:#c8d6e5;border:0;border-radius:3px;min-height:42px;padding:6px 10px;gap:6px}.lgd .tgph{color:#667788;font-size:15px}.lgd .tgr .tgc{background:#445566;color:#fff}
- .lgd-tg{position:relative}.lgd-hint{font-size:12.5px;color:var(--mute);margin-left:10px;font-weight:400}
- .lgd .tgd{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:#c8d6e5;border-radius:3px;min-height:42px;padding:6px 10px;cursor:text;box-sizing:border-box}
- .lgd .tgdc{display:contents}
- .lgd .tgd .tgc{background:#445566;color:#fff;height:28px;font-size:14px;padding:0 16px 0 10px;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
- .lgd .tgd .tgc i{font-style:normal;opacity:.6;margin-left:7px;font-size:15px}.lgd .tgd .tgc:hover i{opacity:1}
- .lgd .tgd input{flex:1;min-width:90px;background:none;border:0;outline:0;box-shadow:none;color:#14181c;font:inherit;font-size:15px;padding:0;margin:0;height:28px;width:auto}
- .lgd .tgd input::placeholder{color:#667788}
- .lgd .tgds{display:none;position:absolute;left:0;right:0;top:calc(100% + 2px);z-index:20;background:#c8d6e5;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.45);overflow:hidden}.lgd .tgds.open{display:block}
- .lgd .tgds div{padding:8px 12px;color:#14181c;font-size:15px;cursor:pointer}.lgd .tgds div.on,.lgd .tgds div:hover{background:#445566;color:#fff}
+ .lgd-tg{position:relative}.lgd-tg .lgd-lb:first-child{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.lgd-hint{font-size:14px;color:var(--mute);font-weight:400;margin:0!important;white-space:nowrap}
+ .lgd .tgd{display:block;background:none;padding:0;min-height:0}
+ .lgd .tgd input{display:block;width:100%;box-sizing:border-box;height:42px;background:#fff;border:0;outline:0;border-radius:4px;color:#14181c;font:inherit;font-size:18px;padding:0 12px;margin:0;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+ .lgd .tgd input:focus{box-shadow:0 2px 10px rgba(0,0,0,.45)}
+ .lgd .tgd input::placeholder{color:#8a99a8}
+ .lgd .tgdc{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.lgd .tgdc:empty{display:none}
+ .lgd .tgdc .tgc{background:rgba(0,0,0,.24);color:#a9b8c6;height:28px;font-size:14px;padding:0 18px 0 10px;cursor:pointer;border-radius:3px 0 0 3px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+ .lgd .tgdc .tgc i{font-style:normal;margin-left:7px;font-size:15px;color:#8fa0b0}.lgd .tgdc .tgc:hover i{color:#fff}
+ .lgd .tgds{display:none;position:absolute;left:0;right:0;top:56px;z-index:20;background:#fff;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.45);overflow:hidden}.lgd .tgds.open{display:block}
+ .lgd .tgds div{padding:9px 12px;color:#14181c;font-size:16px;cursor:pointer}.lgd .tgds div.on,.lgd .tgds div:hover{background:#e3eaf1}
  .lgd .sr .sx{font-size:36px;margin-right:2px;color:rgba(0,0,0,.28)}
  .lgd-lk .hb2{display:block;margin:0 auto}
  .lgd-f{display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:0 56px;height:80px;background:rgba(0,0,0,.14)}
  .lgd-sv{background:var(--g);color:#fff;border:0;border-radius:18px;padding:9px 20px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.lgd-sv:hover{filter:brightness(1.1)}
  .lgd-del{background:rgba(255,255,255,.14);color:var(--mute);border:0;border-radius:18px;padding:9px 20px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.lgd-del:hover{color:var(--tx)}
+ /* compacto: que todo quepa en pantallas bajas */
+ #lgs.lgd-on{inset:4vh auto auto 50%;max-height:92vh;width:920px;margin-left:max(-460px,calc(20px - 50vw))}
+ .lgd-h{height:54px}.lgd-h b{font-size:20px}.lgd-x{font-size:34px}
+ .lgd-b{gap:34px;padding:26px 40px 22px}
+ .lgd-p{width:150px}
+ .lgd-m h2{font-size:26px;margin:0 0 14px}.lgd-m h2 small{font-size:17px}
+ .lgd-r1{gap:10px 28px;margin-bottom:14px;font-size:15px}
+ .lgd-d input{padding:5px 8px;font-size:14px}
+ #lgs textarea.lgd-t{height:clamp(76px,15vh,120px);min-height:76px;font-size:15px;padding:10px}
+ .lgd-r2{margin-top:16px;gap:26px}
+ .lgd-lb{font-size:14px;margin-bottom:6px;height:18px}
+ .lgd .tgd input{height:38px;font-size:16px}
+ .lgd .tgds{top:62px}
+ .lgd .tgdc{margin-top:10px}
+ .lgd .sr .sx{font-size:30px}
+ .lgd-lk .hb2 svg{width:32px;height:32px}
+ .lgd-f{position:sticky;bottom:0;z-index:5;height:62px;padding:0 40px;background:linear-gradient(rgba(0,0,0,.14),rgba(0,0,0,.14)),var(--tab)}
+ .lgd-sv,.lgd-del{padding:8px 18px;font-size:15px}
 }
 </style>
 </head>
@@ -1222,11 +1256,11 @@ const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv
   return `<div class="tiles"><div class="tile g" onclick="openMem(${i.id})" style="cursor:pointer">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m" onclick="openRevs(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl" onclick="openLsts(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
 const pst=i=>{const nm=i._m!=null?i._m:(i.status==="done"?1:0),rv=i._rv!=null?i._rv:(i.review?1:0),ls=i._ls!=null?i._ls:lists.filter(l=>l.ids.includes(i.id)).length;
   return `<div class="pst"><span class="e" title="${L2("Miembros","Members")}" onclick="openMem(${i.id})">${AXI.e}${kfmt(nm)}</span><span class="r" title="${L2("Reseñas","Reviews")}" onclick="openRevs(${i.id})"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1z"/></svg>${kfmt(rv)}</span><span class="b" title="${L2("Listas","Lists")}" onclick="openLsts(${i.id})">${AXI.l}${kfmt(ls)}</span></div>`};
-const pnl=i=>{const id=i.id,dn=i.status==="done",log_=!!(i.watchedOn||i.deid);
+const pnl=(i,x)=>{x=x||{};const id=i.id,dn=i.status==="done",log_=!!(i.watchedOn||i.deid);
   return `<div class="pnl"><div class="pn3"><button class="kv ${dn?"on":""}" onclick="qv(${id},'v',1)">${svg((i.dcount||0)>1?EYEN(i.dcount):EYE,38)}${dn?(log_?L2("Registrada","Logged"):L2("Vista","Watched")):L2("Ver","Watch")}</button><button class="kl ${i.liked?"on":""}" onclick="qv(${id},'l',1)">${svg(HEART,38)}${i.liked?L2("Te gustó","Liked"):L2("Me gusta","Like")}</button><button class="kw ${inWl(i)?"on":""}" onclick="qv(${id},'w',1)">${svg(inWl(i)?CLOCKC:CLOCKP,38)}Watchlist</button></div>
   <div class="pnr"><div>${i.rating?L2("Puntuada","Rated"):L2("Puntúa","Rate")}</div><div class="sr big5" data-s="qr:${id}">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
   ${(i.dcount>0||log_)?`<button class="pnb" onclick="showAct(${id},'${U.id}')">${L2("Mostrar tu actividad","Show your activity")}</button>`:""}
-  <button class="pnb" onclick="openLog(${id})">${log_?L2("Reseñar o registrar otra vez…","Review or log again…"):L2("Reseñar o registrar…","Review or log…")}</button><button class="pnb" onclick="pickList(${id})">${L2("Añadir a listas…","Add to lists…")}</button><button class="pnb" onclick="shr(${id})">${L2("Compartir","Share")}</button></div>`};
+  ${x.ed?`<button class="pnb" onclick="openLog(${id},0,1,'${x.ed}')">${L2("Editar o eliminar reseña…","Edit or delete review…")}</button>`:""}<button class="pnb" onclick="openLog(${id})">${log_?L2("Reseñar o registrar otra vez…","Review or log again…"):L2("Reseñar o registrar…","Review or log…")}</button><button class="pnb" onclick="pickList(${id})">${L2("Añadir a listas…","Add to lists…")}</button><button class="pnb" onclick="shr(${id})">${x.rv?L2("Compartir esta reseña","Share this review"):L2("Compartir","Share")}</button></div>`};
 const wbSec=i=>{
   const wt=inWl(i)?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" ${x.id?`onclick="event.stopPropagation();openReview('${x.id}')"`:""}><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (ps.length?`<div class="wbs"><div class="wbh" onclick="openMem(${i.id},'fr')" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
@@ -1235,7 +1269,7 @@ const revSec=i=>{if(!i.review)return"";return `<div class="rvs"><div class="seg 
 const EYE='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',HEART='<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',WARN='<path d="M12 3L2 20h20z"/><path d="M12 10v5M12 18v.5"/>';
 const lt=i=>{const st=i.rating?` <span style="color:var(--mute);letter-spacing:1px">${S(i.rating)}</span>`:"";if(i.watchedOn||i.deid||(i.dcount||0)>0)return "Has registrado esta serie"+st;if(i.status==="done"||i.rating)return "Has visto esta serie"+st;if(inWl(i))return "Esta serie está en tu watchlist";return "Puntúa, registra, reseña, añade a una lista + más"};
 const sx=(r,cb)=>[1,2,3,4,5].map(n=>`<span class="sx"><b style="width:${r>=n?100:r>=n-.5?50:0}%">★</b>★<button class="hl" onclick="${cb(n-.5)}"></button><button class="hr" onclick="${cb(n)}"></button></span>`).join("");
-const refresh=id=>{if($("det").classList.contains("open"))show(id,true)};
+const refresh=id=>{if($("det").classList.contains("open"))show(id,true);if(curRv&&pgLive("rv"+curRv)){const r=RX[curRv];if(r&&idOf(r.sid)===id)openReview(curRv,1)}};
 new MutationObserver(()=>{if(!POP)return;const b=$("ov").querySelector(".k"+POP);POP="";if(b)b.classList.add("pop")}).observe($("ov"),{childList:true});
 const closeOv=()=>{$("ov").classList.remove("open");$("ov").style.removeProperty("--bgi")};
 const CLOCKP='<circle class="cf" cx="11" cy="11" r="8"/><path class="ch" d="M11 6.5V11l3 1.8"/><circle class="bd" cx="18.5" cy="18.5" r="4.4"/><path class="bx" d="M16.5 18.5h4M18.5 16.5v4"/>',CLOCKC='<circle class="cf" cx="11" cy="11" r="8"/><path class="ch" d="M11 6.5V11l3 1.8"/><circle class="bd" cx="18.5" cy="18.5" r="4.4"/><path class="bx" d="M16.5 18.5h4"/>',EYEN=n=>EYE+'<circle class="bd" cx="18.5" cy="18.5" r="4.6"/><text class="bt" x="18.5" y="'+(n>9?20.8:21)+'" text-anchor="middle" font-size="'+(n>9?5.4:6.8)+'" font-weight="700" stroke="none">'+(n>99?"99":n)+'</text>';
@@ -1297,7 +1331,7 @@ function drawLogD(){const i=get(lg.id),ed=lg.ed&&lg.eid&&RX[lg.eid],tg_=tagArr(l
     <label class="lgd-c"><input type="checkbox" ${lg.re?"checked":""} onchange="lg.re=this.checked;drawLog()"> ${L2("Ya la había visto","I've watched this before")}</label>
     <label class="lgd-c"><input type="checkbox" ${lg.sp?"checked":""} onchange="lg.sp=this.checked;drawLog()"> ${L2("Contiene spoilers","Contains spoilers")}</label></div>
    <textarea class="lgd-t" placeholder="${L2("Añade una reseña…","Add a review…")}" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
-   <div class="lgd-r2"><div class="lgd-tg"><div class="lgd-lb">${L2("Etiquetas","Tags")} <small class="lgd-hint">${L2("Pulsa Tab para completar, Intro para crear","Press Tab to complete, Enter to create")}</small></div><div class="tgd" id="tgd" onclick="$('tgdi').focus()"><span id="tgdc" class="tgdc"></span><input id="tgdi" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="${L2("p. ej. netflix","eg. netflix")}" value="${esc(lg.tq||"")}" oninput="lg.tq=this.value;tgdSug()" onkeydown="tgdKey(event)" onblur="setTimeout(tgdHide,120)"></div><div id="tgds" class="tgds"></div></div>
+   <div class="lgd-r2"><div class="lgd-tg"><div class="lgd-lb">${L2("Etiquetas","Tags")} <small class="lgd-hint">${L2("Pulsa Tab para completar, Intro para crear","Press Tab to complete, Enter to create")}</small></div><div class="tgd" id="tgd"><input id="tgdi" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="${L2("p. ej. netflix","eg. netflix")}" value="${esc(lg.tq||"")}" oninput="lg.tq=this.value;tgdSug()" onkeydown="tgdKey(event)" onblur="setTimeout(tgdHide,120)"></div><div id="tgds" class="tgds"></div><div id="tgdc" class="tgdc"></div></div>
     <div><div class="lgd-lb">${L2("Valoración","Rating")} <small>${lg.r?lg.r:"–"} ${L2("de 5","out of 5")}</small></div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div>
     <div class="lgd-lk"><div class="lgd-lb">${L2("Me gusta","Like")}</div><button class="hb2 ${lg.l?"on":""}" aria-label="${L2("Me gusta","Like")}" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,38)}</button></div></div>
   </div></div>
@@ -1821,6 +1855,21 @@ const revsSec=i=>{const a=RV[i.sid];if(!a)return revSec(i);if(!a.length)return""
   return `<div class="rvs"><div class="seg d" style="margin:6px 0 4px">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${rvTab===k?"on":""}" onclick="rvTab='${k}';show(${i.id},true)">${t}</button>`).join("")}</div><div class="rvlb">${rvTab==="fr"?"Reseñas de amigos":"Reseñas populares"}</div>${l.length?l.slice(0,4).map(rvItem).join(""):'<div class="chint">Nadie a quien sigues ha reseñado esta serie.</div>'}<div class="rvall" onclick="openRevs(${i.id})">Todas las reseñas <span>›</span></div></div>`};
 let curRv=0;
 function openReview(id,re){const r=RX[id];if(!r)return;curRv=id;UN[r.uid]=r.u;const i=get(idOf(r.sid)),mine=r.uid===U.id;
+  if(DSK()){
+   const hd=`<div class="rvd" data-pg="rv${id}"><div class="rvd-in">
+    <div class="rvd-l">${i?`<div class="rvd-po" onclick="subX();show(${i.id})">${nop(i)}</div>`:""}</div>
+    <div class="rvd-m"><button class="dax-back" onclick="subX()">‹ ${L2("Atrás","Back")}</button>
+     <div class="rvd-by" onclick="openUser('${r.uid}')">${av2(r.u,26,r.ap)}<span>${L2("Reseña de","Review by")} <b>${esc(r.u)}</b></span></div>
+     <h1 class="rvd-ti" ${i?`onclick="subX();show(${i.id})"`:""}>${esc(i?short(i.title):"")}${i?` <small>${esc(i.app)}</small>`:""}</h1>
+     <div class="rvd-sr">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}</div>
+     <div class="rvd-wd">${r.rw?L2("Vuelto a ver el","Rewatched on"):L2("Visto el","Watched on")} ${fsh(Date.parse(r.wd+"T12:00:00"))}</div>
+     ${r.t?`<p class="rvd-tx">${esc(r.t)}</p>`:""}
+     <div class="rvlk">${mine?`<button class="hb2" aria-label="Me gusta" onclick="toast('No puedes dar like a tu propia reseña')" style="display:flex">${svg(HEART,22)}</button>`:`<button class="hb2 ${r.me?"on":""}" aria-label="Me gusta" onclick="likeRev('${r.id}')" style="display:flex">${svg(HEART,22)}</button>`}<span>${r.lk?`${r.lk} ${r.lk===1?"like":"likes"}`:"Aún sin likes"}</span></div>
+     ${r.g&&r.g.length?`<div class="tgs">${r.g.map(t=>mine?`<span class="tgc" data-v="${esc(t)}" onclick="openTagTop(this.dataset.v)" style="cursor:pointer">${esc(t)}</span>`:`<span class="tgc">${esc(t)}</span>`).join("")}</div>`:""}
+    </div>
+    <div class="rvd-r">${i?pnl(i,mine?{rv:1,ed:id}:{rv:1}):""}</div>
+   </div></div>`;
+   re?subRe(hd):subOpen(hd);return}
   const dots='<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg>';
   const h=`<div class="lbar"><button onclick="subX()">‹ Atrás</button><b>Reseña</b><button aria-label="Más" onclick="rvMenu('${id}')" style="min-width:44px;display:flex;justify-content:flex-end">${dots}</button></div><div class="in rvx">
   <div class="rvtop"><div style="flex:1;min-width:0"><div class="lown" onclick="openUser('${r.uid}')" style="cursor:pointer">${av2(r.u,28,r.ap)}<span>${esc(r.u)}</span></div>
