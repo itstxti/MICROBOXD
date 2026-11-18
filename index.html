@@ -613,6 +613,38 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .dst2 .stn{padding:12px 0 0!important;text-align:left}
  .dst2 .stgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px;align-items:start}.dst2 .stsc.wide{grid-column:1/-1}
  .dst2 .sth{margin:36px 0 12px}.dst2 .stc{padding:0;height:170px}.dst2 .stb,.dst2 .stt{margin:0}.dst2 .stb{grid-template-columns:130px 1fr 84px}
+
+ /* Actividad de una serie (escritorio): como la página de actividad de Letterboxd */
+ #sub .dax{position:relative;min-height:100%;overflow:hidden}
+ .dax-bg{position:absolute;top:0;right:max(0px,calc(var(--dw) - 110px));width:600px;max-width:100%;height:200px;overflow:hidden;pointer-events:none}
+ .dax-bg i{position:absolute;inset:0;background-size:cover;background-position:center 18%;filter:blur(9px) brightness(.72) saturate(1.1);transform:scale(1.15)}
+ .dax-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,var(--bg) 100%),linear-gradient(90deg,var(--bg) 0,transparent 32%,transparent 68%,var(--bg) 100%)}
+ .dax-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:60px;align-items:start;padding:0 var(--dw) 70px}
+ .dax-main{min-width:0;padding-top:22px}
+ .dax-back{background:none;border:0;padding:0;margin:0 0 20px;color:var(--mute);font:inherit;font-size:13px;letter-spacing:1.2px;cursor:pointer}.dax-back:hover{color:var(--tx)}
+ .dax-lb{font-size:14px;letter-spacing:1.8px;text-transform:uppercase;color:var(--mute)}
+ .dax-h{display:block;min-height:0;margin:6px 0 0;text-align:left;letter-spacing:0;font-family:Georgia,serif;font-size:30px;line-height:1.15;font-weight:700;color:var(--tx)}
+ .dax-h small{font:400 21px Georgia,serif;color:var(--mute);margin-left:4px}
+ .dax-tabs{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);margin:26px 0 0;font-size:14px;letter-spacing:1.8px;text-transform:uppercase}
+ .dax-tabs button{background:none;border:0;border-bottom:2px solid transparent;margin:0 22px -1px 0;padding:0 0 10px;color:var(--mute);font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;transition:color .15s}
+ .dax-tabs button:hover{color:var(--g)}.dax-tabs button.on{color:var(--tx);border-bottom-color:var(--tx)}
+ .dax-who{color:var(--mute);font-size:12px;padding-bottom:10px}
+ .dax-feed{display:block}
+ .dax-r{display:flex;align-items:center;gap:14px;padding:10px 12px;min-height:48px;box-sizing:border-box;border-bottom:1px solid var(--line);color:var(--mute);font-size:15px;line-height:1.4;cursor:pointer}
+ .dax-r:nth-child(odd){background:color-mix(in srgb,var(--pan) 38%,transparent)}.dax-r:hover{background:color-mix(in srgb,var(--pan) 70%,transparent)}
+ .dax-r .av{flex:none;width:30px!important;height:30px!important}
+ .dax-tx{flex:1;min-width:0}.dax-tx b{color:var(--tx);font-weight:600}
+ .dax-st{color:var(--g);font-size:13px;letter-spacing:1px;white-space:nowrap}
+ .dax-ago{flex:none;margin-left:auto;font-size:13px;white-space:nowrap}
+ .dax-end{padding:14px 12px;color:var(--mute);font-size:14px;border-bottom:1px solid var(--line)}
+ .dax-side{padding-top:150px;min-width:0}
+ .dax-side .poster{width:100%;cursor:pointer;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+ .dax-stats{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;color:var(--mute);min-height:20px}
+ .dax-stats span{display:inline-flex;align-items:center;gap:5px}.dax-stats .e{color:#4ddc6f}.dax-stats .b{color:var(--b)}.dax-stats .l{color:var(--o)}
+ .dax .rvl2{padding-bottom:0}.dax .rvi2{padding-left:12px}.dax .rvi2::after{left:12px}
+ .dax .dmh{margin-top:14px;border-radius:4px;padding:0 12px}
+ .dax .lsl{padding-top:18px}
+ .dax .empty{padding:36px 0}
 }
 </style>
 </head>
@@ -1530,21 +1562,57 @@ const rvItem=r=>`<div class="rvi" onclick="openReview('${r.id}')"><div class="rv
 const rvItem2=r=>`<div class="rvi2" onclick="openReview('${r.id}')"><div class="rvh2"><span class="rvst">${r.r?S(r.r):""}${r.hl?' <i class="rvhe">♥</i>':""}${r.rw?' <i class="drw">'+RWI+'</i>':""}</span><span class="rvu" onclick="event.stopPropagation();openUser('${r.uid}')" style="cursor:pointer">${esc(r.u)}${av2(r.u,26,r.ap)}</span></div>${r.sp?'<div class="rvsp">⚠ Esta reseña puede contener spoilers</div>':`<p class="rvt2">${esc(r.t)}</p>`}${r.lk?`<div class="rvl">♥ ${r.lk}</div>`:""}</div>`;
 
 /* Actividad de una persona en una serie: Diario / Reseñas (como en Letterboxd) */
-let ACT={},actTab="d",actU="";
+let ACT={},ACTERR={},actTab="d",actU="";
 const actMe=()=>actU===U.id,actHd=i=>actMe()?"Tu actividad en "+short(i.title):"Actividad de "+(UN[actU]||"")+" en "+short(i.title);
-function drawAct(iid,re){const i=get(iid),es=ACT[iid+":"+actU],me=actMe();let body;
-  if(!es)body='<div class="empty ld">Cargando…</div>';
-  else if(actTab==="r"){const l=es.filter(x=>x.t||x.sp);body=l.length?`<div class="rvl2">${l.map(rvItem2).join("")}</div>`:EMP("chat","Sin reseñas",me?"Todavía no has escrito ninguna reseña de esta serie.":"Todavía no ha escrito ninguna reseña de esta serie.")}
-  else if(!es.length)body=me?EMP("book","Sin entradas","Todavía no has registrado esta serie en tu diario.","Reseñar o registrar",`subX();openLog(${iid})`):EMP("book","Sin entradas","Todavía no ha registrado esta serie en su diario.");
-  else{let m="";body=es.map(x=>{const t=new Date(Date.parse((x.wd||"")+"T12:00:00")),ok=!isNaN(t),k=ok?t.toLocaleDateString(LANG,{month:"long",year:"numeric"}).replace(" de "," "):"Sin fecha",hd=k!==m?(m=k,`<div class="dmh">${k}</div>`):"";
-    return hd+`<div class="de" onclick="openReview('${x.id}')"><div class="ddn">${ok?t.getDate():"–"}</div>${poster(i).replace(/onclick="[^"]*"/,"")}<div class="dti"><div class="dtl"><b>${esc(short(i.title))}</b> <small>${esc(i.app)}</small></div><div class="dst">${x.r?`<span class="dsr">${S(x.r)}</span>`:""}${x.hl?'<i class="dhe">♥</i>':""}${x.rw?'<i class="drw">'+RWI+'</i>':""}${x.t||x.sp?'<i class="drv">☰</i>':""}</div></div></div>`}).join("")}
-  const h=pgH("act"+iid,actHd(i),[["d","Diario"],["r","Reseñas"]],actTab,"actGo",iid,body);
-  re?subRe(h):subOpen(h)}
+function drawAct(iid,re){const i=get(iid),es=ACT[iid+":"+actU],me=actMe(),dk=DSK(),T=dk?actTab:(actTab==="r"?"r":"d");let body;
+  const diaryBody=()=>{if(!es)return '<div class="empty ld">Cargando…</div>';
+    if(!es.length)return me?EMP("book","Sin entradas","Todavía no has registrado esta serie en tu diario.","Reseñar o registrar",`subX();openLog(${iid})`):EMP("book","Sin entradas","Todavía no ha registrado esta serie en su diario.");
+    let m="";return es.map(x=>{const t=new Date(Date.parse((x.wd||"")+"T12:00:00")),ok=!isNaN(t),k=ok?t.toLocaleDateString(LANG,{month:"long",year:"numeric"}).replace(" de "," "):"Sin fecha",hd=k!==m?(m=k,`<div class="dmh">${k}</div>`):"";
+    return hd+`<div class="de" onclick="openReview('${x.id}')"><div class="ddn">${ok?t.getDate():"–"}</div>${poster(i).replace(/onclick="[^"]*"/,"")}<div class="dti"><div class="dtl"><b>${esc(short(i.title))}</b> <small>${esc(i.app)}</small></div><div class="dst">${x.r?`<span class="dsr">${S(x.r)}</span>`:""}${x.hl?'<i class="dhe">♥</i>':""}${x.rw?'<i class="drw">'+RWI+'</i>':""}${x.t||x.sp?'<i class="drv">☰</i>':""}</div></div></div>`}).join("")};
+  const revBody=()=>{if(!es)return '<div class="empty ld">Cargando…</div>';const l=es.filter(x=>x.t||x.sp);return l.length?`<div class="rvl2">${l.map(rvItem2).join("")}</div>`:EMP("chat","Sin reseñas",me?"Todavía no has escrito ninguna reseña de esta serie.":"Todavía no ha escrito ninguna reseña de esta serie.")};
+  if(!dk){body=T==="r"?revBody():diaryBody();
+    const h=pgH("act"+iid,actHd(i),[["d","Diario"],["r","Reseñas"]],T,"actGo",iid,body);re?subRe(h):subOpen(h);return}
+  /* ===== Escritorio: como la página de actividad de Letterboxd ===== */
+  if(T==="a"){if(!es)body='<div class="empty ld">Cargando…</div>';
+    else if(!es.length)body=me?EMP("book",L2("Sin actividad","No activity"),L2("Todavía no has registrado esta serie en tu diario.","You haven't logged this series in your diary yet."),L2("Reseñar o registrar","Review or log"),`subX();openLog(${iid})`):EMP("book",L2("Sin actividad","No activity"),L2("Todavía no ha registrado esta serie en su diario.","They haven't logged this series in their diary yet."));
+    else body='<div class="dax-feed">'+es.map(x=>actRow(i,x)).join("")+`</div><div class="dax-end">${L2("Fin de la actividad reciente","End of recent activity")}</div>`}
+  else if(T==="d")body=diaryBody();
+  else if(T==="r")body=revBody();
+  else{const d=LSD[i.sid];
+    if(!d)body=ACTERR[iid]?EME("No se pudieron cargar las listas","Couldn't load the lists"):'<div class="empty ld">Cargando…</div>';
+    else{const l=d.filter(x=>x.uid===actU);body=l.length?`<div class="lsl">${l.map(lsRow).join("")}</div>`:EMP("list",L2("Sin listas","No lists"),me?"No has añadido esta serie a ninguna lista.":L2("Todavía no ha añadido esta serie a ninguna lista.","They haven't added this series to any list yet."),"","","sm")}}
+  const h=actSerieD(i,body,T);re?subRe(h):subOpen(h)}
+const actDate=wd=>{const t=Date.parse((wd||"")+"T12:00:00");return isNaN(t)?"":new Date(t).toLocaleDateString(LANG,{weekday:"long",day:"numeric",month:"short",year:"numeric"})};
+const actVerbs=x=>{const me=actMe(),v=[x.rw?L2(me?"volviste a ver":"volvió a ver","rewatched"):L2(me?"viste":"vio","watched")];
+  if(x.hl)v.push(L2(me?"marcaste con me gusta":"marcó con me gusta","liked"));
+  if(x.r)v.push(L2(me?"puntuaste":"puntuó","rated"));
+  if(x.t||x.sp)v.push(L2(me?"reseñaste":"reseñó","reviewed"));
+  return v.length<2?v[0]:v.slice(0,-1).join(", ")+L2(" y "," and ")+v[v.length-1]};
+const actRow=(i,x)=>{const dt=actDate(x.wd),who=actMe()?L2("Tú ","You "):`<b>${esc(x.u)}</b> `;
+  return `<div class="dax-r" onclick="openReview('${x.id}')">${av2(x.u,30,x.ap)}<div class="dax-tx">${who}${actVerbs(x)} <b>${esc(short(i.title))}</b>${x.r?` <span class="dax-st">${S(x.r)}</span>`:""}${dt?" "+L2("el ","on ")+dt:""}</div><span class="dax-ago">${x.ts?rel(x.ts):""}</span></div>`};
+const kfmt=n=>n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,"")+"M":n>=1e3?(n/1e3).toFixed(1).replace(/\.0$/,"")+"K":String(n);
+const AXI={e:'<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>',
+  l:'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.2"/><rect x="13" y="3" width="8" height="8" rx="1.2"/><rect x="3" y="13" width="8" height="8" rx="1.2"/><rect x="13" y="13" width="8" height="8" rx="1.2"/></svg>',
+  h:'<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'};
+function actSerieD(i,body,T){const iid=i.id,me=actMe(),d=MB[i.sid],l=LSD[i.sid],h=hue(i.title);
+  const bg=i.cover?`url('${i.cover.replace(/'/g,"%27")}')`:`linear-gradient(135deg,hsl(${h},55%,34%),hsl(${(h+60)%360},50%,16%))`;
+  const sx=(c,k,n)=>`<span class="${c}">${AXI[k]}${kfmt(n)}</span>`;
+  const stats=(d?sx("e","e",d.m.length)+sx("l","h",d.m.filter(x=>x.hl).length):"")+(l?sx("b","l",l.length):"");
+  const tabs=[["a",L2("Actividad","Activity")],["d",L2("Diario","Diary")],["r",L2("Reseñas","Reviews")],["l",L2("Listas","Lists")]];
+  return `<div data-pg="act${iid}" class="dax"><div class="dax-bg"><i style="background-image:${bg}"></i></div><div class="dax-in"><div class="dax-main">
+  <button class="dax-back" onclick="subX()">‹ ${L2("Serie","Series")}</button>
+  <div class="dax-lb">${me?L2("Tu actividad en","Your activity for"):L2("Actividad de "+esc((UN[actU]||"").split(" ")[0])+" en","Activity by "+esc((UN[actU]||"").split(" ")[0])+" on")}</div>
+  <h1 class="dax-h">${esc(short(i.title))} <small>${esc(i.app)}</small></h1>
+  <div class="dax-tabs"><div>${tabs.map(([k,t])=>`<button class="${T===k?"on":""}" onclick="actGo('${k}',${iid})">${t}</button>`).join("")}</div><span class="dax-who">${me?L2("Tú","You"):esc(UN[actU]||"")}</span></div>
+  ${body}</div>
+  <aside class="dax-side">${poster(i).replace(/onclick="[^"]*"/,'onclick="subX()"')}<div class="dax-stats">${stats}</div></aside></div></div>`}
 function actGo(k,iid){actTab=k;drawAct(iid,1)}
-async function showAct(id,uid){const i=get(id);if(!i)return;closeOv();actU=uid||U.id;actTab="d";const key=id+":"+actU;delete ACT[key];drawAct(id,0);
+async function showAct(id,uid){const i=get(id);if(!i)return;closeOv();actU=uid||U.id;actTab=DSK()?"a":"d";const key=id+":"+actU;delete ACT[key];delete ACTERR[id];drawAct(id,0);
+  if(DSK()&&sb&&i.sid){/* escritorio: estadísticas y listas de la serie (el feed no depende de ellas) */
+    Promise.allSettled([MB[i.sid]?0:loadMem(i),LSD[i.sid]?0:loadLs(i)]).then(r=>{if(r[1].status==="rejected")ACTERR[id]=1;if(pgLive("act"+id)&&ACT[key])drawAct(id,1)})}
   try{let es=[];if(sb&&i.sid){const r=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).eq("user_id",actU).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).limit(100);if(r.error)throw r.error;es=r.data.map(nrm)}
     ACT[key]=es;if(pgLive("act"+id))drawAct(id,1)}
-  catch(e){console.error(e);if(pgLive("act"+id))subRe(pgH("act"+id,actHd(i),[["d","Diario"],["r","Reseñas"]],actTab,"actGo",id,EME("No se pudo cargar la actividad","Couldn't load the activity")))}}
+  catch(e){console.error(e);if(pgLive("act"+id))subRe(DSK()?actSerieD(i,EME("No se pudo cargar la actividad","Couldn't load the activity"),actTab):pgH("act"+id,actHd(i),[["d","Diario"],["r","Reseñas"]],actTab==="r"?"r":"d","actGo",id,EME("No se pudo cargar la actividad","Couldn't load the activity")))}}
 
 /* Siguiendo / Seguidores */
 let MYFO=null;
