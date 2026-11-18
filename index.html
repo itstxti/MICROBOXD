@@ -563,13 +563,17 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #sr{padding-top:24px}
  #sr .g3{grid-template-columns:repeat(6,minmax(0,1fr))}
  #sr .br{padding:14px 6px;cursor:pointer}#sr .br:hover{background:rgba(255,255,255,.04)}
- /* Actividad: feed centrado en tarjetas */
- #mn:has(>.act){padding-inline:max(28px,calc(50% - 380px));padding-top:20px}
- #mn:has(>.act)>.act{border-radius:10px;margin-bottom:10px;padding:16px 20px;border:0;background:var(--pan)}
- #mn:has(>.act)>.act.fa.rich{background:var(--pan)}
- #mn:has(>.act) .act .fxfb .poster{width:68px}
+ /* Listas de todos */
+ .gls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 32px;padding-top:28px}
+ .gls .lsr{background:var(--pan);border-radius:10px;padding:18px 20px;cursor:pointer;transition:transform .15s,box-shadow .15s}.gls .lsr:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+ .gls .lsh{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.gls .lsh b{font-size:19px;color:var(--tx)}
+ /* Actividad (en el perfil): filas compactas como Letterboxd */
+ .dacts .act{border-radius:0;margin:0;padding:11px 8px;background:none;border-bottom:1px solid var(--line);align-items:center}.dacts .act:hover{background:rgba(255,255,255,.03)}
+ .dacts .act>.av{flex:none;width:30px!important;height:30px!important}
+ .dacts .act>div:not(.av){display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0;flex:1}
+ .dacts .act .fxfb{display:none}.dacts .act.fa.rich{background:none}
+ .dpsd2 .dsh a{cursor:pointer;font-size:13px}
  /* Ajustes y formulario de serie: panel centrado, no pantalla completa */
- #hd .seg,#mn>.seg{max-width:420px;margin-inline:auto}
  #lst .in{max-width:900px;margin:0 auto;padding-inline:20px}
  #lst .lnm{font-size:32px}
  #set,#form{left:max(0px,calc(50% - 330px));right:max(0px,calc(50% - 330px));border-inline:1px solid var(--line);box-shadow:0 0 60px rgba(0,0,0,.5)}
@@ -771,20 +775,20 @@ const SBH=()=>`<div class="sbw"><div class="sbr"><div class="sb">${svg(IC.search
 function sCancel(){q="";sf=0;const i=$("qi");if(i){i.value="";i.blur()}const c=document.querySelector(".sbc");if(c)c.classList.add("x");sr();setTimeout(()=>{if(tab==="search"&&!sf&&!q.trim()){if(c){c.style.display="none";c.classList.remove("x")}spl("")}},320)}
 function render(){
   document.documentElement.classList.toggle("dh",tab==="home");
-  document.documentElement.classList.toggle("dpr",tab==="me");
+  document.documentElement.classList.toggle("dpr",tab==="me"||(tab==="act"&&DSK()));
   if(tab==="me"&&!DSK()&&!["perfil","diary","lst","pend"].includes(seg.me))seg.me="perfil";
   const titles={home:LOGO+"Microboxd",search:"Buscar",act:"Actividad",me:esc(uname())};
   const sg=SEGS[tab];
   const bn=tab==="search"&&br.length&&!q.trim()?br[br.length-1]:null;
   $("hd").innerHTML=(bn?`<h1 class="bkb"><button onclick="brBack()">‹ ${br.length>1?esc(brTitle(br[br.length-2])):"Explorar"}</button><b>${esc(brTitle(bn))}</b>${BFG.includes(bn.t)?`<button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()">${svg(BFIC,22)}</button>`:"<span></span>"}</h1>`:tab==="me"?`<h1 class="h1p"><button class="gear" aria-label="Ajustes" onclick="openSet()">${svg(GEAR,22)}</button>${titles[tab]}${seg.me==="lst"?`<button class="plus2" aria-label="Nueva lista" onclick="editList()">${svg('<path d="M12 4v16M4 12h16"/>',26)}</button>`:""}${seg.me==="pend"?bfBtn("plus2",false):""}<button class="dots" aria-label="Más" onclick="meOpts()">•••</button></h1>`:tab==="search"?`<h1>Buscar</h1>${SBH()}<div id="spl"></div>`:(tab==="home"&&seg.home==="series"&&items.length?`<h1 class="h1p"><span class="ttl">${titles[tab]}</span>${bfBtn("bfh",true)}</h1>`:`<h1><span class="ttl">${titles[tab]}</span></h1>`))+(sg?`<div class="seg">${sg.map(([k,l])=>`<button class="${seg[tab]===k?"on":""}" onclick="setSeg('${k}')">${l}</button>`).join("")}</div>`:"");
-  $("dn").innerHTML=`<div class="dnl" onclick="go('home')">${LOGO.replace(/"c([ab])"/g,'"dc$1"').replace(/#c([ab])\)/g,"#dc$1)")}<b>Microboxd</b></div>${[["home","series",L2("Series","Series")],["home","rev",L2("Reseñas","Reviews")],["home","lst",L2("Listas","Lists")],["home","jr",L2("Diario","Diary")],["search","",L2("Explorar","Explore")],["act","",L2("Actividad","Activity")]].map(([t,k,l])=>`<a class="${tab===t&&(!k||seg.home===k)?"on":""}" onclick="dnTo('${t}','${k}')">${l}</a>`).join("")}<div class="dnsp"></div><div class="dns">${svg(IC.search,16)}<input id="dsq" placeholder="${L2("Buscar series…","Search series…")}" onfocus="dnSearch()"></div><button class="dnb" onclick="openAdd()">+ ${L2("REGISTRAR","LOG")}</button><div class="dnav" onclick="go('me')">${ini()}</div>`;
+  $("dn").innerHTML=`<div class="dnl" onclick="go('home')">${LOGO.replace(/"c([ab])"/g,'"dc$1"').replace(/#c([ab])\)/g,"#dc$1)")}<b>Microboxd</b></div>${[["home","series",L2("Series","Series")],["home","rev",L2("Reseñas","Reviews")],["home","lst",L2("Listas","Lists")],["search","",L2("Explorar","Explore")]].map(([t,k,l])=>`<a class="${tab===t&&(!k||seg.home===k)?"on":""}" onclick="dnTo('${t}','${k}')">${l}</a>`).join("")}<div class="dnsp"></div><div class="dns">${svg(IC.search,16)}<input id="dsq" placeholder="${L2("Buscar series…","Search series…")}" onfocus="dnSearch()"></div><button class="dnb" onclick="openAdd()">+ ${L2("REGISTRAR","LOG")}</button><div class="dnav" onclick="go('me')">${ini()}</div>`;
   $("tb").innerHTML=["home","search","add","act","me"].map(t=>`<button class="${t==="add"?"plus":tab===t?"on":""}" aria-label="${t}" onclick="go('${t}')">${(tab===t&&t!=="add"&&t!=="search")?svg(IC[t],26).replace('fill="none"','fill="currentColor"'):svg(IC[t],t==="add"?30:26)}</button>`).join("");
   let h="";
   if(tab==="home"){
     if(seg.home==="series"){
       const fi=bfFilt(items);h=wbanner()+`<div class="mro">`+hrow("Añadidas recientemente",fi.slice(0,10))+hrow("Mejor valoradas",fi.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10))+`</div>`+dhome(fi);if(items.length&&!fi.length)h=`<div class="empty">${L2("Ninguna serie coincide con los filtros.","No series match your filters.")}</div>`;
       if(!items.length)h=EMP("tv","Tu biblioteca está vacía","Añade tu primera serie para empezar a puntuar y reseñar.","Añadir serie","openAdd()");
-    }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=lv(lists,0)+(lists.length?'<div style="text-align:center;padding:6px 0 18px"><button class="emb" onclick="editList()">Nueva lista</button></div>':"");
+    }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=DSK()?glH():lv(lists,0)+(lists.length?'<div style="text-align:center;padding:6px 0 18px"><button class="emb" onclick="editList()">Nueva lista</button></div>':"");
     }else{
       h=hrH();
     }
@@ -795,6 +799,7 @@ function render(){
     if(seg.act==="fr")h=feedH();
     else if(seg.act==="in")h=incH();
     else h=meActH();
+    if(DSK()){if(MYFO===null)loadMyFo();h=dpfHead()+actDsk(h)}
   }else{
     const done=items.filter(i=>i.rating),r=done.length?(done.reduce((a,i)=>a+i.rating,0)/done.length).toFixed(1):"–";
     if(seg.me==="perfil"){
@@ -938,10 +943,10 @@ function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>pr
 const dFmt=(wd,o)=>{try{return new Date(wd+"T12:00:00").toLocaleDateString(LANG==="es"?"es-ES":"en-GB",o||{day:"numeric",month:"short",year:"numeric"})}catch(e){return wd}};
 function dpfHead(){
   const yr=new Date().getFullYear(),ty=items.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,wu=typeof webUrl==="function"?webUrl(prof.web):"";
-  const nm=[prof.name,prof.fam].map(x=>(x||"").trim()).filter(Boolean).join(" "),cmp=seg.me!=="perfil";
+  const nm=[prof.name,prof.fam].map(x=>(x||"").trim()).filter(Boolean).join(" "),cmp=seg.me!=="perfil"||tab==="act";
   const st=(n,l,fn,id)=>`<div${fn?` class="lk" onclick="${fn}"`:""}><b${id?` id="${id}"`:""}>${n}</b><span>${l}</span></div>`;
   const T=[...(cmp?[]:[["perfil",L2("Perfil","Profile"),"setSeg('perfil')"]]),["act",L2("Actividad","Activity"),"go('act')"],["all",L2("Series","Series"),"setSeg('all')"],["diary",L2("Diario","Diary"),"setSeg('diary')"],["rev",L2("Reseñas","Reviews"),"setSeg('rev')"],["pend","Watchlist","setSeg('pend')"],["lst",L2("Listas","Lists"),"setSeg('lst')"],["lk",L2("Me gusta","Likes"),"setSeg('lk')"],["tg",L2("Etiquetas","Tags"),"setSeg('tg')"],["stt",L2("Estadísticas","Stats"),"openStats(null)"]];
-  const bar=`<div class="dpt${cmp?" cmp":""}">${cmp?`<div class="dpwho" onclick="setSeg('perfil')"><div class="av">${ini()}</div><b>${esc(uname())}</b></div>`:""}<div class="dptl">${T.map(([k,l,fn])=>`<a class="${seg.me===k?"on":""}" onclick="${fn}">${l}</a>`).join("")}</div></div>`;
+  const bar=`<div class="dpt${cmp?" cmp":""}">${cmp?`<div class="dpwho" onclick="tab='me';setSeg('perfil')"><div class="av">${ini()}</div><b>${esc(uname())}</b></div>`:""}<div class="dptl">${T.map(([k,l,fn])=>`<a class="${(tab==="act"?k==="act":seg.me===k)?"on":""}" onclick="${k==="act"?"seg.act='fr';"+fn:"tab='me';"+fn}">${l}</a>`).join("")}</div></div>`;
   if(cmp)return `<div class="dpf">${bar}</div>`;
   return `<div class="dpf"><div class="dph"><div class="av big">${ini()}</div><div class="dpi"><div class="dpn"><h2>${esc(uname())}</h2><button class="dpe" onclick="openSet()">${L2("EDITAR PERFIL","EDIT PROFILE")}</button><button class="dpm" aria-label="${L2("Más","More")}" onclick="meOpts()">•••</button></div>${nm&&nm!==uname()?`<div class="dpx">${esc(nm)}</div>`:""}${prof.bio?`<p class="dpb2">${esc(prof.bio)}</p>`:""}${prof.loc?`<div class="dpx">${svg(PIN,14)}${esc(prof.loc)}</div>`:""}${wu?`<div class="dpx"><a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a></div>`:""}</div>
   <div class="dps">${st(items.length,"SERIES","setSeg('all')")}${st(ty,L2("ESTE AÑO","THIS YEAR"),"setSeg('diary')")}${st(lists.length,L2("LISTAS","LISTS"),"setSeg('lst')")}${st(FW.size,L2("SIGUIENDO","FOLLOWING"),"openFol('${U.id}','ing')")}${st(MYFO===null?"–":MYFO,L2("SEGUIDORES","FOLLOWERS"),"openFol('${U.id}','ers')","dpfo")}</div></div>${bar}</div>`}
@@ -1403,6 +1408,13 @@ async function boot(){
   U=session.user;gate("Cargando…",1);
   try{await pull();await legacy()}catch(e){console.error(e);gate("Error al cargar tus datos: "+(e.message||e),0,1);return}
   $("gate").style.display="none";render()}
+/* ===== Escritorio: listas de todos y Actividad dentro del perfil ===== */
+let GL=null;
+async function loadGL(){try{const{data,error}=await sb.from("lists").select("id,user_id,name,description,ranked,created_at,profiles(username,display_name,avatar_path),list_items(position,series(*))").order("created_at",{ascending:false}).limit(60);if(error)throw error;
+ GL=data.map(l=>({id:l.id,uid:l.user_id,u:pname(l.profiles),ap:apOf(l.user_id,l.profiles),name:l.name,desc:l.description,rank:l.ranked,its:(l.list_items||[]).slice().sort((p,q)=>p.position-q.position).map(x=>x.series&&sCache(x.series)).filter(Boolean)}));LSD.__all=GL}catch(e){console.error(e);GL=[]}if(tab==="home"&&seg.home==="lst")render()}
+const glH=()=>{if(GL===null){GL=0;loadGL()}if(GL===0)return loadingH;return(GL.length?`<div class="gls">${GL.map(lsRow).join("")}</div>`:'<div class="empty">Aún no hay listas.</div>')+'<div style="text-align:center;padding:10px 0 24px"><button class="emb" onclick="editList()">Nueva lista</button></div>'};
+const actDsk=b=>`<div class="dpv dp2"><div><div class="dpsh"><span>${[["fr","Amigos"],["me","Tú"],["in","Entrantes"]].map(([k,l])=>`<a class="${seg.act===k?"dpon":""}" onclick="setSeg('${k}')">${l}</a>`).join("")}</span></div><div class="dacts">${b}</div></div><div class="dpsd2"><div class="dsh"><span>Siguiendo</span><a onclick="openFol(U.id,'ing')">${FW.size}</a></div><div class="dsh"><span>Seguidores</span><a onclick="openFol(U.id,'fol')">${MYFO||0}</a></div></div></div>`;
+
 /* ===== Arrastrar para puntuar (como Letterboxd) ===== */
 let sd0=null,sdDrag=false,sdSwallow=false;
 const sdVal=(g,x)=>{const sx=g.querySelectorAll(".sx"),a=sx[0].getBoundingClientRect(),b=sx[1].getBoundingClientRect(),st=b.left-a.left;if(x<a.left-14)return 0;return Math.min(5,Math.max(.5,Math.ceil((x-a.left)/st*2)/2))};
