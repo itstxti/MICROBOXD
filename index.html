@@ -742,6 +742,10 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .lgd-lk .hb2 svg{width:32px;height:32px}
  .lgd-f{position:sticky;bottom:0;z-index:5;height:62px;padding:0 40px;background:linear-gradient(rgba(0,0,0,.14),rgba(0,0,0,.14)),var(--tab)}
  .lgd-sv,.lgd-del{padding:8px 18px;font-size:15px}
+ /* Modales de escritorio: por debajo de la cabecera (no se cortan) y centrados */
+ #ad,#fp,#le,#tgs,#form{top:calc(var(--dnh) + 14px);height:calc(var(--H,100vh) - var(--dnh) - 32px)}
+ #form{left:50%;right:auto;margin-left:-330px;width:660px;max-width:calc(100vw - 24px);border-inline:0;border-radius:14px}
+ #lgs.lgd-on{top:calc(var(--dnh) + 12px);max-height:calc(var(--H,100vh) - var(--dnh) - 28px)}
 }
 </style>
 </head>
