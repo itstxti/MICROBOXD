@@ -1,0 +1,15 @@
+{
+  "name": "microboxd",
+  "version": "1.0.0",
+  "description": "A Letterboxd-style diary PWA for AI micro-series. Single-file vanilla JS + Supabase.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "repository": { "type": "git", "url": "git+https://github.com/itstxti/microboxd.git" },
+  "scripts": {
+    "dev": "npx --yes serve .",
+    "check": "node scripts/check.mjs",
+    "setup": "node scripts/setup.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
