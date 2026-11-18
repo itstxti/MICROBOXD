@@ -216,6 +216,7 @@ button.card{border:0;font:inherit;font-weight:700;font-size:15px;padding:12px;cu
 .lgw{margin:0 -14px;padding:16px 14px;border-bottom:1px solid var(--line)}.lgw+*,.lgw+.wbs .wbh{border-top:0}.hs{color:var(--g);font-size:13px;line-height:1;letter-spacing:1px;flex:none;margin-bottom:-1px}.avc{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;width:72px}.bars u.me{background:var(--tab)}.hist .bars{flex:1;height:44px;gap:2px}.hist.e .bars{height:14px}.hist.e .avg{font-size:22px}.bars u{border-radius:0}.avg{font-weight:200;font-size:30px;line-height:1;text-align:center;color:var(--mute)}.avg small{display:none}
 .toast{position:fixed;top:0;left:0;right:0;z-index:70;background:#00a33a;color:#fff;text-align:center;font-weight:600;font-size:14px;padding:calc(14px + env(safe-area-inset-top,0px)) 14px 14px;transform:translateY(-110%);transition:transform .25s}.toast.on{transform:none}
 .bkb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:28px}.bkb button{justify-self:start;background:none;border:0;color:var(--mute);font:inherit;font-size:16px;cursor:pointer;padding:0}.lbar .bfb{display:flex;align-items:center;justify-content:flex-end;position:relative;padding-right:0}.lbar .bfb.on::after{content:"";position:absolute;top:2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--g)}
+.h1p .bfb{position:absolute;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--tx);padding:6px;cursor:pointer;display:flex}.h1p .bfh{right:-4px}.h1p .bfb.on::after{content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--g)}
 .bkb .bfb{justify-self:end;color:var(--tx);position:relative}.bkb .bfb.on::after{content:"";position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--g)}.fw{opacity:.35}
 .bkb b{font-size:17px;color:var(--tx)}
 .plus2{position:absolute;right:34px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--tx);padding:6px;cursor:pointer;display:flex}
@@ -565,12 +566,12 @@ function render(){
   const titles={home:LOGO+"Microboxd",search:"Buscar",act:"Actividad",me:esc(uname())};
   const sg=SEGS[tab];
   const bn=tab==="search"&&br.length&&!q.trim()?br[br.length-1]:null;
-  $("hd").innerHTML=(bn?`<h1 class="bkb"><button onclick="brBack()">‹ ${br.length>1?esc(brTitle(br[br.length-2])):"Explorar"}</button><b>${esc(brTitle(bn))}</b>${BFG.includes(bn.t)?`<button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()">${svg(BFIC,22)}</button>`:"<span></span>"}</h1>`:tab==="me"?`<h1 class="h1p"><button class="gear" aria-label="Ajustes" onclick="openSet()">${svg(GEAR,22)}</button>${titles[tab]}${seg.me==="lst"?`<button class="plus2" aria-label="Nueva lista" onclick="editList()">${svg('<path d="M12 4v16M4 12h16"/>',26)}</button>`:""}<button class="dots" aria-label="Más" onclick="meOpts()">•••</button></h1>`:tab==="search"?`<h1>Buscar</h1>${SBH()}<div id="spl"></div>`:`<h1>${titles[tab]}</h1>`)+(sg?`<div class="seg">${sg.map(([k,l])=>`<button class="${seg[tab]===k?"on":""}" onclick="setSeg('${k}')">${l}</button>`).join("")}</div>`:"");
+  $("hd").innerHTML=(bn?`<h1 class="bkb"><button onclick="brBack()">‹ ${br.length>1?esc(brTitle(br[br.length-2])):"Explorar"}</button><b>${esc(brTitle(bn))}</b>${BFG.includes(bn.t)?`<button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()">${svg(BFIC,22)}</button>`:"<span></span>"}</h1>`:tab==="me"?`<h1 class="h1p"><button class="gear" aria-label="Ajustes" onclick="openSet()">${svg(GEAR,22)}</button>${titles[tab]}${seg.me==="lst"?`<button class="plus2" aria-label="Nueva lista" onclick="editList()">${svg('<path d="M12 4v16M4 12h16"/>',26)}</button>`:""}${seg.me==="pend"?bfBtn("plus2",false):""}<button class="dots" aria-label="Más" onclick="meOpts()">•••</button></h1>`:tab==="search"?`<h1>Buscar</h1>${SBH()}<div id="spl"></div>`:(tab==="home"&&seg.home==="series"&&items.length?`<h1 class="h1p">${titles[tab]}${bfBtn("bfh",true)}</h1>`:`<h1>${titles[tab]}</h1>`))+(sg?`<div class="seg">${sg.map(([k,l])=>`<button class="${seg[tab]===k?"on":""}" onclick="setSeg('${k}')">${l}</button>`).join("")}</div>`:"");
   $("tb").innerHTML=["home","search","add","act","me"].map(t=>`<button class="${t==="add"?"plus":tab===t?"on":""}" aria-label="${t}" onclick="go('${t}')">${(tab===t&&t!=="add"&&t!=="search")?svg(IC[t],26).replace('fill="none"','fill="currentColor"'):svg(IC[t],t==="add"?30:26)}</button>`).join("");
   let h="";
   if(tab==="home"){
     if(seg.home==="series"){
-      h=hrow("Añadidas recientemente",items.slice(0,10))+hrow("Mejor valoradas",items.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10));
+      const fi=bfFilt(items);h=hrow("Añadidas recientemente",fi.slice(0,10))+hrow("Mejor valoradas",fi.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10));if(items.length&&!fi.length)h=`<div class="empty">${L2("Ninguna serie coincide con los filtros.","No series match your filters.")}</div>`;
       if(!items.length)h=EMP("tv","Tu biblioteca está vacía","Añade tu primera serie para empezar a puntuar y reseñar.","Añadir serie","openAdd()");
     }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=lv(lists,0)+(lists.length?'<div style="text-align:center;padding:6px 0 18px"><button class="emb" onclick="editList()">Nueva lista</button></div>':"");
     }else{
@@ -595,7 +596,7 @@ function render(){
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
       <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(inWl).length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
-    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(inWl);h=w.length?grid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
+    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(inWl);h=w.length?bfGrid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
   }
   $("mn").innerHTML=h;if(tab==="search")sr();else sfx();setNh();
 }
@@ -641,31 +642,34 @@ const bfR=()=>({
  dur:[["",bfAny()],["0-60",L2("Hasta 1 h","Up to 1 h")],["61-180","1–3 h"],["181-360","3–6 h"],["361-9999999",L2("Más de 6 h","Over 6 h")]],
  w:bfYN(L2("Vistas","Watched"),L2("No vistas","Not watched")),lk:bfYN(L2("Con me gusta","Liked"),L2("Sin me gusta","Not liked")),rt:bfYN(L2("Valoradas","Rated"),L2("Sin valorar","Not rated")),wl:bfYN(L2("En mi watchlist","On my watchlist"),L2("Fuera de mi watchlist","Not on my watchlist"))});
 const bfW=i=>i.status==="done"||(i.dcount||0)>0||!!i.watchedOn,bfIn=(v,r)=>{const[a,b]=r.split("-").map(Number);return v!=null&&v>=a&&v<=b};
-function bfApply(l){const f=BF;let r=l.filter(i=>{
+function bfFilt(l){const f=BF;return l.filter(i=>{
   if(f.apps.length&&!f.apps.some(a=>a.toLowerCase()===(i.app||"").trim().toLowerCase()))return false;
   if(f.themes.length&&!f.themes.every(t=>hasT(i,t)))return false;
   if(f.eps&&!bfIn(i.eps,f.eps))return false;if(f.dur&&!bfIn(i.epm,f.dur))return false;
   const yn=(k,v)=>!f[k]||(f[k]==="y")===!!v;
-  return yn("w",bfW(i))&&yn("lk",i.liked)&&yn("rt",i.rating>0)&&yn("wl",i.wl||i.status==="want")});
+  return yn("w",bfW(i))&&yn("lk",i.liked)&&yn("rt",i.rating>0)&&yn("wl",i.wl||i.status==="want")})}
+function bfApply(l){const f=BF,r=bfFilt(l);
   const nv=(a,b)=>a==null?(b==null?0:1):b==null?-1:0,pp=i=>(com[key(i)]||[]).length+(i.rating?1:0);
   const S={new:(a,b)=>(b.added||0)-(a.added||0),old:(a,b)=>(a.added||0)-(b.added||0),az:(a,b)=>a.title.localeCompare(b.title),za:(a,b)=>b.title.localeCompare(a.title),rate:(a,b)=>b.rating-a.rating,pop:(a,b)=>pp(b)-pp(a),
    "eps+":(a,b)=>(b.eps||0)-(a.eps||0),"eps-":(a,b)=>(a.eps||0)-(b.eps||0),"dur+":(a,b)=>nv(a.epm,b.epm)||(b.epm||0)-(a.epm||0),"dur-":(a,b)=>nv(a.epm,b.epm)||(a.epm||0)-(b.epm||0)}[f.sort];
   return S?[...r].sort(S):r}
 const bfGrid=l=>{const r=bfApply(l);if(!r.length)return `<div class="empty">${bfN(BF)?L2("Ninguna serie coincide con los filtros.","No series match your filters."):L2("Nada por aquí todavía.","Nothing here yet.")}</div>`;
   return `<div class="grid g3">${r.map(i=>BF.fade&&bfW(i)?cell(i).replace("<div>",'<div class="fw">'):cell(i)).join("")}</div>`};
+const bfBtn=(c,ns)=>`<button class="bfb${bfN(BF)?" on":""}${c?" "+c:""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen(${ns?"true":""})">${svg(BFIC,22)}</button>`;
 const BFIC='<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>';
-function bfOpen(){bd=JSON.parse(JSON.stringify(BF));bfDraw();const f=$("fp");clearTimeout(f._t);f.classList.remove("out");f.classList.add("bf","open")}
+let bfNS=false,bfCtx=null;
+function bfOpen(ns){bfNS=ns===true;bd=JSON.parse(JSON.stringify(BF));bfDraw();const f=$("fp");clearTimeout(f._t);f.classList.remove("out");f.classList.add("bf","open")}
 function bfClose(){const f=$("fp");if(!f.classList.contains("open")||f.classList.contains("out"))return;f.classList.add("out");f._t=setTimeout(()=>f.classList.remove("open","out","bf"),240)}
 function bfLbl(k){const f=bd,R=bfR();if(k==="apps")return f.apps.length?(f.apps.length>1?f.apps.length+" ":"")+f.apps.join(", "):bfAny();if(k==="themes")return f.themes.length?f.themes.join(", "):bfAny();const o=R[k].find(x=>x[0]===f[k]);return o?o[1]:bfAny()}
 function bfDraw(){const keep=($("fp").querySelector(".bfs")||{}).scrollTop||0,N=(l,k)=>`<div class="srow" onclick="bfSel('${k}')"><span>${l}</span><span class="sv2">${esc(bfLbl(k))}</span><i class="chv">›</i></div>`;
   $("fp").innerHTML=`<div class="lef bfs" style="overflow-y:auto;height:100%"><div class="leh"><button onclick="bd=null;bfClose()">${L2("Cancelar","Cancel")}</button><b>${L2("Filtros","Filters")}</b><button class="sv" onclick="bfDone()">${L2("Hecho","Done")}</button></div>
-  <div class="sgrp">${N(L2("Ordenar por","Sort by"),"sort")}</div>
+  ${bfNS?"":`<div class="sgrp">${N(L2("Ordenar por","Sort by"),"sort")}</div>`}
   <div class="slb">${L2("Apariencia","Appearance")}</div><div class="sgrp"><div class="srow"><span>${L2("Atenuar vistas","Fade watched")}</span><button class="sw ${bd.fade?"on":""}" aria-label="${L2("Atenuar vistas","Fade watched")}" onclick="bd.fade=!bd.fade;this.classList.toggle('on',bd.fade)"></button></div></div>
   <div class="slb">${L2("Contenido","Content")}</div><div class="sgrp">${N(L2("Plataforma","Platform"),"apps")}${N(L2("Temas","Themes"),"themes")}${N(L2("Episodios","Episodes"),"eps")}${N(L2("Duración total","Total duration"),"dur")}</div>
   <div class="slb">${L2("Mi cuenta","My account")}</div><div class="sgrp">${N(L2("Vistas","Watched"),"w")}${N(L2("Me gusta","Liked"),"lk")}${N(L2("Valoradas","Rated"),"rt")}${N(L2("Watchlist","Watchlist"),"wl")}</div>
   <div class="srow so" style="margin-top:26px" onclick="bd=JSON.parse(JSON.stringify(BF0));bfDraw()"><span>${L2("Restablecer filtros","Reset filters")}</span></div><div style="height:40px"></div></div>`;
   const e=$("fp").querySelector(".bfs");if(e)e.scrollTop=keep}
-function bfDone(){BF=bd;bd=null;try{localStorage.setItem(BFK,JSON.stringify(BF))}catch(e){}bfClose();if($("lst").classList.contains("open")&&$("lst").querySelector(".bfb")){const y=$("lst").scrollTop;openAll();$("lst").scrollTop=y}render()}
+function bfDone(){BF=bd;bd=null;try{localStorage.setItem(BFK,JSON.stringify(BF))}catch(e){}bfClose();if(bfCtx&&$("lst").classList.contains("open")&&$("lst").querySelector(".bfb")){const y=$("lst").scrollTop;bfCtx();$("lst").scrollTop=y}render()}
 function bfSel(k){const multi=k==="apps"||k==="themes";let opts;
   if(k==="apps")opts=appsAll().map(a=>[a,appN(a)]);
   else if(k==="themes"){const tm=new Map();catAll().forEach(i=>{const seen=new Set();(i.tropes||[]).forEach(t=>{const q=tkey(t);if(!q)return;if(!tm.has(q))tm.set(q,{l:t.trim(),n:0});if(!seen.has(q)){seen.add(q);tm.get(q).n++}})});opts=[...tm.values()].sort((a,b)=>b.n-a.n||a.l.localeCompare(b.l)).map(x=>[x.l,x.n])}
@@ -900,7 +904,7 @@ const diary=(src)=>{if(!src)return diaryOwn();const d=(src||items).filter(i=>i.w
 const tagsAll=()=>[...new Set(items.flatMap(i=>i.rtags||[]))];
 function sheet(t,b,rt){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open','top');render()">‹ ${esc(uname())}</button><b>${t}</b>${rt||'<span style="min-width:44px"></span>'}</div>${b}`;$("lst").classList.add("open");$("lst").scrollTop=0}
 const openRev=()=>sheet("Reseñas",rvl(items.filter(i=>i.review)));
-const openLikes=()=>sheet("Me gusta",grid(items.filter(i=>i.liked)));
+const openLikes=()=>{bfCtx=openLikes;sheet("Me gusta",bfGrid(items.filter(i=>i.liked)),bfBtn("",false).replace("class=\"","class=\"bfl2 "))};
 let tsrt="n",ttab="s";
 function openTags(){const L=ttab==="l",m={};(L?lists:items).forEach(i=>((L?i.tags:i.rtags)||[]).forEach(t=>{const k=t.toLowerCase();m[k]=m[k]||{t,n:0};m[k].n++}));let a=Object.values(m);a.sort(tsrt==="n"?(x,y)=>y.n-x.n||x.t.localeCompare(y.t):(x,y)=>x.t.localeCompare(y.t));
   const sb=`<button aria-label="Ordenar" onclick="tsrt=tsrt==='n'?'a':'n';openTags()" style="min-width:44px;display:flex;justify-content:flex-end;background:none;border:0;color:var(--mute);padding:0;cursor:pointer">${svg('<path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/>',24)}</button>`;
@@ -953,7 +957,7 @@ function openStats(src,nm){if(src===null){STXI=null;STXN=""}else if(src){STXI=sr
   stOut(h+'<div style="height:30px"></div>')}
 function meOpts(){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${esc(uname())}</b><span>Perfil</span></div><button class="oi" onclick="closeOv();openSet()">Editar perfil</button><button class="oi" onclick="closeOv();shrP()">Compartir perfil</button></div><button class="card" onclick="closeOv()">Listo</button>`;$("ov").classList.add("open")}
 async function shrP(){const t=`${uname()} en Microboxd · ${items.length} series · ${items.reduce((a,i)=>a+i.watched,0)} episodios`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast("Copiado al portapapeles")}}catch(e){}}
-function openAll(){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open');render()">‹ ${esc(uname())}</button><b>Series</b><button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()" style="min-width:44px;justify-content:flex-end">${svg(BFIC,22)}</button></div>${bfGrid(items)}`;$("lst").classList.add("open")}
+function openAll(){bfCtx=openAll;$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open');render()">‹ ${esc(uname())}</button><b>Series</b><button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()" style="min-width:44px;justify-content:flex-end">${svg(BFIC,22)}</button></div>${bfGrid(items)}`;$("lst").classList.add("open")}
 let lview="grid";
 let LL={};
 const llH=(id,own)=>{const d=LL[id]||{n:0,me:false};return `<button class="hb2 ${d.me?"on":""}" aria-label="Me gusta" onclick="${own?"toast('No puedes dar like a tu propia lista')":`llTog('${id}')`}" style="display:flex">${svg(HEART,28)}</button><span>${d.n?`${d.n} ${d.n===1?"like":"likes"}`:"Aún sin likes"}</span>`};
@@ -1580,7 +1584,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794961579";
+const BUILD="1794961663";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
