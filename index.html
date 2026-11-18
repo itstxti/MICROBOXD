@@ -113,6 +113,42 @@ select,input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--p
 @keyframes mbIn{from{transform:translateX(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbUp{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbOut{to{transform:translateX(28px);opacity:0}}
+.dsd,.ttl{display:contents}#dn{display:none}
+@media (min-width:1024px){
+ :root{--dw:max(28px,calc(50% - 520px));--dnh:64px}
+ #tb{display:none}
+ #dn{display:flex;align-items:center;gap:30px;flex:none;height:var(--dnh);background:var(--hd);padding:0 var(--dw);position:relative;z-index:15}
+ .dnl{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--tx);font-weight:800;font-size:20px;letter-spacing:-.3px;margin-right:6px}.dnl svg{width:30px;height:30px}
+ #dn a{color:var(--mute);font-size:12px;letter-spacing:1.7px;text-transform:uppercase;font-weight:600;cursor:pointer;padding:8px 0;border-bottom:2px solid transparent;transition:color .15s}#dn a:hover{color:var(--tx)}#dn a.on{color:var(--tx);border-bottom-color:var(--g)}
+ .dnsp{flex:1}.dnb{background:var(--g);color:#fff;border:0;border-radius:4px;padding:9px 18px;font:inherit;font-weight:700;font-size:12px;letter-spacing:1.4px;cursor:pointer;white-space:nowrap}.dnb:hover{filter:brightness(1.1)}
+ .dnav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--o));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:pointer}
+ header{padding:12px var(--dw) 6px;background:var(--bg)}
+ header .ttl{display:none}header h1{margin-bottom:6px;min-height:0}
+ header .seg{max-width:560px;margin:0 auto}
+ header{position:relative}header h1.h1p:has(.bfh){position:static;margin:0;height:0}header .h1p .bfh{right:var(--dw);top:20px;transform:none}
+ main{padding:0 var(--dw) 48px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}main::-webkit-scrollbar{display:block;width:10px}main::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+ .hrow{overflow:hidden;padding:0;gap:12px}.hp{width:calc((100% - 5*12px)/6)}.hp:nth-child(n+7){display:none}h3.sec{margin-left:0;margin-right:0}.br{padding-left:0;padding-right:0}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:18px 12px;padding:14px 0}
+ .poster:hover{outline:2px solid var(--g);outline-offset:-2px}
+ html.insr header{padding:0 var(--dw);height:66px}html.insr header h1{display:none}
+ html.insr header .sbw{top:12px;left:var(--dw);right:var(--dw);height:44px}html.insr.sfoc header .sbw{transform:translate3d(0,0,0)}html.insr header .sbw .sbr{max-width:600px;margin:0 auto}
+ #det,#lst,#sub{top:var(--dnh);height:calc(var(--H,100%) - var(--dnh))}
+ #det .in2{max-width:1040px;width:100%;box-sizing:border-box;display:grid;grid-template-columns:230px minmax(0,1fr) 290px;grid-template-rows:repeat(7,auto) 1fr;column-gap:36px;align-items:start;padding:0 28px 60px}
+ .in2>.hd2,.in2>.hd2 .tt{display:contents}
+ .in2 .hd2 .poster{grid-column:1;grid-row:1/-1;width:230px;margin-top:16px}
+ .in2 .tt h2,.in2 .tt .meta,.in2 .tt .tpr{grid-column:2}
+ .in2 .tt h2{font-size:34px;margin:16px 0 0;grid-row:1}
+ .in2 .tt .meta{grid-row:2;margin:6px 0 12px}.in2 .tt .tpr{grid-row:3}
+ .in2>.syn{grid-column:2;max-height:none;font-size:16px;-webkit-mask-image:none;mask-image:none;margin:14px 0 8px;cursor:default}
+ .in2>.dsd{display:block;grid-column:3;grid-row:1/-1;padding-top:16px}
+ .in2>*:not(.hd2):not(.dsd):not(.syn){grid-column:2}
+ .in2 .dsd .lgw{margin:0 0 14px;padding:0;border:0}
+ .in2>.seg.d{margin-top:18px}
+ .top{max-width:1040px;margin:0 auto;padding-left:20px;padding-right:20px}
+ #form,#fp,#lgs,#tgs,#ad,#le{inset:5vh auto auto 50%;width:600px;margin-left:-300px;height:90vh;border-radius:14px;box-shadow:0 0 0 100vmax rgba(0,0,0,.62),0 20px 60px rgba(0,0,0,.6);padding-top:0;animation-name:mbUp}
+ #fp.bf::before{display:none}#fp.bf.open{animation:mbUp .24s cubic-bezier(.2,.8,.2,1)}#fp.bf.out{animation:mbOut .18s ease-in forwards}
+ .ov{background:rgba(11,13,16,.72);align-items:center;justify-content:center;padding:24px}.ov>.card{width:420px;max-width:100%}
+}
 @media (prefers-reduced-motion:reduce){#fp.bf.open,#fp.bf.out,.sheet.open,.sheet.out,.ov.open,.ov.open::before{animation:none!important}}
 .back{height:170px;background-size:cover;background-position:center;filter:blur(18px) brightness(.55);transform:scale(1.2);position:absolute;top:0;left:0;right:0}
 .in{position:relative;max-width:680px;margin:0 auto;padding:14px}
@@ -400,6 +436,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .tpr{margin-top:10px}.tpr .tag{margin:0 4px 5px 0}@keyframes mbTin{from{opacity:0;transform:translateY(-5px) scale(.96)}to{opacity:1;transform:none}}.tpr .tag.tin{animation:mbTin .28s cubic-bezier(.2,.7,.2,1) both}.tpr .tmore{color:var(--tx);border-color:var(--mute)}.fb{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:7px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}.fb b{font-family:Georgia,serif;font-size:12px;line-height:1.15}.fb small{font-size:8px;letter-spacing:1px;text-transform:uppercase;opacity:.85}.fm .fs{position:sticky;bottom:0;padding:18px 0 6px;margin-top:8px;background:linear-gradient(transparent,var(--bg) 40%)}.fm .fs .btn{width:100%;height:48px;font-size:16px;border-radius:10px}html.kbd .fm .fs{position:static;background:none}.strip .fb{padding:2px}.strip .fb b,.strip .fb small{display:none}</style>
 </head>
 <body>
+<nav id="dn"></nav>
 <header id="hd"></header>
 <main id="mn"></main>
 <nav id="tb"></nav>
@@ -566,7 +603,8 @@ function render(){
   const titles={home:LOGO+"Microboxd",search:"Buscar",act:"Actividad",me:esc(uname())};
   const sg=SEGS[tab];
   const bn=tab==="search"&&br.length&&!q.trim()?br[br.length-1]:null;
-  $("hd").innerHTML=(bn?`<h1 class="bkb"><button onclick="brBack()">‹ ${br.length>1?esc(brTitle(br[br.length-2])):"Explorar"}</button><b>${esc(brTitle(bn))}</b>${BFG.includes(bn.t)?`<button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()">${svg(BFIC,22)}</button>`:"<span></span>"}</h1>`:tab==="me"?`<h1 class="h1p"><button class="gear" aria-label="Ajustes" onclick="openSet()">${svg(GEAR,22)}</button>${titles[tab]}${seg.me==="lst"?`<button class="plus2" aria-label="Nueva lista" onclick="editList()">${svg('<path d="M12 4v16M4 12h16"/>',26)}</button>`:""}${seg.me==="pend"?bfBtn("plus2",false):""}<button class="dots" aria-label="Más" onclick="meOpts()">•••</button></h1>`:tab==="search"?`<h1>Buscar</h1>${SBH()}<div id="spl"></div>`:(tab==="home"&&seg.home==="series"&&items.length?`<h1 class="h1p">${titles[tab]}${bfBtn("bfh",true)}</h1>`:`<h1>${titles[tab]}</h1>`))+(sg?`<div class="seg">${sg.map(([k,l])=>`<button class="${seg[tab]===k?"on":""}" onclick="setSeg('${k}')">${l}</button>`).join("")}</div>`:"");
+  $("hd").innerHTML=(bn?`<h1 class="bkb"><button onclick="brBack()">‹ ${br.length>1?esc(brTitle(br[br.length-2])):"Explorar"}</button><b>${esc(brTitle(bn))}</b>${BFG.includes(bn.t)?`<button class="bfb${bfN(BF)?" on":""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen()">${svg(BFIC,22)}</button>`:"<span></span>"}</h1>`:tab==="me"?`<h1 class="h1p"><button class="gear" aria-label="Ajustes" onclick="openSet()">${svg(GEAR,22)}</button>${titles[tab]}${seg.me==="lst"?`<button class="plus2" aria-label="Nueva lista" onclick="editList()">${svg('<path d="M12 4v16M4 12h16"/>',26)}</button>`:""}${seg.me==="pend"?bfBtn("plus2",false):""}<button class="dots" aria-label="Más" onclick="meOpts()">•••</button></h1>`:tab==="search"?`<h1>Buscar</h1>${SBH()}<div id="spl"></div>`:(tab==="home"&&seg.home==="series"&&items.length?`<h1 class="h1p"><span class="ttl">${titles[tab]}</span>${bfBtn("bfh",true)}</h1>`:`<h1><span class="ttl">${titles[tab]}</span></h1>`))+(sg?`<div class="seg">${sg.map(([k,l])=>`<button class="${seg[tab]===k?"on":""}" onclick="setSeg('${k}')">${l}</button>`).join("")}</div>`:"");
+  $("dn").innerHTML=`<div class="dnl" onclick="go('home')">${LOGO.replace(/"c([ab])"/g,'"dc$1"').replace(/#c([ab])\)/g,"#dc$1)")}<b>Microboxd</b></div>${[["home",L2("Series","Series")],["search",L2("Explorar","Explore")],["act",L2("Actividad","Activity")],["me",L2("Perfil","Profile")]].map(([t,l])=>`<a class="${tab===t?"on":""}" onclick="go('${t}')">${l}</a>`).join("")}<div class="dnsp"></div><button class="dnb" onclick="openAdd()">+ ${L2("AÑADIR","ADD")}</button><div class="dnav" onclick="go('me')">${ini()}</div>`;
   $("tb").innerHTML=["home","search","add","act","me"].map(t=>`<button class="${t==="add"?"plus":tab===t?"on":""}" aria-label="${t}" onclick="go('${t}')">${(tab===t&&t!=="add"&&t!=="search")?svg(IC[t],26).replace('fill="none"','fill="currentColor"'):svg(IC[t],t==="add"?30:26)}</button>`).join("");
   let h="";
   if(tab==="home"){
@@ -767,9 +805,9 @@ function show(id,keep){
   d.innerHTML=`<div class="top"><button class="rb" aria-label="Volver" onclick="closeDet()"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 6 13l10 10"/></svg></button><span class="tpt">${esc(short(i.title))}</span><div style="display:flex">${canEdit(i)?`<button class="rb" aria-label="Editar serie" onclick="fmEdit(${i.id})"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>`:""}<button class="rb" aria-label="Más" onclick="opts(${i.id})"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg></button></div></div>
   <div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div>${i.tropes.length?`<div class="tpr">${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>`:""}</div>${poster(i).replace(/onclick="[^"]*"/,"")}</div>
   <p class="syn" onclick="synTog(this)">${esc(i.syn)||"Sin sinopsis todavía."}</p>
-  ${hist(i)}
+  <div class="dsd">${hist(i)}
   <div class="lgw"><div class="logrow" onclick="opts(${i.id})"><div class="av" style="width:32px;height:32px;font-size:14px;flex:none">${ini()}</div><span>${lt(i)}</span><span class="more">•••</span></div></div>
-  ${wbSec(i)}${wwSec(i)}
+  ${wbSec(i)}${wwSec(i)}</div>
   ${revsSec(i)}
   <div class="seg d">${[["cast","Reparto"],["inf","Detalles"],["trp","Temas"]].map(([k,l])=>`<button class="${dtab===k?"on":""}" onclick="setDt('${k}',${i.id})">${l}</button>`).join("")}</div>
   ${dt(i)}${simSec(i)}${lstSec(i)}</div>`;
@@ -1584,7 +1622,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794961663";
+const BUILD="1794988769";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
