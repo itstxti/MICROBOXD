@@ -499,6 +499,42 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .dpsd .mh{padding:6px 0 0;align-items:flex-end}.dpsd .mh .bars{height:64px;gap:3px}
  .dpl2{margin-bottom:16px;cursor:pointer}.dpln{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:14px;color:var(--tx)}.dpln span{color:var(--mute);font-size:12px;white-space:nowrap}.dpl2:hover .dpln b{color:var(--g)}
 }
+
+/* Subpáginas del perfil (Letterboxd-like) */
+.dpv{display:none}
+@media (min-width:1024px){
+ .dpv{display:block;padding-top:6px}.dpv.dp2{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:60px;align-items:start}
+ .dpt.cmp{justify-content:flex-start;margin-top:26px;padding:0 14px;gap:20px;background:rgba(255,255,255,.05)}
+ .dpt.cmp .dpwho{display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--tx);font-weight:700;font-size:15px;padding:11px 0}.dpt.cmp .dpwho .av{width:30px;height:30px;border:0}
+ .dptl{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;flex:1}.dpt:not(.cmp) .dptl{flex:none}.dpt.cmp .dptl{gap:26px}
+ .dpt.cmp a{padding:16px 0 14px}
+ .dpsh{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding:30px 0 8px;margin-bottom:18px;font-size:14px;letter-spacing:1.8px;text-transform:uppercase;color:var(--mute)}
+ .dpsh a,.dpsh b{cursor:pointer;color:var(--mute);font-weight:500;margin-right:14px}.dpsh .dpon{color:var(--tx);font-weight:600;border-bottom:2px solid var(--g);padding-bottom:8px;margin-bottom:-9px}.dpsh a:hover{color:var(--tx)}.dpsr{display:flex;align-items:center;gap:14px;letter-spacing:1px;font-size:12px}.dpsr a{margin:0}
+ .dpsh .bfb{background:none;border:0;color:var(--mute);cursor:pointer;padding:0;display:inline-flex}.dpsh .bfb:hover{color:var(--tx)}
+ .dpg{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:14px 10px}.dpg.dpg5{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 10px}
+ .dpg .ss{font-size:10px;letter-spacing:.5px;white-space:nowrap;overflow:hidden}.dprv{font-style:normal;margin-left:2px}
+ .dpem2{color:var(--mute);padding:22px 0;font-size:15px;max-width:520px;line-height:1.5}
+ .dpsd2{padding-top:30px}.dpbt{display:block;width:100%;background:var(--tab);color:#fff;border:0;border-bottom:1px solid rgba(0,0,0,.25);padding:13px 10px;font:inherit;font-size:15px;cursor:pointer;text-align:center}.dpbt:hover{filter:brightness(1.12)}.dpbt:first-child{border-radius:4px 4px 0 0}.dpbt:last-of-type{border-radius:0 0 4px 4px}
+ .dpht{font-size:14px;line-height:1.6;color:var(--mute);margin:0}.dpsd2 .dsh{margin-top:30px}
+ /* diario */
+ .dpr1{display:grid;grid-template-columns:86px 54px minmax(0,1fr) 110px 100px 60px 62px 62px 56px;align-items:center;border-bottom:1px solid var(--line);min-height:68px}
+ .dpr1.dpth{min-height:0;padding:8px 0;font-size:11px;letter-spacing:1.3px;color:var(--mute)}.dpr1.dpth>div{text-align:center}.dpr1.dpth>div:nth-child(3),.dpr1.dpth>div:nth-child(4){text-align:left}.dpr1.dpth>div:nth-child(2){text-align:right;padding-right:14px}
+ .dpm1{align-self:stretch;display:flex;align-items:center}.dpcal{width:68px;height:52px;border-radius:5px;background:var(--pan);border-top:6px solid var(--tab);box-sizing:border-box;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.05}.dpcal b{color:var(--tx);font-size:16px;letter-spacing:1px}.dpcal small{color:var(--mute);font-size:11px}
+ .dpday{font-size:26px;font-weight:300;color:var(--mute);text-align:right;padding-right:16px}
+ .dpti{display:flex;align-items:center;gap:14px;cursor:pointer;min-width:0}.dpti .poster{width:34px;flex:none;border-radius:2px}.dpti b{font-family:Georgia,serif;font-size:19px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dpti:hover b{color:var(--g)}
+ .dpap{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .dprt{text-align:center}.dprt .fxst{font-size:14px;letter-spacing:1px}.dpc{text-align:center;color:var(--mute);font-size:15px}.dpc svg{width:17px;height:17px}.dpht2{color:var(--o);font-style:normal;font-size:17px}.dpc.dped{cursor:pointer;font-size:17px}.dpc.dped:hover{color:var(--g)}
+ /* reseñas */
+ .dprv2{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--line);cursor:pointer}.dprv2:first-of-type{padding-top:6px}
+ .dprp{flex:0 0 88px}.dprv2 h3{margin:0;font-family:Georgia,serif;font-size:24px;color:var(--tx)}.dprv2 h3 small{font:400 14px system-ui,sans-serif;color:var(--mute);margin-left:6px}.dprv2:hover h3{color:var(--g)}
+ .dpm2{margin:7px 0 12px;color:var(--mute);font-size:14px;display:flex;align-items:center;gap:6px}.dprv2 p{margin:0;font-size:16px;line-height:1.55;color:#cdd;white-space:pre-wrap}
+ /* listas */
+ .dpli{display:flex;gap:22px;padding:20px 0;border-bottom:1px solid var(--line);cursor:pointer}.dpli:first-of-type{padding-top:6px}
+ .dpstk{display:flex;flex:none;width:260px;height:131px}.dpstk .poster{width:88px;flex:none;margin-left:-44px;border-radius:3px;box-shadow:-3px 0 7px rgba(0,0,0,.55);aspect-ratio:2/3}.dpstk .poster:first-child{margin-left:0}.dpstk .poster:hover{outline:0}.dpemp{background:var(--pan)}
+ .dpld{min-width:0}.dpld h3{margin:2px 0 0;font-size:22px;color:var(--tx)}.dpli:hover h3{color:var(--g)}.dpld .dpm2{margin:6px 0 10px}.dpld p{margin:0;font-family:Georgia,serif;font-size:16px;color:#cdd;line-height:1.5}.dped{cursor:pointer;color:var(--mute);font-size:15px}.dped:hover{color:var(--g)}
+ /* etiquetas */
+ .dptg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 70px}.dptr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;min-width:0}.dptr b{color:var(--mute);font-weight:400;font-size:14px}.dptr .tgc{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -696,6 +732,7 @@ function sCancel(){q="";sf=0;const i=$("qi");if(i){i.value="";i.blur()}const c=d
 function render(){
   document.documentElement.classList.toggle("dh",tab==="home");
   document.documentElement.classList.toggle("dpr",tab==="me");
+  if(tab==="me"&&!DSK()&&!["perfil","diary","lst","pend"].includes(seg.me))seg.me="perfil";
   const titles={home:LOGO+"Microboxd",search:"Buscar",act:"Actividad",me:esc(uname())};
   const sg=SEGS[tab];
   const bn=tab==="search"&&br.length&&!q.trim()?br[br.length-1]:null;
@@ -730,9 +767,9 @@ function render(){
       <div class="link" style="margin-top:0" onclick="go('act')">Más actividad <span>›</span></div>
       ${myHist()}
       <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,"openAll()")}${row("Diario",`${items.filter(i=>i.watchedOn).length} / ${thisYr(items)} este año`,"setSeg('diary')")}${row("Listas",lists.length,"setSeg('lst')")}${row("Reseñas",items.filter(i=>i.review).length,"openRev()")}${row("Watchlist",items.filter(inWl).length,"setSeg('pend')")}${row("Me gusta",items.filter(i=>i.liked).length,"openLikes()")}${row("Etiquetas",tagsAll().length,"openTags()")}${row("Siguiendo",`<span id="myfg">${FW.size}</span>`,`openFol('${U.id}','ing')`)}${row("Seguidores",`<span id="myfo">${MYFO===null?"–":MYFO}</span>`,`openFol('${U.id}','ers')`)}${row("Estadísticas","","openStats(null)")}</div>`;loadMyFo();
-    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else{const w=items.filter(inWl);h=w.length?bfGrid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}
+    }else if(seg.me==="diary")h=diary();else if(seg.me==="lst")h=lv(lists,0);else if(seg.me==="pend"){const w=items.filter(inWl);h=w.length?bfGrid(w):EMP("clock","Tu watchlist está vacía","Guarda aquí las series que quieres ver más adelante.","Buscar series","go('search')")}else h=""
   }
-  if(tab==="me"){if(MYFO===null)loadMyFo();h=dpfHead()+(seg.me==="perfil"?`<div class="mro">${h}</div>`+dprof():`<div class="dpo">${h}</div>`)}
+  if(tab==="me"){if(MYFO===null)loadMyFo();h=dpfHead()+`<div class="mro">${h}</div>`+(seg.me==="perfil"?dprof():dpv())}
   $("mn").innerHTML=h;if(tab==="search")sr();else sfx();setNh();
 }
 const spl=h=>{const e=$("spl");if(e)e.innerHTML=h};let SRL=null,SRM=null;
@@ -860,13 +897,33 @@ function fvDrag(e){const el=e.target.closest(".fvp[data-k]");if(!el||e.target.cl
 function saveSet(){["name","fam","email","loc","web","bio","pron"].forEach(k=>prof[k]=(sd[k]||"").trim());prof.fav=sd.fav.filter(id=>get(id));prof.av=sd.av||"";prof.avd=sd.avd||"";setMe();save();$("set").classList.remove("open");render()}
 const dFmt=(wd,o)=>{try{return new Date(wd+"T12:00:00").toLocaleDateString(LANG==="es"?"es-ES":"en-GB",o||{day:"numeric",month:"short",year:"numeric"})}catch(e){return wd}};
 function dpfHead(){
-  const yr=new Date().getFullYear(),dn=items.filter(i=>i.status==="done"||i.rating||(i.dcount||0)>0),ty=items.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,wu=typeof webUrl==="function"?webUrl(prof.web):"";
-  const nm=[prof.name,prof.fam].map(x=>(x||"").trim()).filter(Boolean).join(" ");
+  const yr=new Date().getFullYear(),ty=items.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,wu=typeof webUrl==="function"?webUrl(prof.web):"";
+  const nm=[prof.name,prof.fam].map(x=>(x||"").trim()).filter(Boolean).join(" "),cmp=seg.me!=="perfil";
   const st=(n,l,fn,id)=>`<div${fn?` class="lk" onclick="${fn}"`:""}><b${id?` id="${id}"`:""}>${n}</b><span>${l}</span></div>`;
-  const T=[["perfil",L2("Perfil","Profile"),"setSeg('perfil')"],["all",L2("Series","Series"),"openAll()"],["diary",L2("Diario","Diary"),"setSeg('diary')"],["rev",L2("Reseñas","Reviews"),"openRev()"],["pend","Watchlist","setSeg('pend')"],["lst",L2("Listas","Lists"),"setSeg('lst')"],["lk",L2("Me gusta","Likes"),"openLikes()"],["tg",L2("Etiquetas","Tags"),"openTags()"],["stt",L2("Estadísticas","Stats"),"openStats(null)"]];
+  const T=[...(cmp?[]:[["perfil",L2("Perfil","Profile"),"setSeg('perfil')"]]),["act",L2("Actividad","Activity"),"go('act')"],["all",L2("Series","Series"),"setSeg('all')"],["diary",L2("Diario","Diary"),"setSeg('diary')"],["rev",L2("Reseñas","Reviews"),"setSeg('rev')"],["pend","Watchlist","setSeg('pend')"],["lst",L2("Listas","Lists"),"setSeg('lst')"],["lk",L2("Me gusta","Likes"),"setSeg('lk')"],["tg",L2("Etiquetas","Tags"),"setSeg('tg')"],["stt",L2("Estadísticas","Stats"),"openStats(null)"]];
+  const bar=`<div class="dpt${cmp?" cmp":""}">${cmp?`<div class="dpwho" onclick="setSeg('perfil')"><div class="av">${ini()}</div><b>${esc(uname())}</b></div>`:""}<div class="dptl">${T.map(([k,l,fn])=>`<a class="${seg.me===k?"on":""}" onclick="${fn}">${l}</a>`).join("")}</div></div>`;
+  if(cmp)return `<div class="dpf">${bar}</div>`;
   return `<div class="dpf"><div class="dph"><div class="av big">${ini()}</div><div class="dpi"><div class="dpn"><h2>${esc(uname())}</h2><button class="dpe" onclick="openSet()">${L2("EDITAR PERFIL","EDIT PROFILE")}</button><button class="dpm" aria-label="${L2("Más","More")}" onclick="meOpts()">•••</button></div>${nm&&nm!==uname()?`<div class="dpx">${esc(nm)}</div>`:""}${prof.bio?`<p class="dpb2">${esc(prof.bio)}</p>`:""}${prof.loc?`<div class="dpx">${svg(PIN,14)}${esc(prof.loc)}</div>`:""}${wu?`<div class="dpx"><a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a></div>`:""}</div>
-  <div class="dps">${st(items.length,"SERIES","openAll()")}${st(ty,L2("ESTE AÑO","THIS YEAR"),"setSeg('diary')")}${st(lists.length,L2("LISTAS","LISTS"),"setSeg('lst')")}${st(FW.size,L2("SIGUIENDO","FOLLOWING"),"openFol('${U.id}','ing')")}${st(MYFO===null?"–":MYFO,L2("SEGUIDORES","FOLLOWERS"),"openFol('${U.id}','ers')","dpfo")}</div></div>
-  <div class="dpt">${T.map(([k,l,fn])=>`<a class="${seg.me===k?"on":""}" onclick="${fn}">${l}</a>`).join("")}${seg.me==="lst"?`<button class="dpe dpn2" onclick="editList()">＋ ${L2("NUEVA LISTA","NEW LIST")}</button>`:""}</div></div>`}
+  <div class="dps">${st(items.length,"SERIES","setSeg('all')")}${st(ty,L2("ESTE AÑO","THIS YEAR"),"setSeg('diary')")}${st(lists.length,L2("LISTAS","LISTS"),"setSeg('lst')")}${st(FW.size,L2("SIGUIENDO","FOLLOWING"),"openFol('${U.id}','ing')")}${st(MYFO===null?"–":MYFO,L2("SEGUIDORES","FOLLOWERS"),"openFol('${U.id}','ers')","dpfo")}</div></div>${bar}</div>`}
+const dpEn=()=>{const en=DEN.slice();items.forEach(i=>{if(i.watchedOn&&!en.some(e=>e.iid===i.id))en.push({id:i.deid||"",iid:i.id,wd:new Date(i.watchedOn).toISOString().slice(0,10),r:i.rating||0,hl:!!i.liked,rw:!!i.rewatch,t:i.review||"",sp:!!i.spoil})});return en.filter(e=>get(e.iid)).map((e,k)=>[e,k]).sort((a,b)=>a[0].wd<b[0].wd?1:a[0].wd>b[0].wd?-1:a[1]-b[1]).map(x=>x[0])};
+function dpv(){
+  const k=seg.me,sh=(t,r)=>`<div class="dpsh"><span>${t}</span><span class="dpsr">${r||""}</span></div>`,
+   emp=m=>`<div class="dpem2">${m}</div>`,
+   grid=l=>{const r=bfApply(l);return r.length?`<div class="dpg">${r.map(i=>`<div>${poster(i)}<div class="ss">${i.rating?S(i.rating):""}${i.liked?' <i class="rvhe">♥</i>':""}${i.review?' <i class="dprv">☰</i>':""}</div></div>`).join("")}</div>`:emp(bfN(BF)?L2("Ninguna serie coincide con los filtros.","No series match your filters."):L2("Nada por aquí todavía.","Nothing here yet."))},
+   clk=(e,i)=>e.id?`dOpen('${e.id}',${i.id})`:`show(${i.id})`,
+   mon=wd=>dFmt(wd,{month:"short"}).toUpperCase().replace(".",""),
+   side=h=>`<aside class="dpsd2">${h}</aside>`;
+  if(k==="all"){const w=items.filter(i=>i.status==="done"||i.rating||(i.dcount||0)>0);return `<div class="dpv">${sh(L2("VISTAS","WATCHED"),bfBtn("",false))}${grid(w)}</div>`}
+  if(k==="lk")return `<div class="dpv">${sh(`<b class="dpon">${L2("SERIES","SERIES")}</b>`,bfBtn("",false))}${grid(items.filter(i=>i.liked))}</div>`;
+  if(k==="pend"){const w=items.filter(inWl);return `<div class="dpv dp2"><div>${sh(L2("QUIERES VER ","YOU WANT TO SEE ")+w.length+L2(" SERIES"," SERIES"),bfBtn("",false))}${w.length?`<div class="dpg dpg5">${bfApply(w).map(i=>`<div>${poster(i)}</div>`).join("")}</div>`:emp(L2("Tu watchlist está vacía. Guarda aquí las series que quieres ver más adelante.","Your watchlist is empty. Save the series you want to watch later."))}</div>${side(`<button class="dpbt" onclick="openAdd()">${L2("Añadir una serie","Add a series")}</button><button class="dpbt" onclick="go('search')">${L2("Explorar series…","Browse series…")}</button><div class="dsh"><span>${L2("CÓMO AÑADIR","HOW TO ADD")}</span></div><p class="dpht">${L2("Añade series a tu watchlist desde el menú de cada serie, o desde su ficha. Se marcan automáticamente cuando las registras como vistas.","Add series to your watchlist from each series' menu or its page. They're ticked off automatically when you log them as watched.")}</p>`)}</div>`}
+  if(k==="lst"){const rows=lists.length?lists.map(l=>{const its=l.ids.map(get).filter(Boolean),n=its.length;return `<div class="dpli" onclick="openList(${l.id})"><div class="dpstk">${its.slice(0,5).map((i,x)=>poster(i).replace('class="poster"',`class="poster" style="z-index:${9-x}"`).replace(/onclick="[^"]*"/,"")).join("")||'<div class="poster dpemp"></div>'}</div><div class="dpld"><h3>${esc(l.name)}</h3><div class="dpm2">${n} ${n===1?L2("serie","series"):"series"} <a class="dped" aria-label="${L2("Editar","Edit")}" onclick="event.stopPropagation();editList(${l.id})">✎</a></div>${l.desc?`<p>${esc(l.desc)}</p>`:""}</div></div>`}).join(""):emp(L2("Agrupa tus series en listas: tus mejores venganzas, maratones de fin de semana…","Group your series into lists: your best revenge dramas, weekend binges…"));return `<div class="dpv dp2"><div>${sh(`<b class="dpon">${L2("TUS LISTAS","YOUR LISTS")}</b>`)}${rows}</div>${side(`<button class="dpbt" onclick="editList()">${L2("Crear una lista nueva…","Start a new list…")}</button>`)}</div>`}
+  if(k==="diary"){const en=dpEn();let m="";const rows=en.map(e=>{const i=get(e.iid),mk=e.wd.slice(0,7),first=mk!==m;m=mk;return `<div class="dpr1"><div class="dpm1">${first?`<div class="dpcal"><b>${mon(e.wd)}</b><small>${e.wd.slice(0,4)}</small></div>`:""}</div><div class="dpday">${e.wd.slice(8,10)}</div><div class="dpti" onclick="show(${i.id})">${nop(i)}<b>${esc(short(i.title))}</b></div><div class="dpap">${esc(i.app||"")}</div><div class="dprt">${e.r?`<span class="fxst">${S(e.r)}</span>`:""}</div><div class="dpc">${e.hl?'<i class="dpht2">♥</i>':""}</div><div class="dpc">${e.rw?RWI:""}</div><div class="dpc">${e.t||e.sp?"☰":""}</div><div class="dpc dped" onclick="${clk(e,i)}">✎</div></div>`}).join("");
+    return `<div class="dpv">${sh(L2("DIARIO","DIARY"),bfBtn("",true))}${en.length?`<div class="dpr1 dpth"><div>${L2("MES","MONTH")}</div><div>${L2("DÍA","DAY")}</div><div>${L2("SERIE","SERIES")}</div><div>${L2("PLATAFORMA","PLATFORM")}</div><div>${L2("NOTA","RATING")}</div><div>${L2("ME GUSTA","LIKE")}</div><div>${L2("REVER","REWATCH")}</div><div>${L2("RESEÑA","REVIEW")}</div><div>${L2("EDITAR","EDIT")}</div></div>${rows}`:emp(L2("Tu diario está vacío. Usa “Registrar en el diario” para anotar cuándo viste una serie.","Your diary is empty. Use “Log to diary” to note when you watched a series."))}</div>`}
+  if(k==="rev"){const en=dpEn().filter(e=>e.t||e.sp),rows=en.map(e=>{const i=get(e.iid);return `<div class="dprv2" onclick="${clk(e,i)}"><div class="dprp" onclick="event.stopPropagation();show(${i.id})">${nop(i)}</div><div><h3>${esc(short(i.title))} <small>${esc(i.app||"")}</small></h3><div class="dpm2">${e.r?`<span class="fxst">${S(e.r)}</span> `:""}${L2("Visto el ","Watched ")}${dFmt(e.wd)}${e.hl?' <i class="rvhe">♥</i>':""}</div><p>${e.sp?`<i>⚠ ${L2("Contiene spoilers","Contains spoilers")}</i>`:esc(e.t)}</p></div></div>`}).join(""),tg=tagsAll();
+    return `<div class="dpv dp2"><div>${sh(L2("RESEÑAS","REVIEWS"),"")}${rows||emp(L2("Aún no has escrito reseñas.","You haven't written any reviews yet."))}</div>${side(tg.length?`<div class="dsh"><span>${L2("ETIQUETAS DE RESEÑAS","REVIEW TAGS")}</span><a>${tg.length}</a></div><div>${tg.map(t=>`<span class="tgc" data-v="${esc(t)}" onclick="openTag(this.dataset.v)">${esc(t)}</span>`).join(" ")}</div>`:"")}</div>`}
+  if(k==="tg"){const L=ttab==="l",mm={};(L?lists:items).forEach(i=>((L?i.tags:i.rtags)||[]).forEach(t=>{const kk=t.toLowerCase();mm[kk]=mm[kk]||{t,n:0};mm[kk].n++}));const a=Object.values(mm).sort(tsrt==="n"?(x,y)=>y.n-x.n||x.t.localeCompare(y.t):(x,y)=>x.t.localeCompare(y.t));
+    return `<div class="dpv">${sh(`<a class="${L?"":"dpon"}" onclick="ttab='s';render()">${L2("SERIES","SERIES")}</a><a class="${L?"dpon":""}" onclick="ttab='l';render()">${L2("LISTAS","LISTS")}</a>`,`<a onclick="tsrt=tsrt==='n'?'a':'n';render()">${L2("Ordenar por ","Sort by ")}${tsrt==="n"?L2("FRECUENCIA","FREQUENCY"):L2("NOMBRE","NAME")} ⌄</a>`)}${a.length?`<div class="dptg">${a.map(x=>`<div class="dptr" data-v="${esc(x.t)}" onclick="${L?"openListTag":"openTag"}(this.dataset.v)"><span class="tgc">${esc(x.t)}</span><b>${x.n}</b></div>`).join("")}</div>`:emp(L?L2("Aún no etiquetas tus listas. Añádelas al crear o editar una lista.","You don't tag your lists yet. Add them when creating or editing a list."):L2("Aún no usas etiquetas. Añádelas al registrar una serie en tu diario.","You don't use tags yet. Add them when logging a series to your diary."))}</div>`}
+  return ""}
 function dprof(){
   const pf=(prof.fav||[]).map(get).filter(Boolean).slice(0,4),
    rec=[...new Set(log.map(e=>e.id))].map(get).filter(Boolean).slice(0,4),
@@ -876,7 +933,7 @@ function dprof(){
   const fav=sh(L2("Series favoritas","Favorite series"),null)+`<div class="grid dfav" onpointerdown="pfDrag(event)">${pf.map((i,k)=>`<div class="fvq" data-k="${k}">${cell(i)}</div>`).join("")}${'<div class="fve" onclick="favAdd()">＋</div>'.repeat(4-pf.length)}</div>`;
   const act=rec.length?sh(L2("Actividad reciente","Recent activity"),L2("TODA","ALL"),"go('act')")+`<div class="grid dfav">${rec.map(cellD).join("")}</div>`:"";
   const rv=DEN.filter(e=>e.t).slice(0,4).map(e=>{const i=get(e.iid);if(!i)return"";return `<div class="drv" onclick="show(${i.id})"><div class="drp">${nop(i)}</div><div><h4>${esc(short(i.title))}</h4><div class="m">${e.r?`<span class="fxst">${S(e.r)}</span> `:""}${L2("Visto el ","Watched ")}${dFmt(e.wd)}</div><p>${e.sp?`<i>⚠ ${L2("Contiene spoilers","Contains spoilers")}</i>`:esc(e.t.slice(0,420))}</p></div></div>`}).join("");
-  const rvs=rv?sh(L2("Reseñas recientes","Recent reviews"),L2("MÁS","MORE"),"openRev()")+rv:"";
+  const rvs=rv?sh(L2("Reseñas recientes","Recent reviews"),L2("MÁS","MORE"),"setSeg('rev')")+rv:"";
   const wl=items.filter(inWl),
    mo={},ent=DEN.filter(e=>get(e.iid)).slice(0,12);ent.forEach(e=>{const k=e.wd.slice(0,7);(mo[k]=mo[k]||[]).push(e)});
   const dia=Object.keys(mo).slice(0,4).map(k=>`<div class="dpd"><div class="cal"><small>${dFmt(k+"-15",{month:"short"}).toUpperCase()}</small></div><div class="dpdl">${mo[k].slice(0,4).map(e=>`<div class="dpe2" onclick="show(${get(e.iid).id})"><i>${+e.wd.slice(8,10)}</i><span>${esc(short(get(e.iid).title))}</span></div>`).join("")}</div></div>`).join("");
