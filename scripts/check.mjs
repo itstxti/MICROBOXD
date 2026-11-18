@@ -40,6 +40,16 @@ else if (build !== String(vj)) bad(`BUILD (${build}) != version.json (${vj})`);
 else ok("BUILD matches version.json");
 if (!/const V = "mbx-v\d+"/.test(read("sw.js"))) bad("sw.js cache name (mbx-vNN) not found"); else ok("sw.js cache name present");
 
+// 4b. Local assets referenced by index.html: exist, carry ?b=BUILD, and are pre-cached by the service worker
+const sw = read("sw.js");
+for (const m of html.matchAll(/(?:href|src)="(\/(?:css|js)\/[^"?]+)(?:\?b=(\d+))?"/g)) {
+  const [, p, b] = m;
+  if (!existsSync(new URL("../" + p.slice(1), import.meta.url))) { bad(p + " referenced but missing"); continue; }
+  if (b !== build) bad(`${p} has ?b=${b} but BUILD is ${build}`);
+  else if (!sw.includes(`"${p}?b=${build}"`)) bad(`${p}?b=${build} not in sw.js SHELL`);
+  else ok(p + " versioned and pre-cached");
+}
+
 // 5. Migrations: contiguous 0001..N, unique, .sql
 const mig = readdirSync(new URL("../supabase/migrations/", import.meta.url)).filter((f) => f.endsWith(".sql")).sort();
 mig.forEach((f, i) => {
