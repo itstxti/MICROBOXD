@@ -1,0 +1,42 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "What happened?"
+      description: "Include what you expected instead."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to reproduce"
+      placeholder: "1. Go to...\n2. Tap...\n3. See error"
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: "Where does it happen?"
+      options:
+        - iPhone (installed PWA)
+        - iPhone (Safari)
+        - Android
+        - Desktop Chrome
+        - Desktop Safari
+        - Desktop Firefox
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: "App version"
+      description: "The BUILD constant in the page source, or the date you last opened the app."
+  - type: textarea
+    id: shots
+    attributes:
+      label: "Screenshots / console errors"
+      description: "Drag images here."

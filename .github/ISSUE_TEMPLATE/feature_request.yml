@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an idea
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What problem would this solve?"
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: "Proposed solution"
+      description: "Sketches or Letterboxd references welcome."
+    validations:
+      required: true
+  - type: textarea
+    id: alt
+    attributes:
+      label: "Alternatives considered"
