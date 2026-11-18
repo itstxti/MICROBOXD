@@ -560,7 +560,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #mn:has(>.de) .de .dti{display:flex;align-items:center;gap:24px;flex:1;min-width:0}
  #mn:has(>.de) .de .dst{margin:0 0 0 auto;gap:12px;font-size:13px}
  /* Explorar */
- #sr{padding-inline:max(0px,calc(50% - 520px + 140px));padding-top:24px}
+ #sr{padding-top:24px}
  #sr .g3{grid-template-columns:repeat(6,minmax(0,1fr))}
  #sr .br{padding:14px 6px;cursor:pointer}#sr .br:hover{background:rgba(255,255,255,.04)}
  /* Actividad: feed centrado en tarjetas */
@@ -569,6 +569,9 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #mn:has(>.act)>.act.fa.rich{background:var(--pan)}
  #mn:has(>.act) .act .fxfb .poster{width:68px}
  /* Ajustes y formulario de serie: panel centrado, no pantalla completa */
+ #hd .seg,#mn>.seg{max-width:420px;margin-inline:auto}
+ #lst .in{max-width:900px;margin:0 auto;padding-inline:20px}
+ #lst .lnm{font-size:32px}
  #set,#form{left:max(0px,calc(50% - 330px));right:max(0px,calc(50% - 330px));border-inline:1px solid var(--line);box-shadow:0 0 60px rgba(0,0,0,.5)}
  #set .fvs{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
