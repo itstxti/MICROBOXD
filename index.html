@@ -108,10 +108,12 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:13px}
 select,input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--pan);border:1px solid var(--line);border-radius:4px;padding:9px;margin-bottom:8px}
 .sheet{position:fixed;inset:0 0 auto 0;height:var(--H,100%);background:var(--bg);overflow-y:auto;z-index:20;display:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--kb,0px))}
 .sheet.open{display:block;animation:mbIn .26s cubic-bezier(.2,.8,.2,1)}#form.open{animation-name:mbUp}.sheet.out{animation:mbOut .2s ease-in forwards;pointer-events:none}
+@keyframes mbSUp{from{transform:translateY(100%)}to{transform:none}}@keyframes mbSDn{to{transform:translateY(100%)}}
+#fp.bf.open{animation:mbSUp .34s cubic-bezier(.2,.8,.2,1)}#fp.bf.out{animation:mbSDn .26s cubic-bezier(.5,0,.8,.4) forwards;pointer-events:none}
 @keyframes mbIn{from{transform:translateX(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbUp{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 @keyframes mbOut{to{transform:translateX(28px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.sheet.open,.sheet.out,.ov.open,.ov.open::before{animation:none!important}}
+@media (prefers-reduced-motion:reduce){#fp.bf.open,#fp.bf.out,.sheet.open,.sheet.out,.ov.open,.ov.open::before{animation:none!important}}
 .back{height:170px;background-size:cover;background-position:center;filter:blur(18px) brightness(.55);transform:scale(1.2);position:absolute;top:0;left:0;right:0}
 .in{position:relative;max-width:680px;margin:0 auto;padding:14px}
 .x{background:rgba(0,0,0,.5);color:#fff;border:0;border-radius:20px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -651,17 +653,18 @@ function bfApply(l){const f=BF;let r=l.filter(i=>{
 const bfGrid=l=>{const r=bfApply(l);if(!r.length)return `<div class="empty">${bfN(BF)?L2("Ninguna serie coincide con los filtros.","No series match your filters."):L2("Nada por aquí todavía.","Nothing here yet.")}</div>`;
   return `<div class="grid g3">${r.map(i=>BF.fade&&bfW(i)?cell(i).replace("<div>",'<div class="fw">'):cell(i)).join("")}</div>`};
 const BFIC='<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>';
-function bfOpen(){bd=JSON.parse(JSON.stringify(BF));bfDraw();$("fp").classList.add("open")}
+function bfOpen(){bd=JSON.parse(JSON.stringify(BF));bfDraw();const f=$("fp");clearTimeout(f._t);f.classList.remove("out");f.classList.add("bf","open")}
+function bfClose(){const f=$("fp");if(!f.classList.contains("open")||f.classList.contains("out"))return;f.classList.add("out");f._t=setTimeout(()=>f.classList.remove("open","out","bf"),240)}
 function bfLbl(k){const f=bd,R=bfR();if(k==="apps")return f.apps.length?(f.apps.length>1?f.apps.length+" ":"")+f.apps.join(", "):bfAny();if(k==="themes")return f.themes.length?f.themes.join(", "):bfAny();const o=R[k].find(x=>x[0]===f[k]);return o?o[1]:bfAny()}
 function bfDraw(){const keep=($("fp").querySelector(".bfs")||{}).scrollTop||0,N=(l,k)=>`<div class="srow" onclick="bfSel('${k}')"><span>${l}</span><span class="sv2">${esc(bfLbl(k))}</span><i class="chv">›</i></div>`;
-  $("fp").innerHTML=`<div class="lef bfs" style="overflow-y:auto;height:100%"><div class="leh"><button onclick="bd=null;$('fp').classList.remove('open')">${L2("Cancelar","Cancel")}</button><b>${L2("Filtros","Filters")}</b><button class="sv" onclick="bfDone()">${L2("Hecho","Done")}</button></div>
+  $("fp").innerHTML=`<div class="lef bfs" style="overflow-y:auto;height:100%"><div class="leh"><button onclick="bd=null;bfClose()">${L2("Cancelar","Cancel")}</button><b>${L2("Filtros","Filters")}</b><button class="sv" onclick="bfDone()">${L2("Hecho","Done")}</button></div>
   <div class="sgrp">${N(L2("Ordenar por","Sort by"),"sort")}</div>
   <div class="slb">${L2("Apariencia","Appearance")}</div><div class="sgrp"><div class="srow"><span>${L2("Atenuar vistas","Fade watched")}</span><button class="sw ${bd.fade?"on":""}" aria-label="${L2("Atenuar vistas","Fade watched")}" onclick="bd.fade=!bd.fade;this.classList.toggle('on',bd.fade)"></button></div></div>
   <div class="slb">${L2("Contenido","Content")}</div><div class="sgrp">${N(L2("Plataforma","Platform"),"apps")}${N(L2("Temas","Themes"),"themes")}${N(L2("Episodios","Episodes"),"eps")}${N(L2("Duración total","Total duration"),"dur")}</div>
   <div class="slb">${L2("Mi cuenta","My account")}</div><div class="sgrp">${N(L2("Vistas","Watched"),"w")}${N(L2("Me gusta","Liked"),"lk")}${N(L2("Valoradas","Rated"),"rt")}${N(L2("Watchlist","Watchlist"),"wl")}</div>
   <div class="srow so" style="margin-top:26px" onclick="bd=JSON.parse(JSON.stringify(BF0));bfDraw()"><span>${L2("Restablecer filtros","Reset filters")}</span></div><div style="height:40px"></div></div>`;
   const e=$("fp").querySelector(".bfs");if(e)e.scrollTop=keep}
-function bfDone(){BF=bd;bd=null;try{localStorage.setItem(BFK,JSON.stringify(BF))}catch(e){}$("fp").classList.remove("open");render()}
+function bfDone(){BF=bd;bd=null;try{localStorage.setItem(BFK,JSON.stringify(BF))}catch(e){}bfClose();render()}
 function bfSel(k){const multi=k==="apps"||k==="themes";let opts;
   if(k==="apps")opts=appsAll().map(a=>[a,appN(a)]);
   else if(k==="themes"){const tm=new Map();catAll().forEach(i=>{const seen=new Set();(i.tropes||[]).forEach(t=>{const q=tkey(t);if(!q)return;if(!tm.has(q))tm.set(q,{l:t.trim(),n:0});if(!seen.has(q)){seen.add(q);tm.get(q).n++}})});opts=[...tm.values()].sort((a,b)=>b.n-a.n||a.l.localeCompare(b.l)).map(x=>[x.l,x.n])}
@@ -1576,7 +1579,7 @@ vv.addEventListener("resize",fit);vv.addEventListener("scroll",kb);addEventListe
 addEventListener("touchmove",e=>{if(e.touches.length>1)return;if(!sc(e.target))e.preventDefault()},{passive:false});
 addEventListener("scroll",()=>{if(scrollY||scrollX)scrollTo(0,0)},{passive:true})})();
 
-const BUILD="1794956609";
+const BUILD="1794961257";
 (function(){let n=0;const chk=async()=>{try{const j=await (await fetch("/version.json?__v="+Date.now(),{cache:"no-store"})).json();if(j.b&&j.b!==BUILD&&n<2&&!document.querySelector(".sheet.open,.ov.open")){n++;try{const k=+sessionStorage.getItem("mbxr")||0;if(k>=2)return;sessionStorage.setItem("mbxr",k+1)}catch(e){}location.reload()}else if(j.b===BUILD){try{sessionStorage.removeItem("mbxr")}catch(e){}}}catch(e){}};
 chk();document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()});setInterval(()=>{if(!document.hidden)chk()},300000)})();
 </script>
