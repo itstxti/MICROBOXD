@@ -115,6 +115,7 @@ select,input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--p
 @keyframes mbOut{to{transform:translateX(28px);opacity:0}}
 html,body,button,a,label,input,select,textarea,[onclick]{touch-action:manipulation}
 .dsd,.ttl{display:contents}#dn,.wb,.dhm{display:none}.mro{display:contents}
+.pnl,.pst,.dbk{display:none}.pcol{flex:none}.lgd{display:contents}
 @media (min-width:1024px){
  :root{--dw:max(28px,calc(50% - 520px));--dnh:64px}
  #tb{display:none}
@@ -645,6 +646,59 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .dax .dmh{margin-top:14px;border-radius:4px;padding:0 12px}
  .dax .lsl{padding-top:18px}
  .dax .empty{padding:36px 0}
+
+ /* Ficha de serie (escritorio): como la página de película de Letterboxd */
+ .dbk{display:block;position:absolute;top:0;left:0;right:0;height:340px;overflow:hidden;pointer-events:none;z-index:0}
+ .dbk i{position:absolute;inset:0;background-size:cover;background-position:center 22%;filter:blur(22px) brightness(.55) saturate(1.15);transform:scale(1.2)}
+ .dbk::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,24,28,.1) 0,var(--bg) 100%)}
+ #det .in2{z-index:1;max-width:1188px;grid-template-columns:288px minmax(0,1fr) 288px;column-gap:48px;padding-top:56px}
+ #det .top{max-width:1188px}
+ .in2 .hd2 .pcol{display:block;grid-column:1;grid-row:1/-1}
+ .in2 .hd2 .pcol .poster{width:100%;margin:0;border-radius:6px;cursor:default;box-shadow:0 6px 26px rgba(0,0,0,.5)}
+ .pst{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;color:var(--mute)}
+ .pst span{display:inline-flex;align-items:center;gap:5px;cursor:pointer}.pst span:hover{color:var(--tx)}.pst .e{color:#4ddc6f}.pst .r{color:var(--st)}.pst .b{color:var(--b)}
+ #det .in2 .tt h2{font-family:Georgia,serif;font-size:42px;line-height:1.1;font-weight:700;margin:0}
+ #det .in2 .tt .meta{margin:10px 0 14px;font-size:13px;letter-spacing:1.4px}
+ #det .in2>.syn{font-family:Georgia,serif;font-size:21px;line-height:1.6;color:var(--tx);opacity:.86;margin:16px 0 12px}
+ .in2 .dsd .lgw,.in2 .dsd .tiles{display:none}
+ .in2>.dsd{padding-top:0}
+ .pnl{display:block;background:var(--tab);border-radius:4px;overflow:hidden;margin-bottom:26px}
+ .pn3{display:flex;justify-content:space-around;padding:16px 6px 12px}
+ .pn3 button{background:none;border:0;color:var(--mute);font:inherit;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:0;min-width:76px}.pn3 button:hover{color:var(--tx)}
+ .pn3 .kv.on{color:#4ddc6f}.pn3 .kl.on{color:var(--o)}.pn3 .kl.on svg{fill:currentColor}.pn3 .kw.on{color:var(--b)}
+ .pnr{border-top:1px solid rgba(0,0,0,.25);padding:14px 8px 12px;text-align:center;font-size:15px;color:var(--mute)}
+ .pnr .sr{justify-content:center;margin-top:4px}.pnr .sx{font-size:40px;margin-right:2px;color:rgba(0,0,0,.28)}
+ .pnb{display:block;width:100%;background:none;border:0;border-top:1px solid rgba(0,0,0,.25);padding:14px 10px;color:var(--mute);font:inherit;font-size:15px;cursor:pointer;text-align:center;border-radius:0}.pnb:hover{background:rgba(255,255,255,.07);color:var(--tx)}
+ .in2>.seg.d{background:none;border-radius:0;border-bottom:1px solid var(--line);padding:0;gap:22px;margin:26px 0 16px;overflow:visible}
+ .in2>.seg.d .segi{display:none}
+ .in2>.seg.d button{flex:none;background:none!important;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 0 9px;margin-bottom:-1px;font-size:14px;letter-spacing:1.8px;text-transform:uppercase;font-weight:600;color:var(--g);cursor:pointer}
+ .in2>.seg.d button:hover{color:var(--tx)}.in2>.seg.d button.on{color:var(--tx);border-bottom-color:var(--tx)}
+ /* Registrar / editar entrada del diario (escritorio) */
+ #lgs.lgd-on{inset:12vh auto auto 50%;width:1000px;max-width:calc(100vw - 40px);margin-left:max(-500px,calc(20px - 50vw));height:auto;max-height:84vh;background:var(--tab);border-radius:6px;overflow-y:auto;padding:0}
+ #lgs .lgd{display:block}
+ .lgd-h{display:flex;justify-content:space-between;align-items:center;padding:0 26px;height:68px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(0,0,0,.22)}
+ .lgd-h b{font-size:22px;font-weight:700;color:var(--tx)}
+ .lgd-x{background:none;border:0;color:var(--mute);font-size:38px;line-height:1;cursor:pointer;padding:0 4px}.lgd-x:hover{color:var(--tx)}
+ .lgd-b{display:flex;gap:46px;padding:50px 56px 40px}
+ .lgd-p{flex:none;width:188px}.lgd-p .poster{width:100%;cursor:default;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+ .lgd-m{flex:1;min-width:0}
+ .lgd-m h2{margin:0 0 18px;font-family:Georgia,serif;font-size:30px;line-height:1.15;color:var(--tx)}.lgd-m h2 small{font:400 20px Georgia,serif;color:var(--mute);margin-left:4px}
+ .lgd-r1{display:flex;flex-wrap:wrap;align-items:center;gap:14px 44px;margin-bottom:20px;color:var(--tx);font-size:16px}
+ .lgd-r1 label{display:inline-flex;align-items:center;gap:9px;cursor:pointer}
+ .lgd-r1 input[type=checkbox]{width:20px;height:20px;margin:0;accent-color:var(--g);cursor:pointer}
+ .lgd-d input{background:rgba(0,0,0,.25);color:var(--tx);border:0;border-radius:3px;padding:6px 9px;font:inherit;font-size:15px;color-scheme:dark;width:auto;margin:0}
+ @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .lgd-d input{color-scheme:light}}
+ #lgs textarea.lgd-t{display:block;width:100%;box-sizing:border-box;height:150px;min-height:150px;flex:none;background:#c8d6e5;color:#14181c;border:0;border-radius:3px;padding:12px;font:inherit;font-size:16px;resize:vertical;margin:0}
+ #lgs textarea.lgd-t::placeholder{color:#667788}
+ .lgd-r2{display:flex;align-items:flex-start;gap:34px;margin-top:26px}
+ .lgd-tg{flex:1;min-width:0}
+ .lgd-lb{font-size:15px;color:var(--tx);margin-bottom:8px;height:20px}.lgd-lb small{color:var(--mute);font-size:14px;margin-left:14px}
+ .lgd .tgr{background:#c8d6e5;border:0;border-radius:3px;min-height:42px;padding:6px 10px;gap:6px}.lgd .tgph{color:#667788;font-size:15px}.lgd .tgr .tgc{background:#445566;color:#fff}
+ .lgd .sr .sx{font-size:36px;margin-right:2px;color:rgba(0,0,0,.28)}
+ .lgd-lk .hb2{display:block;margin:0 auto}
+ .lgd-f{display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:0 56px;height:80px;background:rgba(0,0,0,.14)}
+ .lgd-sv{background:var(--g);color:#fff;border:0;border-radius:18px;padding:9px 20px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.lgd-sv:hover{filter:brightness(1.1)}
+ .lgd-del{background:rgba(255,255,255,.14);color:var(--mute);border:0;border-radius:18px;padding:9px 20px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.lgd-del:hover{color:var(--tx)}
 }
 </style>
 </head>
@@ -1143,9 +1197,9 @@ function show(id,keep){
   const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
   const bg=i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`;
   d.innerHTML=`<div class="top"><button class="rb" aria-label="Volver" onclick="closeDet()"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 6 13l10 10"/></svg></button><span class="tpt">${esc(short(i.title))}</span><div style="display:flex">${canEdit(i)?`<button class="rb" aria-label="Editar serie" onclick="fmEdit(${i.id})"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>`:""}<button class="rb" aria-label="Más" onclick="opts(${i.id})"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg></button></div></div>
-  <div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div>${i.tropes.length?`<div class="tpr">${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>`:""}</div>${poster(i).replace(/onclick="[^"]*"/,"")}</div>
+  <div class="dbk"><i style="background-image:${bg}"></i></div><div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div>${i.tropes.length?`<div class="tpr">${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>`:""}</div><div class="pcol">${poster(i).replace(/onclick="[^"]*"/,"")}${pst(i)}</div></div>
   <p class="syn" onclick="synTog(this)">${esc(i.syn)||"Sin sinopsis todavía."}</p>
-  <div class="dsd">${hist(i)}
+  <div class="dsd">${pnl(i)}${hist(i)}
   <div class="lgw"><div class="logrow" onclick="opts(${i.id})"><div class="av" style="width:32px;height:32px;font-size:14px;flex:none">${ini()}</div><span>${lt(i)}</span><span class="more">•••</span></div></div>
   ${wbSec(i)}${wwSec(i)}</div>
   ${revsSec(i)}
@@ -1157,6 +1211,13 @@ const detSc=()=>{const t=document.querySelector('#det .top');if(t)t.classList.to
 const setDt=(k,id)=>{dtab=k;show(id,true)};
 const wwSec=i=>{const h=hue(i.app),nm=i._m!=null?i._m:(i.status==="done"?1:0),rv=i._rv!=null?i._rv:(i.review?1:0),ls=i._ls!=null?i._ls:lists.filter(l=>l.ids.includes(i.id)).length;
   return `<div class="tiles"><div class="tile g" onclick="openMem(${i.id})" style="cursor:pointer">${svg(EYE,24)}<b>Miembros</b>${nm}</div><div class="tile m" onclick="openRevs(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',24)}<b>Reseñas</b>${rv}</div><div class="tile bl" onclick="openLsts(${i.id})" style="cursor:pointer">${svg('<rect x="5" y="3" width="11" height="18" rx="2"/><path d="M19 6v12"/>',24)}<b>Listas</b>${ls}</div></div>`};
+const pst=i=>{const nm=i._m!=null?i._m:(i.status==="done"?1:0),rv=i._rv!=null?i._rv:(i.review?1:0),ls=i._ls!=null?i._ls:lists.filter(l=>l.ids.includes(i.id)).length;
+  return `<div class="pst"><span class="e" title="${L2("Miembros","Members")}" onclick="openMem(${i.id})">${AXI.e}${kfmt(nm)}</span><span class="r" title="${L2("Reseñas","Reviews")}" onclick="openRevs(${i.id})"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1z"/></svg>${kfmt(rv)}</span><span class="b" title="${L2("Listas","Lists")}" onclick="openLsts(${i.id})">${AXI.l}${kfmt(ls)}</span></div>`};
+const pnl=i=>{const id=i.id,dn=i.status==="done",log_=!!(i.watchedOn||i.deid);
+  return `<div class="pnl"><div class="pn3"><button class="kv ${dn?"on":""}" onclick="qv(${id},'v',1)">${svg((i.dcount||0)>1?EYEN(i.dcount):EYE,38)}${dn?(log_?L2("Registrada","Logged"):L2("Vista","Watched")):L2("Ver","Watch")}</button><button class="kl ${i.liked?"on":""}" onclick="qv(${id},'l',1)">${svg(HEART,38)}${i.liked?L2("Te gustó","Liked"):L2("Me gusta","Like")}</button><button class="kw ${inWl(i)?"on":""}" onclick="qv(${id},'w',1)">${svg(inWl(i)?CLOCKC:CLOCKP,38)}Watchlist</button></div>
+  <div class="pnr"><div>${i.rating?L2("Puntuada","Rated"):L2("Puntúa","Rate")}</div><div class="sr big5" data-s="qr:${id}">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
+  ${(i.dcount>0||log_)?`<button class="pnb" onclick="showAct(${id},'${U.id}')">${L2("Mostrar tu actividad","Show your activity")}</button>`:""}
+  <button class="pnb" onclick="openLog(${id})">${log_?L2("Reseñar o registrar otra vez…","Review or log again…"):L2("Reseñar o registrar…","Review or log…")}</button><button class="pnb" onclick="pickList(${id})">${L2("Añadir a listas…","Add to lists…")}</button><button class="pnb" onclick="shr(${id})">${L2("Compartir","Share")}</button></div>`};
 const wbSec=i=>{
   const wt=inWl(i)?`<div class="wbs"><div class="wbh"><span>Quieren verla</span></div><div class="wbr"><div class="wbp"><div class="av2 me">${ini()}</div><small></small></div></div></div>`:"";
   const W=WB[i.sid];if(W){const seen=new Set(),ps=[];W.forEach(x=>{if(seen.has(x.uid)||ps.length>=14)return;seen.add(x.uid);ps.push(`<div class="wbp" ${x.id?`onclick="event.stopPropagation();openReview('${x.id}')"`:""}><div class="av2" style="${avs(x.ap).slice(1)}">${x.t||x.sp?'<span class="wbb">☰</span>':""}</div><small>${x.r?S(x.r):""}</small></div>`)});return (ps.length?`<div class="wbs"><div class="wbh" onclick="openMem(${i.id},'fr')" style="cursor:pointer"><span>Visto por</span><span class="wbc">›</span></div><div class="wbr">${ps.join("")}</div></div>`:"")+wt}
@@ -1176,6 +1237,7 @@ function opts(id){const i=get(id),dn=i.status==="done",log_=!!(i.watchedOn||i.de
   <div class="rt" style="border-top:1px solid var(--bg)"><div class="pl">${i.rating?"Puntuada":"Puntúa"}</div><div class="sr big5" data-s="qr:${id}" style="justify-content:center">${sx(i.rating,v=>`qr(${id},${v})`)}</div></div>
   ${(i.dcount>0||log_)?`<button class="oi" onclick="showAct(${id},'${U.id}')">Mostrar tu actividad</button>`:""}
   <button class="oi" onclick="openLog(${id})">${log_?"Reseñar o registrar otra vez":"Reseñar o registrar"}</button><button class="oi" onclick="pickList(${id})">Añadir a listas</button><button class="oi" onclick="shr(${id})">Compartir</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
+const optsR=id=>{if($("ov").classList.contains("open"))opts(id)};
 const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
 const inWl=i=>i.status==="want"||!!i.wl;
 const hasAct=i=>!!(i.rating||i.review||i.watchedOn||i.deid||(i.dcount||0)>0);
@@ -1183,11 +1245,11 @@ function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!=
 /* Volver a pulsar «Vista» la quita: borra también nota, me gusta y entradas del diario */
 async function unwatch(id){const i=get(id);if(!i)return;
   if(hasAct(i)){POP="";toast(esc(short(i.title))+" no se puede quitar de tus series, porque tiene actividad");return}
-  if(i.liked||i.wl){log=log.filter(e=>e.id!==id);Object.assign(i,{status:i.wl?"want":"",watched:0,wl:false});RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render();return}
+  if(i.liked||i.wl){log=log.filter(e=>e.id!==id);Object.assign(i,{status:i.wl?"want":"",watched:0,wl:false});RV={};RVt={};WB={};WBt={};HR=null;save();optsR(id);refresh(id);render();return}
   if(sb&&i.sid&&U){try{const{error}=await sb.from("diary_entries").delete().eq("user_id",U.id).eq("series_id",i.sid);if(error)throw error}catch(e){console.error(e);toast("No se pudo quitar");return}}
   dq=dq.filter(e=>e.series!==i);DEN=DEN.filter(e=>e.iid!==id);
   drop(id);Object.assign(i,{dcount:0,review:"",watchedOn:undefined,spoil:false,deid:undefined,rewatch:false,rtags:[]});
-  RV={};RVt={};WB={};WBt={};HR=null;save();opts(id);refresh(id);render()}
+  RV={};RVt={};WB={};WBt={};HR=null;save();optsR(id);refresh(id);render()}
 /* Pulsar «Registrada»: con una sola entrada abre la entrada; con varias, la página de actividad */
 async function goLog(id){const i=get(id);if(!i)return;closeOv();
   if((i.dcount||0)>1||!i.deid||!sb){showAct(id,U.id);return}
@@ -1201,7 +1263,7 @@ const mark=i=>{if(i.status!=="done"){i.status="done";i.watched=i.eps;addLog("don
 /* actualiza al instante el histograma de la comunidad con tu cambio de nota */
 const comRate=(i,v)=>{const c=com[key(i)];if(!c)return;if(i.rating){const o=c.indexOf(i.rating);if(o>=0)c.splice(o,1)}if(v)c.push(v)};
 function setR(i,v){comRate(i,v);i.rating=v;if(v){mark(i);addLog("rate",i)}}
-function qr(id,v,d){const i=get(id);setR(i,d?v:(i.rating===v?0:v));save();opts(id);refresh(id)}
+function qr(id,v,d){const i=get(id);setR(i,d?v:(i.rating===v?0:v));save();optsR(id);refresh(id);if(DSK())render()}
 async function shr(id){const i=get(id),t=`${short(i.title)} (${i.app})${i.rating?" "+S(i.rating):""} · Microboxd`;try{if(navigator.share)await navigator.share({text:t});else await navigator.clipboard.writeText(t)}catch(e){}}
 let lg={},lg0="";
 function openLog(id,add,ed,eid){closeOv();const i=get(id);
@@ -1218,7 +1280,21 @@ function dDisc(id,add,ed,eid){delete drafts[id];pers();openLog(id,!!add,!!ed,eid
 function dRes(id,add){const d=drafts[id];closeOv();lg=Object.assign({},d,{add:!!add});drawLog();$("lgs").classList.add("open");$("lgs").scrollTop=0}
 function cancelLog(){const{add,...rest}=lg;if(JSON.stringify(Object.assign({},lg,{add:lg.add}))!==lg0){drafts[lg.id]=Object.assign({},lg)}pers();$("lgs").classList.remove("open")}
 const ldate=()=>{const t=fmt(new Date((lg.d||new Date().toISOString().slice(0,10))+"T12:00:00").getTime());return t.charAt(0).toUpperCase()+t.slice(1)};
-function drawLog(){const i=get(lg.id);$("lgs").innerHTML=`<div class="w"><div class="lh"><button onclick="cancelLog()">Cancelar</button><b>He visto…</b><button class="sv" onclick="saveLog()">Guardar</button></div>
+function drawLogD(){const i=get(lg.id),ed=lg.ed&&lg.eid&&RX[lg.eid],tg_=tagArr(lg.g);
+  $("lgs").innerHTML=`<div class="lgd"><div class="lgd-h"><b>${ed?L2("Editar entrada del diario","Edit diary entry"):L2("He visto…","I watched…")}</b><button class="lgd-x" aria-label="${L2("Cerrar","Close")}" onclick="cancelLog()">×</button></div>
+  <div class="lgd-b"><div class="lgd-p">${nop(i)}</div><div class="lgd-m">
+   <h2>${esc(short(i.title))} <small>${esc(i.app)}</small></h2>
+   <div class="lgd-r1"><label class="lgd-d">${L2("Visto el","Watched on")} <input type="date" value="${lg.d}" onchange="if(this.value){lg.d=this.value;drawLog()}"></label>
+    <label class="lgd-c"><input type="checkbox" ${lg.re?"checked":""} onchange="lg.re=this.checked;drawLog()"> ${L2("Ya la había visto","I've watched this before")}</label>
+    <label class="lgd-c"><input type="checkbox" ${lg.sp?"checked":""} onchange="lg.sp=this.checked;drawLog()"> ${L2("Contiene spoilers","Contains spoilers")}</label></div>
+   <textarea class="lgd-t" placeholder="${L2("Añade una reseña…","Add a review…")}" oninput="lg.t=this.value">${esc(lg.t)}</textarea>
+   <div class="lgd-r2"><div class="lgd-tg"><div class="lgd-lb">${L2("Etiquetas","Tags")}</div><div class="tgr" onclick="openTagEd()">${tg_.length?tg_.map(t=>`<span class="tgc">${esc(t)}</span>`).join(""):`<span class="tgph">${L2("Añadir etiquetas…","Add tags…")}</span>`}</div></div>
+    <div><div class="lgd-lb">${L2("Valoración","Rating")} <small>${lg.r?lg.r:"–"} ${L2("de 5","out of 5")}</small></div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div>
+    <div class="lgd-lk"><div class="lgd-lb">${L2("Me gusta","Like")}</div><button class="hb2 ${lg.l?"on":""}" aria-label="${L2("Me gusta","Like")}" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,38)}</button></div></div>
+  </div></div>
+  <div class="lgd-f">${ed?`<button class="lgd-del" onclick="lgDel()">${L2("Eliminar","Delete")}</button>`:""}<button class="lgd-sv" onclick="saveLog()">${L2("Guardar","Save")}</button></div></div>`}
+function lgDel(){if(lg.eid)askRvDel(lg.eid)}
+function drawLog(){const i=get(lg.id);$("lgs").classList.toggle("lgd-on",DSK());if(DSK())return drawLogD();$("lgs").innerHTML=`<div class="w"><div class="lh"><button onclick="cancelLog()">Cancelar</button><b>He visto…</b><button class="sv" onclick="saveLog()">Guardar</button></div>
   <div class="lt"><div class="ltp">${nop(i)}</div><span>${esc(short(i.title))}</span><small>${esc(i.app)}</small></div>
   <label class="lr ldt" onclick="const e=this.querySelector('input');try{e.showPicker()}catch(_){}"><span>Fecha</span><span class="ldv">${ldate()}</span><input type="date" value="${lg.d}" tabindex="-1" onchange="if(this.value){lg.d=this.value;drawLog()}"></label>
   <div class="lrx"><div><div class="lb">Valoración</div><div class="sr" data-s="lgr">${sx(lg.r,v=>`lgr(${v})`)}</div></div><div style="text-align:right"><div class="lb">Me gusta</div><button class="hb2 ${lg.l?"on":""}" aria-label="Me gusta" onclick="lg.l=!lg.l;drawLog()">${svg(HEART,40)}</button></div></div>
@@ -1746,7 +1822,7 @@ async function rvDel(id,ok){const r=RX[id];if(!r||r.uid!==U.id)return;if(!ok){as
    else if(i.deid===id||i.dcount===0)Object.assign(i,{review:"",watchedOn:undefined,spoil:false,rewatch:false,rtags:[],deid:undefined,dcount:0});
    if(i.status!=="done"){i.status="done";i.watched=i.eps}
    save()}
-  RV={};RVt={};WB={};WBt={};HR=null;subX();if(i&&pgLive("act"+i.id)&&ACT[i.id+":"+U.id]){actU=U.id;drawAct(i.id,1)}if(i&&curDet===i.id&&$("det").classList.contains("open")){loadRevs(i,true);loadWb(i,true);show(i.id,true)}render()}
+  $("lgs").classList.remove("open");RV={};RVt={};WB={};WBt={};HR=null;subX();if(i&&pgLive("act"+i.id)&&ACT[i.id+":"+U.id]){actU=U.id;drawAct(i.id,1)}if(i&&curDet===i.id&&$("det").classList.contains("open")){loadRevs(i,true);loadWb(i,true);show(i.id,true)}render()}
 async function likeRev(id){const r=RX[id];if(!r||r.uid===U.id)return;const on=!r.me;r.me=on;r.lk+=on?1:-1;openReview(id,1);if($("det").classList.contains("open"))show(curDet,true);HR=null;
   try{if(on)await ck(sb.from("review_likes").insert({entry_id:id,user_id:U.id}));else await ck(sb.from("review_likes").delete().eq("entry_id",id).eq("user_id",U.id))}
   catch(e){r.me=!on;r.lk+=on?-1:1;openReview(id,1);toast("No se pudo guardar el me gusta")}}
