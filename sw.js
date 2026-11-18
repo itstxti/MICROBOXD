@@ -1,6 +1,6 @@
-const V = "mbx-v69";
+const V = "mbx-v70";
 const CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
-const SHELL = ["/", "/css/app.css?b=1795045506", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+const SHELL = ["/", "/css/app.css?b=1795045683", "/js/i18n.js?b=1795045683", "/js/core.js?b=1795045683", "/js/desktop.js?b=1795045683", "/js/shell.js?b=1795045683", "/js/filters.js?b=1795045683", "/js/settings.js?b=1795045683", "/js/detail.js?b=1795045683", "/js/log.js?b=1795045683", "/js/diary.js?b=1795045683", "/js/lists.js?b=1795045683", "/js/config.js?b=1795045683", "/js/data.js?b=1795045683", "/js/gestures.js?b=1795045683", "/js/reviews.js?b=1795045683", "/js/people.js?b=1795045683", "/js/form.js?b=1795045683", "/js/runtime.js?b=1795045683", "/js/anim-tabs.js?b=1795045683", "/js/anim-extra.js?b=1795045683", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
