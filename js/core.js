@@ -76,13 +76,13 @@ const svg=(p,s=28)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="n
 const LOGO=`<svg viewBox="0 0 24 24" width="26" height="26"><defs><clipPath id="ca"><polygon points="0,0 14,0 10,24 0,24"/></clipPath><clipPath id="cb"><polygon points="14,0 24,0 24,24 10,24"/></clipPath></defs><g clip-path="url(#ca)"><path fill="var(--g)" d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></g><g clip-path="url(#cb)"><path transform="translate(1.2 -1.4)" fill="var(--o)" d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></g></svg>`;
 
 
-/* Anti-parpadeo: #sub (reseñas, actividad, miembros…) y #lst (listas) se repintan a menudo cuando llegan datos
-   (refresh, likes, cargas en segundo plano). Si el HTML nuevo es idéntico al último que se escribió y nadie ha
+/* Anti-parpadeo: #sub (reseñas, actividad, miembros…), #lst (listas) y #mn (pantalla principal) se repintan a menudo
+   cuando llegan datos (refresh, likes, cargas en segundo plano): los estados vacíos reiniciaban su fade ~1s después de cambiar de pestaña. Si el HTML nuevo es idéntico al último que se escribió y nadie ha
    añadido/quitado nodos desde entonces, no se toca el DOM: así no se recrean pósters/avatares ni se reinician
    animaciones. (No se compara con el DOM real porque el traductor ES→EN cambia textos después de pintar.)
    Si algo difiere, se repinta como siempre. */
 (function(){const d=Object.getOwnPropertyDescriptor(Element.prototype,"innerHTML");if(!d||!d.set||!window.MutationObserver)return;
-  ["sub","lst"].forEach(id=>{const el=document.getElementById(id);if(!el)return;
+  ["sub","lst","mn"].forEach(id=>{const el=document.getElementById(id);if(!el)return;
     let last=null,dirty=true;const mo=new MutationObserver(ms=>{if(ms.some(m=>m.type==="childList"))dirty=true});mo.observe(el,{childList:true,subtree:true});
     Object.defineProperty(el,"innerHTML",{configurable:true,get(){return d.get.call(this)},set(h){
       if(mo.takeRecords().some(m=>m.type==="childList"))dirty=true;
