@@ -15,7 +15,7 @@
 
 Microboxd is an installable PWA for people who binge vertical micro-series (DramaBox, ReelShort, ShortMax…). Keep a diary with half-star ratings, rewatches and spoiler-safe reviews, build lists, follow friends and see their activity. Mobile-first, with a full desktop layout.
 
-**No build step, no framework:** the whole app is one `index.html` (vanilla JS) on top of [Supabase](https://supabase.com) (Auth, Postgres with Row Level Security, Storage).
+**No build step, no framework:** plain HTML, one CSS file and vanilla JS files on top of [Supabase](https://supabase.com) (Auth, Postgres with Row Level Security, Storage).
 
 ## Quick start (one command)
 ```bash
@@ -37,7 +37,7 @@ Open http://localhost:3000. Out of the box it connects to the **shared public de
 2. Apply `supabase/migrations/0001…` to the latest, **in order** (SQL editor, or `supabase link` + `supabase db push`).
 3. Point the app at your project (use the **publishable** key, never a secret key):
    ```bash
-   node scripts/setup.mjs https://<your-ref>.supabase.co <publishable-key>
+   node scripts/setup.mjs https://<your-ref>.supabase.co <publishable-key>   # edits js/config.js
    ```
 4. Supabase → *Authentication → URL Configuration*: set **Site URL** to your domain and add `http://localhost:3000` to *Redirect URLs*. For production configure a custom SMTP (the built-in one is heavily rate-limited), or disable "Confirm email" while testing.
 5. Deploy the folder to any static host (Vercel, Netlify, GitHub Pages, Cloudflare Pages). `vercel.json` carries the security headers for Vercel.
@@ -47,7 +47,9 @@ Open http://localhost:3000. Out of the box it connects to the **shared public de
 ## Architecture
 | Path | What |
 | --- | --- |
-| `index.html` | The entire app (HTML, CSS, JS) |
+| `index.html` | HTML skeleton (markup only) |
+| `css/app.css` | All styles (mobile first, desktop in `@media (min-width:1024px)`) |
+| `js/*.js` | App code as plain classic scripts sharing one scope, loaded in order by `index.html` (`i18n`, `core`, `desktop`, `shell`, `filters`, `settings`, `detail`, `log`, `diary`, `lists`, `config`, `data`, `gestures`, `reviews`, `people`, `form`, `runtime`, animations) |
 | `sw.js`, `manifest.json`, `icons/` | PWA shell cache and install metadata (Supabase calls are never cached) |
 | `version.json` | Build id polled by the app to prompt/apply updates |
 | `supabase/migrations/` | Schema, RLS, storage bucket |

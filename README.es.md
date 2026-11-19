@@ -12,7 +12,7 @@
 
 PWA instalable para quien devora microseries verticales (DramaBox, ReelShort, ShortMax…): diario con medias estrellas, rewatches y reseñas con spoilers ocultos, listas, seguir a amigos y ver su actividad. Pensada para móvil, con diseño completo para escritorio.
 
-**Sin build ni framework:** toda la app es un `index.html` (JS vanilla) sobre [Supabase](https://supabase.com) (Auth, Postgres con RLS, Storage).
+**Sin build ni framework:** HTML, un CSS y archivos JS vanilla (`index.html`, `css/`, `js/`) sobre [Supabase](https://supabase.com) (Auth, Postgres con RLS, Storage).
 
 ## Inicio rápido (un comando)
 ```bash
