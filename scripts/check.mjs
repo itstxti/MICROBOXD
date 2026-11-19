@@ -46,6 +46,11 @@ for (const m of html.matchAll(/(?:href|src)="(\/(?:css|js)\/[^"?]+)(?:\?b=(\d+))
   else ok(p + " versioned and pre-cached");
 }
 
+// 4c. No orphan files: every js/*.js and css/*.css must be referenced by index.html
+for (const f of jsFiles.map((x) => "js/" + x).concat(readdirSync(new URL("../css/", import.meta.url)).filter((x) => x.endsWith(".css")).map((x) => "css/" + x))) {
+  html.includes(`"/${f}?b=`) ? ok(f + " referenced in index.html") : bad(f + " is not referenced in index.html");
+}
+
 // 5. Migrations: contiguous 0001..N, unique, .sql
 const mig = readdirSync(new URL("../supabase/migrations/", import.meta.url)).filter((f) => f.endsWith(".sql")).sort();
 mig.forEach((f, i) => {
