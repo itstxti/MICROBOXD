@@ -33,7 +33,7 @@ const short=t=>t.replace(/^Ejemplo:\s*/,"");
 const S=n=>"★".repeat(Math.floor(n))+(n%1?"½":"");
 const fsh=ts=>new Date(ts).toLocaleDateString(LANG,{day:"numeric",month:"short",year:"numeric"});
 const fmt=ts=>new Date(ts).toLocaleDateString(LANG,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-const rel=ts=>{const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return LANG==="es"?"ahora":"now";if(m<60)return m+" min";const h=Math.floor(m/60);if(h<24)return h+" h";const d=Math.floor(h/24);if(d<7)return d+" d";const w=Math.floor(d/7);if(w<5)return w+(LANG==="es"?" sem":" w");const mo=Math.floor(d/30);return mo<12?mo+(LANG==="es"?" mes":" mo"):Math.floor(d/365)+(LANG==="es"?" a":" y")};
+const rel=ts=>{if(!Number.isFinite(+ts))return"";const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return LANG==="es"?"ahora":"now";if(m<60)return m+" min";const h=Math.floor(m/60);if(h<24)return h+" h";const d=Math.floor(h/24);if(d<7)return d+" d";const w=Math.floor(d/7);if(w<5)return w+(LANG==="es"?" sem":" w");const mo=Math.floor(d/30);return mo<12?mo+(LANG==="es"?" mes":" mo"):Math.floor(d/365)+(LANG==="es"?" a":" y")};
 const adt=(wd,ts)=>fsh(wd?Date.parse(wd+"T12:00:00"):ts);
 const addLog=(t,i)=>{log.unshift({t,id:i.id,title:i.title,r:i.rating,ts:Date.now()});log=log.slice(0,100)};
 let appPrev="DramaBox";
