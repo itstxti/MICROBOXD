@@ -774,3 +774,72 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #form{left:50%;right:auto;margin-left:-330px;width:660px;max-width:calc(100vw - 24px);border-inline:0;border-radius:14px}
  #lgs.lgd-on{top:calc(var(--dnh) + 12px);max-height:calc(var(--H,100vh) - var(--dnh) - 28px)}
 }
+
+/* ===== Escritorio: Reseñas de serie, Estadísticas, Todas las series, Lista y Añadir a lista ===== */
+.rvw,.rvbd{display:contents}.rvdk,.rvdm,.rvsd,.pkh,.pkv:empty,.pkc,.pkn{display:none}
+@media (min-width:1024px){
+ /* barra superior de las capas #lst: contenedor centrado en vez de barra a todo el ancho */
+ #lst>.lbar{position:static;background:none;border:0;padding:20px max(20px,calc(50% - 500px)) 0}
+ #lst>.lbar>b{display:none}
+ #lst>.lbar button{font-size:14px;color:var(--mute);min-width:0;padding:4px 0}#lst>.lbar button:hover{color:var(--tx)}
+ #lst>.lbar>div button{font-size:17px;padding:4px 10px;color:var(--tx)}
+ #lst>.lbar.lbt{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;row-gap:10px}
+ #lst>.lbar.lbt>button:first-child{grid-column:1/-1;justify-self:start}
+ #lst>.lbar.lbt>b{display:block;grid-column:1;font:700 30px/1.1 Georgia,serif;text-align:left}
+ #lst>.lbar.lbt>:last-child{grid-column:2}
+ /* Todas las series */
+ #lst>.grid.g3{grid-template-columns:repeat(8,minmax(0,1fr));gap:18px 14px;max-width:1040px;margin:0 auto;padding:22px 20px 40px}
+ /* Estadísticas */
+ .dsx{max-width:1040px;margin:0 auto;padding:0 20px 50px}
+ #sub .dsx{padding-top:10px}
+ .dsx .stc>div em{font-size:11px}
+ /* Lista */
+ #lst .in{max-width:1040px}
+ #lst .lnm{font:700 38px/1.1 Georgia,serif;margin:14px 0 12px}
+ #lst .ldc{font-size:15px;line-height:1.55;color:#d6dee6;max-width:640px;margin:0 0 14px}
+ #lst .lown{margin-top:14px}
+ #lst .lmeta{margin-bottom:30px}
+ #lst .in>.grid{gap:24px 16px}
+ #lst .in>.grid .lrk{width:auto;height:auto;background:none;border-radius:0;justify-content:flex-start;margin:8px 0 0;font:700 20px/1 Georgia,serif;color:var(--mute)}
+ /* Reseñas de una serie */
+ #sub .rvw{display:block;padding:0 0 60px}
+ #sub .rvhd{position:static;background:none;border:0;padding:26px var(--dw) 0;display:grid;grid-template-columns:92px minmax(0,1fr);grid-template-areas:"back back" "poster title" "poster meta" "tabs tabs";grid-template-rows:auto minmax(0,1fr) auto auto;column-gap:22px;align-items:end}
+ #sub .rvbar{display:contents}
+ #sub .rvbar button{grid-area:back;justify-self:start;font-size:13px;margin:0 0 16px}#sub .rvbar button:hover{color:var(--tx)}
+ #sub .rvbar .rvch{font-size:20px;margin-top:-2px}
+ #sub .rvbar b{grid-area:title;font:700 32px/1.1 Georgia,serif;white-space:normal;align-self:end}
+ #sub .rvdk{display:block;grid-area:poster;width:92px;pointer-events:none}
+ #sub .rvdm{display:block;grid-area:meta;color:var(--mute);font-size:13px;margin-top:6px}
+ #sub .rvhd .seg{grid-area:tabs;background:none;border-radius:0;border-bottom:1px solid var(--line);padding:0;gap:26px;margin-top:26px;overflow:visible}
+ #sub .rvhd .seg .segi{display:none}
+ #sub .rvhd .seg button{flex:none;background:none!important;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 0 10px;margin-bottom:-1px;font-size:13px;letter-spacing:1.8px;text-transform:uppercase;font-weight:600;color:var(--g);cursor:pointer}
+ #sub .rvhd .seg button:hover{color:var(--tx)}#sub .rvhd .seg button.on{color:var(--tx);border-bottom-color:var(--tx)}
+ #sub .rvbd{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding:0 var(--dw)}
+ #sub .rvl2{padding-bottom:0}
+ #sub .rvi2{padding:20px 0}#sub .rvi2::after{left:0}#sub .rvi2:hover .rvt2{opacity:1}
+ #sub .rvh2{flex-direction:row-reverse;justify-content:flex-end;gap:12px}
+ #sub .rvi2 .rvu{flex-direction:row-reverse;font-size:15px;color:var(--tx)}
+ #sub .rvi2 .rvu .av{width:34px!important;height:34px!important}
+ #sub .rvi2 .rvst{font-size:14px}
+ #sub .rvt2{font-size:15px;line-height:1.55;margin-top:10px;-webkit-line-clamp:12;line-clamp:12}
+ #sub .rvsd{display:block;padding-top:22px}
+ .rvsh{display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:var(--mute);font-weight:700;margin:0 0 14px}.rvsh::after{content:"";flex:1;height:1px;background:var(--line)}
+ .rvhs{display:flex;gap:2px;align-items:flex-end;height:64px}.rvhs u{flex:1;background:var(--tab);border-radius:1px;text-decoration:none;display:block}.rvhs u.mx{background:var(--g)}
+ .rvhl{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:var(--mute)}.rvhl b{font-size:18px;color:var(--tx)}
+ .rvhn{text-align:right;font-size:12px;color:var(--mute);margin:2px 0 28px}
+ .rvfr{display:flex;gap:8px;flex-wrap:wrap}
+ /* Añadir a lista: modal centrado con casillas */
+ .ov.open:has(.pkh){justify-content:center;align-items:center;gap:0}
+ .ov:has(.pkh)>.card{width:480px;max-width:100%}
+ .ov:has(.pkh)>.card:first-child{background:#1d242b;border:1px solid #394552;border-bottom:0;border-radius:10px 10px 0 0;display:flex;flex-direction:column;max-height:calc(var(--H,100vh) - 220px);overflow-y:auto}
+ .ov:has(.pkh) .ot{display:none}
+ .pkh{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line);order:-2}.pkh .poster{width:42px;flex:none;pointer-events:none}.pkh .poster *{display:none}
+ .pkh small{display:block;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--mute);font-weight:700;margin-bottom:2px}.pkh b{font:700 17px Georgia,serif;color:var(--tx)}
+ .ov:has(.pkh) .oi{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 20px;font-size:15px;color:var(--tx);border-top:1px solid var(--line)}.ov:has(.pkh) .oi:hover{background:rgba(255,255,255,.04)}
+ .ov:has(.pkh) .oi .pkv{display:none}
+ .ov:has(.pkh) .pkc{display:flex;order:-1;flex:none;width:22px;height:22px;box-sizing:border-box;border:1.5px solid #4a5866;border-radius:4px;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;font-style:normal}
+ .ov:has(.pkh) .oi.on .pkc{background:var(--g);border-color:var(--g)}.ov:has(.pkh) .oi.on .pkc::before{content:"✓"}
+ .ov:has(.pkh) .pkn{display:block;margin-left:auto;font-size:12px;color:var(--mute)}
+ .ov:has(.pkh) .oi.pkw{order:-1;color:var(--g);font-weight:700;border-top:0;border-bottom:1px solid var(--line)}
+ .ov:has(.pkh)>button.card{background:var(--g);color:#fff;border-radius:0 0 10px 10px;padding:14px;font-size:14px;letter-spacing:1.2px;text-transform:uppercase}.ov:has(.pkh)>button.card:hover{filter:brightness(1.08)}
+}
