@@ -1,6 +1,6 @@
-const V = "mbx-v77";
+const V = "mbx-v78";
 const CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
-const SHELL = ["/", "/css/app.css?b=1795293265", "/js/i18n.js?b=1795293265", "/js/core.js?b=1795293265", "/js/desktop.js?b=1795293265", "/js/shell.js?b=1795293265", "/js/filters.js?b=1795293265", "/js/settings.js?b=1795293265", "/js/detail.js?b=1795293265", "/js/log.js?b=1795293265", "/js/diary.js?b=1795293265", "/js/lists.js?b=1795293265", "/js/config.js?b=1795293265", "/js/data.js?b=1795293265", "/js/gestures.js?b=1795293265", "/js/reviews.js?b=1795293265", "/js/people.js?b=1795293265", "/js/form.js?b=1795293265", "/js/nav.js?b=1795293265", "/js/runtime.js?b=1795293265", "/js/anim-tabs.js?b=1795293265", "/js/anim-extra.js?b=1795293265", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+const SHELL = ["/", "/css/app.css?b=1795293968", "/js/i18n.js?b=1795293968", "/js/core.js?b=1795293968", "/js/desktop.js?b=1795293968", "/js/shell.js?b=1795293968", "/js/filters.js?b=1795293968", "/js/settings.js?b=1795293968", "/js/detail.js?b=1795293968", "/js/log.js?b=1795293968", "/js/diary.js?b=1795293968", "/js/lists.js?b=1795293968", "/js/config.js?b=1795293968", "/js/data.js?b=1795293968", "/js/gestures.js?b=1795293968", "/js/reviews.js?b=1795293968", "/js/people.js?b=1795293968", "/js/form.js?b=1795293968", "/js/nav.js?b=1795293968", "/js/runtime.js?b=1795293968", "/js/anim-tabs.js?b=1795293968", "/js/anim-extra.js?b=1795293968", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
