@@ -21,7 +21,7 @@ const diary=(src)=>{if(!src)return diaryOwn();const d=(src||items).filter(i=>i.w
   return d.map(i=>{const t=new Date(i.watchedOn),k=t.toLocaleDateString(LANG,{month:"long",year:"numeric"}).replace(" de "," "),hd=k!==m?(m=k,`<div class="dmh">${k}</div>`):"";
    return hd+`<div class="de" onclick="show(${i.id})"><div class="ddn">${t.getDate()}</div>${poster(i).replace(/onclick="[^"]*"/,"")}<div class="dti"><div class="dtl"><b>${esc(short(i.title))}</b> <small>${esc(i.app)}</small></div><div class="dst">${i.rating?`<span class="dsr">${S(i.rating)}</span>`:""}${i.liked?'<i class="dhe">♥</i>':""}${i.rewatch?'<i class="drw">'+RWI+'</i>':""}${i.review?'<i class="drv">☰</i>':""}</div></div></div>`}).join("")};
 const tagsAll=()=>[...new Set(items.flatMap(i=>i.rtags||[]))];
-function sheet(t,b,rt){$("lst").innerHTML=`<div class="lbar"><button onclick="$('lst').classList.remove('open','top');render()">‹ ${esc(uname())}</button><b>${t}</b>${rt||'<span style="min-width:44px"></span>'}</div>${b}`;$("lst").classList.add("open");$("lst").scrollTop=0}
+function sheet(t,b,rt){$("lst").innerHTML=`<div class="lbar lbt"><button onclick="$('lst').classList.remove('open','top');render()">‹ ${esc(uname())}</button><b>${t}</b>${rt||'<span style="min-width:44px"></span>'}</div>${b}`;$("lst").classList.add("open");$("lst").scrollTop=0}
 const openRev=()=>sheet("Reseñas",rvl(items.filter(i=>i.review)));
 const openLikes=()=>{bfCtx=openLikes;sheet("Me gusta",bfGrid(items.filter(i=>i.liked)),bfBtn("",false).replace("class=\"","class=\"bfl2 "))};
 let tsrt="n",ttab="s";
@@ -35,7 +35,7 @@ const openTagTop=x=>{openTag(x);$("lst").classList.add("top")};
 const openTag=x=>sheet(`<span class="tgc" style="height:30px;font-size:15px">${esc(x)}</span>`,grid(items.filter(i=>(i.rtags||[]).some(t=>t.toLowerCase()===x.toLowerCase())),"g3"));
 let stY=0;
 function stGo(y){stY=y;if(DSK()&&tab==="me"&&seg.me==="stt"&&!STXI){render();return}if(STXI){STXR=1;openStats();STXR=0;return}const sc=$("lst").scrollTop;openStats();$("lst").scrollTop=sc}
-let STXR=0;const stOut=(h)=>STXI?(STXR?subRe:subOpen)(U2(STXN,subBar("Estadísticas")+h)):sheet("Estadísticas",h);
+let STXR=0;const stOut=(h)=>{h=`<div class="dst2 dsx">${h}</div>`;return STXI?(STXR?subRe:subOpen)(U2(STXN,subBar("Estadísticas")+h)):sheet("Estadísticas",h)};
 let STXI=null,STXN="";
 const stEn=()=>{if(STXI){const D=UD[STXN];return D?D.rows.map(x=>({iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||""})):[]}
   const en=DEN.map(e=>({iid:e.iid,wd:e.wd,r:e.r,hl:e.hl,rw:e.rw,t:e.t}));
