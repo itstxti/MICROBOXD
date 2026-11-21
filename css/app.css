@@ -858,3 +858,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .rvs>.rvg:first-of-type>.rvlb{padding-top:6px}
  .rvmo{display:inline;font-size:11px;letter-spacing:1.4px;cursor:pointer}.rvmo:hover,.rvmo:focus-visible{color:var(--tx)}
 }
+
+/* Etiquetas de los resultados de búsqueda: clicables (buscan ese tema/app), como en la ficha */
+.srt .tg2{cursor:pointer}
+@media (hover:hover){.srt .tg2:hover{background:var(--tab);color:var(--tx)}}

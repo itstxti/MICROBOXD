@@ -48,7 +48,7 @@ function render(){
 }
 const spl=h=>{const e=$("spl");if(e)e.innerHTML=h};let SRL=null,SRM=null;
 function sfx(){const c=document.documentElement.classList;c.toggle("insr",tab==="search"&&!(br.length&&!q.trim()));c.toggle("sfoc",tab==="search"&&!!(sf||q.trim()))}
-const srRow=i=>`<div class="srr">${poster(i)}<div class="srt"><h3 onclick="show(${i.id})">${esc(i.title)}</h3>${i.rating?`<div class="ss">${S(i.rating)}</div>`:""}<div>${i.app?`<span class="tg2 ap">${esc(i.app)}</span>`:""}${(i.tropes||[]).slice(0,6).map(t=>`<span class="tg2">${esc(t)}</span>`).join("")}</div></div></div>`;
+const srRow=i=>`<div class="srr">${poster(i)}<div class="srt"><h3 onclick="show(${i.id})">${esc(i.title)}</h3>${i.rating?`<div class="ss">${S(i.rating)}</div>`:""}<div>${i.app?`<span class="tg2 ap" role="button" tabindex="0" data-q="${esc(i.app)}" onclick="goQ(this.dataset.q)">${esc(i.app)}</span>`:""}${(i.tropes||[]).slice(0,6).map(t=>`<span class="tg2" role="button" tabindex="0" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</span>`).join("")}</div></div></div>`;
 const srD=bd=>`<div class="srx"><div class="srm"><div class="srh">${L2("Mostrando coincidencias para","Showing matches for")} “${esc(q.trim())}”</div>${bd}</div><aside class="srs"><div class="srh">${L2("Mostrar resultados de","Show results for")}</div>${[["s",L2("Series","Series")],["r",L2("Reseñas","Reviews")],["l",L2("Listas","Lists")],["m",L2("Miembros","Members")]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</aside></div>`;
 function sr(){
   sfx();const el=$("sr");if(!el)return;
