@@ -847,3 +847,14 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .ov:has(.pkh) .oi.pkw{order:-1;color:var(--g);font-weight:700;border-top:0;border-bottom:1px solid var(--line)}
  .ov:has(.pkh)>button.card{background:var(--g);color:#fff;border-radius:0 0 10px 10px;padding:14px;font-size:14px;letter-spacing:1.2px;text-transform:uppercase}.ov:has(.pkh)>button.card:hover{filter:brightness(1.08)}
 }
+
+/* Reseñas en el detalle: dos listas apiladas en escritorio (en móvil, pestañas Populares/Amigos) */
+.rvg.rgh{display:none}.rvmo{display:none}
+@media (min-width:1024px){
+ .rvs>.seg.d{display:none}
+ .rvs>.rvg.rgh{display:block}.rvs>.rvg.rge{display:none}
+ .rvs>.rvall{display:none}
+ .rvs>.rvg>.rvlb{display:flex;align-items:baseline;justify-content:space-between;margin:0;padding:26px 0 8px;font-size:12px}
+ .rvs>.rvg:first-of-type>.rvlb{padding-top:6px}
+ .rvmo{display:inline;font-size:11px;letter-spacing:1.4px;cursor:pointer}.rvmo:hover,.rvmo:focus-visible{color:var(--tx)}
+}
