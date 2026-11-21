@@ -74,8 +74,13 @@ async function loadRevs(i,force){if(!sb||!i.sid)return;if(!force&&Date.now()-(RV
   try{const{data,error}=await sb.from("diary_entries").select(RSEL).eq("series_id",i.sid).neq("review","").order("created_at",{ascending:false}).limit(100);if(error)throw error;
    const o=JSON.stringify(RV[i.sid]);RV[i.sid]=data.map(nrm);if(o!==JSON.stringify(RV[i.sid])&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}}
 const revsSec=i=>{const a=RV[i.sid];if(!a)return revSec(i);if(!a.length)return"";
-  const l=rvTab==="fr"?a.filter(r=>FW.has(r.uid)):[...a].sort((x,y)=>y.lk-x.lk||y.ts-x.ts);
-  return `<div class="rvs"><div class="seg d" style="margin:6px 0 4px">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${rvTab===k?"on":""}" onclick="rvTab='${k}';show(${i.id},true)">${t}</button>`).join("")}</div><div class="rvlb">${rvTab==="fr"?"Reseñas de amigos":"Reseñas populares"}</div>${l.length?l.slice(0,4).map(rvItem).join(""):'<div class="chint">Nadie a quien sigues ha reseñado esta serie.</div>'}<div class="rvall" onclick="openRevs(${i.id})">Todas las reseñas <span>›</span></div></div>`};
+  const pop=[...a].sort((x,y)=>y.lk-x.lk||y.ts-x.ts),fr=a.filter(r=>FW.has(r.uid)),f=rvTab==="fr";
+  const mo=t=>`<span class="rvmo" role="link" tabindex="0" onclick="event.stopPropagation();openRevs(${i.id},'${t}')">${L2("MÁS","MORE")}</span>`;
+  /* móvil: pestañas Populares/Amigos (una sola lista); escritorio: las dos listas una debajo de otra */
+  return `<div class="rvs"><div class="seg d" style="margin:6px 0 4px">${[["pop","Populares"],["fr","Amigos"]].map(([k,t])=>`<button class="${rvTab===k?"on":""}" onclick="rvTab='${k}';show(${i.id},true)">${t}</button>`).join("")}</div>
+  <div class="rvg${f?" rgh":""}"><div class="rvlb">Reseñas populares${mo("all")}</div>${pop.slice(0,4).map(rvItem).join("")}</div>
+  <div class="rvg${f?"":" rgh"}${fr.length?"":" rge"}"><div class="rvlb">Reseñas de amigos${mo("fr")}</div>${fr.length?fr.slice(0,4).map(rvItem).join(""):'<div class="chint">Nadie a quien sigues ha reseñado esta serie.</div>'}</div>
+  <div class="rvall" onclick="openRevs(${i.id})">Todas las reseñas <span>›</span></div></div>`};
 let curRv=0;
 function openReview(id,re){const r=RX[id];if(!r)return;curRv=id;UN[r.uid]=r.u;const i=get(idOf(r.sid)),mine=r.uid===U.id;
   if(DSK()){
@@ -122,7 +127,7 @@ async function rvDel(id,ok){const r=RX[id];if(!r||r.uid!==U.id)return;if(!ok){as
 async function likeRev(id){const r=RX[id];if(!r||r.uid===U.id)return;const on=!r.me;r.me=on;r.lk+=on?1:-1;openReview(id,1);if($("det").classList.contains("open"))show(curDet,true);HR=null;
   try{if(on)await ck(sb.from("review_likes").insert({entry_id:id,user_id:U.id}));else await ck(sb.from("review_likes").delete().eq("entry_id",id).eq("user_id",U.id))}
   catch(e){r.me=!on;r.lk+=on?-1:1;openReview(id,1);toast("No se pudo guardar el me gusta")}}
-async function openRevs(iid){const i=get(iid);if(!i)return;if(!RV[i.sid])await loadRevs(i,true);rsTab="all";drawRevs(iid,0)}
+async function openRevs(iid,tab){const i=get(iid);if(!i)return;if(!RV[i.sid])await loadRevs(i,true);rsTab=tab==="fr"?"fr":"all";drawRevs(iid,0)}
 function drawRevs(iid,re){const i=get(iid),a=RV[i.sid]||[];
   const f=({all:a,fr:a.filter(r=>FW.has(r.uid)),me:a.filter(r=>r.uid===U.id),lk:a.filter(r=>r.hl)})[rsTab].slice().sort((x,y)=>y.lk-x.lk||y.ts-x.ts);
   const rr=a.filter(r=>r.r),hb=Array(10).fill(0);rr.forEach(r=>{const j=Math.round(r.r*2)-1;if(j>=0&&j<10)hb[j]++});const hm=Math.max(1,...hb),ht=hb.indexOf(Math.max(...hb)),av=rr.length?(rr.reduce((t,r)=>t+r.r,0)/rr.length).toFixed(1).replace(".",","):"",
