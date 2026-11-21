@@ -775,5 +775,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #lgs.lgd-on{top:calc(var(--dnh) + 12px);max-height:calc(var(--H,100vh) - var(--dnh) - 28px)}
 }
 
+/* Foco visible con teclado (solo escritorio) */
+@media (min-width:1024px){:is([tabindex],button,a,select):focus-visible{outline:2px solid var(--g);outline-offset:2px}}
 /* Escritorio: Guardar/Listo con el color de acento de la app (en lugar del verde de iOS) */
 @media (min-width:1024px){.lh .sv,.leh .sv,.tgac .sv{color:var(--g)}}
