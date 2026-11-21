@@ -52,6 +52,7 @@ const srRow=i=>`<div class="srr">${poster(i)}<div class="srt"><h3 onclick="show(
 const srD=bd=>`<div class="srx"><div class="srm"><div class="srh">${L2("Mostrando coincidencias para","Showing matches for")} “${esc(q.trim())}”</div>${bd}</div><aside class="srs"><div class="srh">${L2("Mostrar resultados de","Show results for")}</div>${[["s",L2("Series","Series")],["r",L2("Reseñas","Reviews")],["l",L2("Listas","Lists")],["m",L2("Miembros","Members")]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</aside></div>`;
 function sr(){
   sfx();const el=$("sr");if(!el)return;
+  const lh=el.dataset.lh;el.dataset.lh="";
   let old="";{const m=!q.trim()?(sf&&!br.length?"f":"b"):"r";if(el!==SRL){SRL=el;SRM=null}if(m!==SRM){if(m==="f"&&SRM==="b")old=el.innerHTML;SRM=m;el.classList.remove("an");void el.offsetWidth;el.classList.add("an")}}
   const pills=()=>`<div class="ptabs">${[["s","Series"],["r","Reseñas"],["l","Listas"],["m","Miembros"]].map(([k,l])=>`<button class="${sq===k?"on":""}" onclick="sq='${k}';sr()">${l}</button>`).join("")}</div>`;
   if(!q.trim()&&sf&&!br.length){
@@ -63,7 +64,9 @@ function sr(){
     const n=norm(q),tb=pills();
     const sm=catAll().filter(i=>norm(i.title+i.app+(i.tropes||[]).join("")).includes(n)),D1=DSK();
     spl(tb);const bd=(sq==="m"?`<div id="mem">${memHtml()}</div>`:sq==="r"?rvl(items.filter(i=>i.review&&norm(i.title+i.review).includes(n))):sq==="l"?lv(lists.filter(l=>norm(l.name+l.desc).includes(n)),0,"Sin resultados."):D1?(sm.length?sm.map(srRow).join(""):EMN()):grid(sm,"g3"));
-    el.innerHTML=D1?srD(bd):bd;
+    const nh=D1?srD(bd):bd;
+    /* miembros: si el HTML es idéntico no se reemplaza (evita que el estado vacío vuelva a animarse = parpadeo) */
+    if(sq==="m"&&lh===nh)el.dataset.lh=nh;else{el.innerHTML=nh;if(sq==="m")el.dataset.lh=nh}
     if(sq==="m")memSearch()
   }
 }
