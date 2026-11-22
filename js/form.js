@@ -15,7 +15,7 @@ function fcDrag(e,k0){e.preventDefault();const h=e.currentTarget,row=h.closest("
   const mv=ev=>{const dy=ev.clientY-y0;row.style.transform="translateY("+dy+"px)";k1=Math.max(0,Math.min(n-1,k0+Math.round(dy/rh)))};
   const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);removeEventListener("pointercancel",up);if(k1!==k0){const[m]=fc.splice(k0,1);fc.splice(k1,0,m)}drawFc()};
   addEventListener("pointermove",mv);addEventListener("pointerup",up);addEventListener("pointercancel",up)}
-function fcPh(k,inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const W=120,H=150,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2,w,h);fc[k].img=c.toDataURL("image/jpeg",.8);URL.revokeObjectURL(im.src);drawFc()};im.src=URL.createObjectURL(f)}
+function fcPh(k,inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const W=360,H=450,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r,x=c.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(im,(W-w)/2,(H-h)/2,w,h);fc[k].img=c.toDataURL("image/jpeg",.9);URL.revokeObjectURL(im.src);drawFc()};im.src=URL.createObjectURL(f)}
 $("fca").onclick=()=>{if(fc.length<20){fc.push({n:"",r:"",img:""});drawFc();const i=$("fcl").querySelectorAll(".fcn input");if(i.length>=2)i[i.length-2].focus()}};
 drawFc();
 /* ===== Editar / eliminar serie (reutiliza el formulario de creación) ===== */
@@ -73,8 +73,8 @@ $("cancel").onclick=()=>$("form").classList.remove("open");
 let dupT=0;$("f-title").oninput=()=>{clearTimeout(dupT);if(editId){$("dup").style.display="none";return}const v=$("f-title").value.trim();if(v.length<4){$("dup").style.display="none";return}
   dupT=setTimeout(async()=>{try{const{data}=await sb.rpc("similar_series",{q:v}),d=data&&data[0];$("dup").style.display=d?"block":"none";if(d)$("dup").textContent="¿Es la misma que “"+d.title+"” ("+d.app+")? Una serie puede tener nombres distintos según la app o el país."}catch(e){}},300)};
 $("f-img").onchange=e=>{const f=e.target.files[0];if(!f)return;
-  const im=new Image();im.onload=()=>{const w=240,h=Math.round(w*im.height/im.width),c=document.createElement("canvas");c.width=w;c.height=h;
-   c.getContext("2d").drawImage(im,0,0,w,h);cover=c.toDataURL("image/jpeg",.75);$("prev").src=cover;$("prev").style.display="block"};
+  const im=new Image();im.onload=()=>{const w=Math.min(720,im.width),h=Math.round(w*im.height/im.width),c=document.createElement("canvas");c.width=w;c.height=h;
+   const x=c.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(im,0,0,w,h);cover=c.toDataURL("image/jpeg",.9);$("prev").src=cover;$("prev").style.display="block"};
   im.src=URL.createObjectURL(f)};
 const epmv=()=>{const v=parseFloat(($("f-min").value||"").replace(",","."));return v>0&&v<=20000?Math.round(v*10)/10:null};
 $("save").onclick=()=>{tmCommit();const title=$("f-title").value.trim();if(!title)return;
