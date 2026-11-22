@@ -866,3 +866,11 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 /* Bienvenida (escritorio): el nombre lleva al perfil */
 .wb h2 .wbn{color:inherit;cursor:pointer;text-decoration:none;border-bottom:2px solid transparent;transition:border-color .15s}
 .wb h2 .wbn:hover,.wb h2 .wbn:focus-visible{border-bottom-color:var(--g)}
+
+/* Portada ampliada (clic en la portada de la ficha) */
+.pcol .poster[onclick]{cursor:zoom-in}
+.zm{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .2s;cursor:zoom-out}
+.zm.on{opacity:1}
+.zm img{max-width:min(92vw,560px);max-height:92vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 70px rgba(0,0,0,.7);transform:scale(.94);transition:transform .22s}
+.zm.on img{transform:none}
+@media (prefers-reduced-motion:reduce){.zm,.zm img{transition:none}}
