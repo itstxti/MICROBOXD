@@ -30,7 +30,7 @@ function dhome(fi,rc){
 function wbanner(){const f=[...items].filter(i=>i.cover).sort((a,b)=>b.rating-a.rating)[0]||catAll().find(i=>i.cover),hh=hue(f?f.title:"microboxd");
   const bg=f?`background-image:url('${f.cover.replace(/'/g,"%27")}')`:`background:linear-gradient(135deg,hsl(${hh},55%,34%),hsl(${(hh+60)%360},50%,16%))`;
   const n=items.filter(i=>i.status==="done"||(i.dcount||0)>0).length;
-  return `<div class="wb"><div class="bg" style="${bg}"></div><h2>${L2("Hola de nuevo, ","Welcome back, ")}${esc(uname())}. ${L2("Esto es lo que se está viendo…","Here's what's being watched…")}</h2><p>${n?L2("Llevas "+n+(n===1?" serie vista":" series vistas")+". ¿Qué has visto hoy?","You've watched "+n+" series. What did you watch today?"):L2("Valora, reseña y sigue todas las micro-series que ves.","Rate, review and keep track of every micro-series you watch.")}</p><button class="dnb" onclick="openAdd()">${L2("REGISTRAR UNA SERIE","LOG A SERIES")}</button></div>`}
+  return `<div class="wb"><div class="bg" style="${bg}"></div><h2>${L2("Hola de nuevo, ","Welcome back, ")}<span class="wbn" role="link" tabindex="0" onclick="tab='me';setSeg('perfil')">${esc(uname())}</span>. ${L2("Esto es lo que se está viendo…","Here's what's being watched…")}</h2><p>${n?L2("Llevas "+n+(n===1?" serie vista":" series vistas")+". ¿Qué has visto hoy?","You've watched "+n+" series. What did you watch today?"):L2("Valora, reseña y sigue todas las micro-series que ves.","Rate, review and keep track of every micro-series you watch.")}</p><button class="dnb" onclick="openAdd()">${L2("REGISTRAR UNA SERIE","LOG A SERIES")}</button></div>`}
 function poster(i){
   const h=hue(i.title);
   return `<div class="poster" onclick="show(${i.id})">${i.cover?`<img src="${i.cover}" alt="">`:
