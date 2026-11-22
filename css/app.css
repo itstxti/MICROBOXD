@@ -934,3 +934,8 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #sr .b-top,#sr .b-top:hover{background:linear-gradient(135deg,#4d3b1f,#2a2011)}
  #sr .b-recent,#sr .b-recent:hover{background:linear-gradient(135deg,#1f4d3a,#112a20)}
 }
+/* Desktop: bottom sheets (filters, new/edit list) float as fully rounded centred modals */
+@media (min-width:1024px){
+ #fp,#le{border-radius:16px;border:1px solid rgba(255,255,255,.1);overflow-x:hidden}
+ #fp{height:auto;min-height:min(600px,calc(var(--H,100vh) - var(--dnh) - 32px));max-height:calc(var(--H,100vh) - var(--dnh) - 32px)}
+}
