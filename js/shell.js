@@ -14,10 +14,14 @@ function render(){
   $("tb").innerHTML=["home","search","add","act","me"].map(t=>`<button class="${t==="add"?"plus":tab===t?"on":""}" aria-label="${t}" onclick="go('${t}')">${(tab===t&&t!=="add"&&t!=="search")?svg(IC[t],26).replace('fill="none"','fill="currentColor"'):svg(IC[t],t==="add"?30:26)}</button>`).join("");
   let h="";
   if(tab==="home"){
+    if(seg.home==="jr")seg.home="series";
     if(seg.home==="series"){
-      const fi=bfFilt(items);h=wbanner()+`<div class="mro">`+hrow("Añadidas recientemente",fi.slice(0,10))+hrow("Mejor valoradas",fi.filter(i=>i.rating).sort((a,b)=>b.rating-a.rating).slice(0,10))+`</div>`+dhome(fi);if(items.length&&!fi.length)h=EMF();
-      if(!items.length)h=EMP("tv","Tu biblioteca está vacía","Añade tu primera serie para empezar a puntuar y reseñar.","Añadir serie","openAdd()");
-    }else if(seg.home==="jr"){h=diary();}else if(seg.home==="lst"){h=DSK()?glH():lv(lists,0)+(lists.length?'<div style="text-align:center;padding:6px 0 18px"><button class="emb" onclick="editList()">Nueva lista</button></div>':"");
+      /* Inicio = comunidad: series de todos los usuarios (móvil y escritorio) */
+      const all=catAll(),fi=bfFilt(all),pp=i=>(com[key(i)]||[]).length+(i.rating?1:0),ca=i=>com[key(i)]&&com[key(i)].length?comAvg(i):0;
+      const pop=[...fi].sort((a,b)=>pp(b)-pp(a)||b.watched-a.watched),rec=[...fi].sort((a,b)=>(b.added||0)-(a.added||0)),top=fi.filter(ca).sort((a,b)=>ca(b)-ca(a));
+      h=wbanner()+`<div class="mro">`+hrow(L2("Populares ahora","Popular right now"),pop.slice(0,10),comAvg)+hrow(L2("Añadidas recientemente","Recently added"),rec.slice(0,10),comAvg)+hrow(L2("Mejor valoradas","Top rated"),top.slice(0,10),comAvg)+`</div>`+dhome(fi,rec);if(all.length&&!fi.length)h=EMF();
+      if(!all.length)h=EMP("tv","Aún no hay series","Añade la primera serie para empezar a puntuar y reseñar.","Añadir serie","openAdd()");
+    }else if(seg.home==="lst"){h=glH();
     }else{
       h=hrH();
     }

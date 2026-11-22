@@ -7,7 +7,7 @@ function dnIn(v){if(tab==="search"&&!br.length){q=v;sr()}}
 function dnKey(e){if(e.key==="Enter"){e.preventDefault();dnGo(e.target.value)}else if(e.key==="Escape")dnX()}
 function dnGo(v){v=(v||"").trim();if(!v)return;["det","lst","sub"].forEach(k=>$(k).classList.remove("open"));q=v;br=[];sf=0;tab="search";dnO=1;rsqAdd();render();$("mn").scrollTop=0;const i=$("dsq");if(i)i.blur()}
 const comAvg=i=>{const c=com[key(i)];return Math.round((c&&c.length?c.reduce((a,b)=>a+b,0)/c.length:i.rating||0)*2)/2};
-function dhome(fi){
+function dhome(fi,rc){
   if(FEED===null&&DSK()){FEED=0;loadFeed()}
   const pp=i=>(com[key(i)]||[]).length+(i.rating?1:0),pop=bfFilt([...catAll()]).sort((a,b)=>pp(b)-pp(a)||b.watched-a.watched).slice(0,6),
    row=l=>`<div class="drow">${l.map(i=>`<div>${poster(i)}<div class="ss">${comAvg(i)?S(comAvg(i)):""}</div></div>`).join("")}</div>`,
@@ -23,7 +23,7 @@ function dhome(fi){
   const ls=lists.slice(0,4).map(l=>{const n=l.ids.map(get).filter(Boolean).length;return `<div class="dli" onclick="openList(${l.id})"><b>${esc(l.name)}</b><span>${n} ${n===1?L2("serie","series"):"series"}</span></div>`}).join("")||`<div class="dli" onclick="editList()"><b>${L2("Crea tu primera lista","Create your first list")}</b><span>＋</span></div>`;
   return `<div class="dhm">${sh(L2("Populares ahora","Popular right now"),mo(L2("MÁS","MORE"),"goBr('pop')"),1)}${pop.length?row(pop):EMH("sm")}
   <div class="dcols"><div>${sh(L2("Reseñas recientes de amigos","Recent reviews from friends"),mo(L2("TODAS","ALL"),"dnTo('home','rev')"))}${rvH}
-  ${sh(L2("Añadidas recientemente","Recently added"),mo(L2("MÁS","MORE"),"goBr('recent')"))}${fi.length?row(fi.slice(0,5)):EMH("sm")}</div>
+  ${sh(L2("Añadidas recientemente","Recently added"),mo(L2("MÁS","MORE"),"goBr('recent')"))}${(rc||fi).length?row((rc||fi).slice(0,5)):EMH("sm")}</div>
   <aside class="dside"><div class="dbx"><h5>${L2("Tu semana","Your week")}</h5><div class="dst">${st(E.length,L2("REGISTROS","LOGGED"))}${st(E.filter(e=>e.t).length,L2("RESEÑAS","REVIEWS"))}${st(avg,L2("MEDIA ★","AVG ★"))}</div></div>
   <div class="dbx"><h5>${L2("Tus listas","Your lists")}</h5>${ls}</div>
   ${th?`<div class="dbx"><h5>${L2("Temas en tendencia","Trending themes")}</h5>${th}</div>`:""}</aside></div></div>`}
@@ -38,7 +38,7 @@ function poster(i){
 }
 const cell=i=>`<div>${poster(i)}<div class="ss">${S(i.rating)}</div></div>`;
 const grid=(l,c)=>l.length?`<div class="grid ${c||""}">${l.map(cell).join("")}</div>`:EMH();
-const hrow=(t,l)=>l.length?`<h3 class="sec">${t}</h3><div class="hrow">${l.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div>`:"";
+const hrow=(t,l,f)=>l.length?`<h3 class="sec">${t}</h3><div class="hrow">${l.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(f?f(i):i.rating)}</div></div>`).join("")}</div>`:"";
 
 
 /* Ir a explorar (Populares, Recientes, un tema) desde Inicio: descarta la búsqueda anterior para no abrir sus resultados */
