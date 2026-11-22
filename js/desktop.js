@@ -19,11 +19,11 @@ function dhome(fi){
   const wk=Date.now()-7*864e5,E=(DEN.length?DEN.map(e=>({wd:Date.parse(e.wd),r:e.r,t:e.t})):items.filter(i=>i.watchedOn).map(i=>({wd:+i.watchedOn,r:i.rating,t:""}))).filter(e=>e.wd>=wk),
    rt=E.filter(e=>e.r>0),avg=rt.length?(rt.reduce((a,e)=>a+e.r,0)/rt.length).toFixed(1):"–";
   const st=(n,l)=>`<div><b>${n}</b><span>${l}</span></div>`;
-  const th=tmCounts().slice(0,10).map(t=>`<span class="tag" data-v="${esc(t.l)}" onclick="go('search');brPush('trope',this.dataset.v)">${esc(t.l)}</span>`).join("");
+  const th=tmCounts().slice(0,10).map(t=>`<span class="tag" data-v="${esc(t.l)}" onclick="goBr('trope',this.dataset.v)">${esc(t.l)}</span>`).join("");
   const ls=lists.slice(0,4).map(l=>{const n=l.ids.map(get).filter(Boolean).length;return `<div class="dli" onclick="openList(${l.id})"><b>${esc(l.name)}</b><span>${n} ${n===1?L2("serie","series"):"series"}</span></div>`}).join("")||`<div class="dli" onclick="editList()"><b>${L2("Crea tu primera lista","Create your first list")}</b><span>＋</span></div>`;
-  return `<div class="dhm">${sh(L2("Populares ahora","Popular right now"),mo(L2("MÁS","MORE"),"go('search');brPush('pop')"),1)}${pop.length?row(pop):EMH("sm")}
+  return `<div class="dhm">${sh(L2("Populares ahora","Popular right now"),mo(L2("MÁS","MORE"),"goBr('pop')"),1)}${pop.length?row(pop):EMH("sm")}
   <div class="dcols"><div>${sh(L2("Reseñas recientes de amigos","Recent reviews from friends"),mo(L2("TODAS","ALL"),"dnTo('home','rev')"))}${rvH}
-  ${sh(L2("Añadidas recientemente","Recently added"),mo(L2("MÁS","MORE"),"go('search');brPush('recent')"))}${fi.length?row(fi.slice(0,5)):EMH("sm")}</div>
+  ${sh(L2("Añadidas recientemente","Recently added"),mo(L2("MÁS","MORE"),"goBr('recent')"))}${fi.length?row(fi.slice(0,5)):EMH("sm")}</div>
   <aside class="dside"><div class="dbx"><h5>${L2("Tu semana","Your week")}</h5><div class="dst">${st(E.length,L2("REGISTROS","LOGGED"))}${st(E.filter(e=>e.t).length,L2("RESEÑAS","REVIEWS"))}${st(avg,L2("MEDIA ★","AVG ★"))}</div></div>
   <div class="dbx"><h5>${L2("Tus listas","Your lists")}</h5>${ls}</div>
   ${th?`<div class="dbx"><h5>${L2("Temas en tendencia","Trending themes")}</h5>${th}</div>`:""}</aside></div></div>`}
@@ -40,3 +40,6 @@ const cell=i=>`<div>${poster(i)}<div class="ss">${S(i.rating)}</div></div>`;
 const grid=(l,c)=>l.length?`<div class="grid ${c||""}">${l.map(cell).join("")}</div>`:EMH();
 const hrow=(t,l)=>l.length?`<h3 class="sec">${t}</h3><div class="hrow">${l.map(i=>`<div class="hp">${poster(i)}<div class="ss">${S(i.rating)}</div></div>`).join("")}</div>`:"";
 
+
+/* Ir a explorar (Populares, Recientes, un tema) desde Inicio: descarta la búsqueda anterior para no abrir sus resultados */
+const goBr=(t,v)=>{q="";br=[];go("search");brPush(t,v)};
