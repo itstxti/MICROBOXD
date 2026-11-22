@@ -939,3 +939,13 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  #fp,#le{border-radius:16px;border:1px solid rgba(255,255,255,.1);overflow-x:hidden}
  #fp{height:auto;min-height:min(600px,calc(var(--H,100vh) - var(--dnh) - 32px));max-height:calc(var(--H,100vh) - var(--dnh) - 32px)}
 }
+/* Desktop: snappier transitions (mobile keeps its longer, touch-friendly timings) */
+@media (min-width:1024px){
+ .sheet.open{animation-duration:.15s}.sheet.out{animation-duration:.11s}
+ #fp.bf.open{animation-duration:.15s}#fp.bf.out{animation-duration:.11s}
+ .ov.open{animation-duration:.15s}.ov.open::before{animation-duration:.15s}
+ #sr.an>*,#sr.an>.ptabs,.oldc{animation-duration:.16s}
+ .mbx-f,.mbx-s{animation-duration:.16s}
+ .mbx-gy,#det.fr .bars u,#sub .bars u,#lst .bars u{animation-duration:.3s}
+ .mbx-gx,#mn .stb>u i,#lst .stb>u i,#sub .stb>u i{animation-duration:.35s}
+}
