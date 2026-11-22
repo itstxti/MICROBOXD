@@ -63,7 +63,7 @@ function sr(){
     spl(pills());el.innerHTML=rsqH();
     if(old){const o=document.createElement("div");o.className="oldc";o.innerHTML=old;el.appendChild(o);setTimeout(()=>o.remove(),330)}
   }else if(!q.trim()){
-    el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br" onclick="brPush('${k}')">${l}<span>›</span></div>`).join("");
+    el.innerHTML=br.length?brBody():`<h3 class="sec" style="margin-top:6px">Explorar por</h3>`+BRR.map(([k,l])=>`<div class="br brt b-${k}" role="button" tabindex="0" onclick="brPush('${k}')"><svg class="bri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${BRI[k]}</svg><em class="brl">${l}</em><small class="brh">${BRH[k]()}</small><span>›</span></div>`).join("");
   }else{
     const n=norm(q),tb=pills();
     const sm=catAll().filter(i=>norm(i.title+i.app+(i.tropes||[]).join("")).includes(n)),D1=DSK();
@@ -75,6 +75,8 @@ function sr(){
   }
 }
 let br=[];
+const BRI={apps:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',tropes:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1"/>',pop:'<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 1 1 1 2 1 3 2-2 2-5 2-9z"/>',top:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',recent:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',lists:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',all:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>'};
+const BRH={apps:()=>L2("Dónde verlas","Where to watch"),tropes:()=>L2("Por temática","By theme"),pop:()=>L2("Lo que ve todo el mundo","What everyone watches"),top:()=>L2("Las mejor puntuadas","Highest rated"),recent:()=>L2("Lo último en llegar","Latest arrivals"),lists:()=>L2("De la comunidad","From the community"),all:()=>L2("Catálogo completo","Full catalogue")};
 const BRR=[["apps","Aplicación"],["tropes","Tema"],["pop","Más populares"],["top","Mejor valoradas"],["recent","Añadidas recientemente"],["lists","Listas"],["all","Todas las series"]];
 const brTitle=n=>({apps:"Aplicación",tropes:"Tema",app:n.v,trope:n.v,pop:"Más populares",top:"Mejor valoradas",recent:"Añadidas recientemente",lists:"Listas",all:"Todas las series"}[n.t]);
 const brPush=(t,v)=>{br.push({t,v});render();$("mn").scrollTop=0};

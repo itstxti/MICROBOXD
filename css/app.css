@@ -906,3 +906,31 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 .cra button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media (max-width:700px){.crp{align-items:flex-end;padding:0}.crc{width:100%;border-radius:18px 18px 0 0;border-bottom:0;padding:18px 16px max(18px,env(safe-area-inset-bottom));transform:translateY(40px)}}
 @media (prefers-reduced-motion:reduce){.crp,.crc{transition:none}}
+/* Mobile: new Explorar/review extras stay hidden */
+.br .bri,.br .brh,.hrv .rwf{display:none}.br .brl{font-style:normal}
+@media (min-width:1024px){
+ /* Home > Reviews as cards */
+ #mn:has(>.hrv){gap:20px;padding-top:26px}
+ #mn:has(>.hrv)>.hrv{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:18px;gap:16px;transition:transform .15s,border-color .15s}
+ #mn:has(>.hrv)>.hrv:hover{transform:translateY(-2px);border-color:rgba(255,79,139,.4)}
+ #mn:has(>.hrv)>.hrv .poster{width:84px}
+ #mn:has(>.hrv)>.hrv b{font-size:17px}
+ .hrv .rwt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+ .hrv .rwf{display:block;margin-top:10px;font-size:12px;color:var(--mute)}
+ /* Explorar as card grid */
+ #sr:has(>.brt){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-content:start}
+ #sr:has(>.brt)>h3{grid-column:1/-1}
+ #sr .brt{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;text-align:left;gap:2px;height:128px;padding:20px;border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#fff;overflow:hidden;transition:transform .15s,box-shadow .15s;background:linear-gradient(135deg,#2b2f3a,#181b22)}
+ #sr .brt:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+ #sr .brt:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+ #sr .brt .bri{display:block;position:absolute;left:20px;top:18px;width:26px;height:26px;opacity:.9}
+ #sr .brt .brl{font-size:17px;font-weight:700}
+ #sr .brt .brh{display:block;font-size:12px;color:rgba(255,255,255,.65)}
+ #sr .brt>span{position:absolute;right:16px;top:14px;font-size:20px;color:rgba(255,255,255,.6)}
+ #sr .b-apps,#sr .b-tropes,#sr .b-all{grid-column:span 2}
+ #sr .b-apps,#sr .b-apps:hover{background:linear-gradient(135deg,#3b2150,#1f1630)}
+ #sr .b-tropes,#sr .b-tropes:hover{background:linear-gradient(135deg,#4d1f35,#2a131e)}
+ #sr .b-pop,#sr .b-pop:hover{background:linear-gradient(135deg,#1f3a4d,#111f29)}
+ #sr .b-top,#sr .b-top:hover{background:linear-gradient(135deg,#4d3b1f,#2a2011)}
+ #sr .b-recent,#sr .b-recent:hover{background:linear-gradient(135deg,#1f4d3a,#112a20)}
+}
