@@ -11,7 +11,7 @@ function hist(i){const cv=com[key(i)],v=cv&&cv.length?cv:(i.rating?[i.rating]:[]
   return `<div class="panel"><div class="pl">Valoraciones de la comunidad</div><div class="hist${v.length?"":" e"}"><span class="hs">★</span><div class="bars">${b.map((n,j)=>`<u title="${n}" class="${j===k?"me":""}" style="height:${Math.max(4,n/m*100)}%"></u>`).join("")}</div><div class="avc" title="${v.length} ${v.length===1?"nota":"notas"}"><div class="avg">${avg}</div><span class="hs">★★★★★</span></div></div></div>`}
 function dt(i){
   if(dtab==="cast"){const c=castList(i),sh=castAll?c:c.slice(0,10),ph=i.castPh||{};
-    const rows=sh.map(([a,p,im0])=>{const k=a.trim().toLowerCase(),im=im0||ph[k],h=hue(a);return `<div class="cr"><div class="cav" style="${im?`background-image:url(${im})`:`background:linear-gradient(160deg,hsl(${h},55%,40%),hsl(${(h+50)%360},60%,22%))`}">${im?"":esc(a.trim().charAt(0).toUpperCase())}</div><div><b>${esc(a)}</b>${p?`<small>${esc(p)}</small>`:""}</div></div>`}).join("");
+    const rows=sh.map(([a,p,im0])=>{const k=a.trim().toLowerCase(),im=im0||ph[k],h=hue(a);return `<div class="cr"><div class="cav"${im?` role="button" tabindex="0" aria-label="${L2("Ampliar foto","Enlarge photo")}" data-u="${esc(im)}" data-n="${esc(a)}" onclick="zoomImg(this.dataset.u,this.dataset.n)"`:""} style="${im?`background-image:url(${im})`:`background:linear-gradient(160deg,hsl(${h},55%,40%),hsl(${(h+50)%360},60%,22%))`}">${im?"":esc(a.trim().charAt(0).toUpperCase())}</div><div><b>${esc(a)}</b>${p?`<small>${esc(p)}</small>`:""}</div></div>`}).join("");
     return (c.length?rows+(c.length>10&&!castAll?`<div class="cmore" onclick="castAll=true;show(${i.id},true)">Mostrar ${c.length-10} más <span>⌄</span></div>`:""):EMP("users",L2("Aún no hay personajes","No characters yet"),L2("El reparto aparecerá aquí.","The cast will show up here."),"","","sm"))}
   if(dtab==="inf")return [["App",i.app],["Episodios",i.eps],...(i.epm?[[L2("Duración","Duration"),Math.floor(i.epm/60)?Math.floor(i.epm/60)+" h"+(Math.round(i.epm%60)?" "+Math.round(i.epm%60)+" min":""):Math.round(i.epm)+" min"]]:[])].map(([a,b])=>`<div class="dr"><span>${a}</span><b>${esc(b)}</b></div>`).join("");
   return i.tropes.length?i.tropes.map(t=>`<div class="br" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}<span>›</span></div>`).join(""):EMP("tag",L2("Sin temas","No themes"),L2("Esta serie no tiene temas.","This series has no themes."),"","","sm");
@@ -86,10 +86,11 @@ const inWl=i=>i.status==="want"||!!i.wl;
 const hasAct=i=>!!(i.rating||i.review||i.watchedOn||i.deid||(i.dcount||0)>0);
 function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false,wl:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
 
-/* Ampliar la portada: clic en la portada de la ficha abre una vista grande; clic o Esc la cierra */
-function zoomCover(id){const i=get(id);if(!i||!i.cover||$("zm"))return;
-  const d=document.createElement("div");d.id="zm";d.className="zm";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label",i.title);
-  const im=document.createElement("img");im.alt=i.title;im.src=i.cover;d.appendChild(im);d.onclick=zmX;document.body.appendChild(d);
+/* Ampliar portada o foto del reparto: clic abre una vista grande; clic o Esc la cierra */
+function zoomCover(id){const i=get(id);if(i&&i.cover)zoomImg(i.cover,i.title)}
+function zoomImg(src,alt){if(!src||$("zm"))return;
+  const d=document.createElement("div");d.id="zm";d.className="zm";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label",alt||"");
+  const im=document.createElement("img");im.alt=alt||"";im.src=src;d.appendChild(im);d.onclick=zmX;document.body.appendChild(d);
   void d.offsetWidth;d.classList.add("on")}
 function zmX(){const d=$("zm");if(!d)return;d.classList.remove("on");setTimeout(()=>d.remove(),200)}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("zm")){e.preventDefault();e.stopPropagation();zmX()}},true);
