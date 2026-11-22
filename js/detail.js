@@ -40,7 +40,7 @@ function show(id,keep){
   const i=get(id);if(!i)return;curDet=id;const h=hue(i.title),d=$("det"),y=d.scrollTop;if(!keep)d.style.zIndex=$("sub").classList.contains("open")?"27":"";if(!keep){dtab="cast";castAll=false}
   const bg=i.cover?`url(${i.cover})`:`linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))`;
   d.innerHTML=`<div class="top"><button class="rb ${DSK()?"rbd":""}" aria-label="Volver" onclick="closeDet()">${DSK()?`<span>‹ ${L2("Atrás","Back")}</span>`:`<svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 6 13l10 10"/></svg>`}</button><span class="tpt">${esc(short(i.title))}</span><div style="display:flex">${canEdit(i)&&!DSK()?`<button class="rb" aria-label="Editar serie" onclick="fmEdit(${i.id})"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>`:""}${DSK()?"":`<button class="rb" aria-label="Más" onclick="opts(${i.id})"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4" cy="13" r="2.6"/><circle cx="13" cy="13" r="2.6"/><circle cx="22" cy="13" r="2.6"/></svg></button>`}</div></div>
-  <div class="dbk"><i style="background-image:${bg}"></i></div><div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div>${i.tropes.length?`<div class="tpr">${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>`:""}</div><div class="pcol">${poster(i).replace(/onclick="[^"]*"/,"")}${pst(i)}</div></div>
+  <div class="dbk"><i style="background-image:${bg}"></i></div><div class="in2"><div class="hd2"><div class="tt"><h2>${esc(i.title)}</h2><div class="meta">${esc(i.app)} · ${i.eps} ${i.eps===1?"episodio":"episodios"}</div>${i.tropes.length?`<div class="tpr">${i.tropes.map(t=>`<button class="tag" data-q="${esc(t)}" onclick="goQ(this.dataset.q)">${esc(t)}</button>`).join("")}</div>`:""}</div><div class="pcol">${poster(i).replace(/onclick="[^"]*"/,i.cover?`role="button" tabindex="0" aria-label="${L2("Ampliar portada","Enlarge cover")}" onclick="zoomCover(${i.id})"`:"")}${pst(i)}</div></div>
   <p class="syn" onclick="synTog(this)">${esc(i.syn)||"Sin sinopsis todavía."}</p>
   <div class="dsd">${pnl(i)}${hist(i)}
   <div class="lgw"><div class="logrow" onclick="opts(${i.id})"><div class="av" style="width:32px;height:32px;font-size:14px;flex:none">${ini()}</div><span>${lt(i)}</span><span class="more">•••</span></div></div>
@@ -85,3 +85,11 @@ const lk=i=>!!(i.rating||i.review||i.liked||i.watchedOn);
 const inWl=i=>i.status==="want"||!!i.wl;
 const hasAct=i=>!!(i.rating||i.review||i.watchedOn||i.deid||(i.dcount||0)>0);
 function drop(id){const d=get(id);if(d)comRate(d,0);items=items.filter(i=>i.id!==id);if(d){Object.assign(d,{status:"",watched:0,rating:0,liked:false,wl:false});d._b=iState(d);cache[id]=d}lists.forEach(l=>l.ids=l.ids.filter(x=>x!==id));log=log.filter(e=>e.id!==id)}
+
+/* Ampliar la portada: clic en la portada de la ficha abre una vista grande; clic o Esc la cierra */
+function zoomCover(id){const i=get(id);if(!i||!i.cover||$("zm"))return;
+  const d=document.createElement("div");d.id="zm";d.className="zm";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label",i.title);
+  const im=document.createElement("img");im.alt=i.title;im.src=i.cover;d.appendChild(im);d.onclick=zmX;document.body.appendChild(d);
+  void d.offsetWidth;d.classList.add("on")}
+function zmX(){const d=$("zm");if(!d)return;d.classList.remove("on");setTimeout(()=>d.remove(),200)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("zm")){e.preventDefault();e.stopPropagation();zmX()}},true);
