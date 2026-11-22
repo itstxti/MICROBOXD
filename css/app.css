@@ -862,3 +862,7 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
 /* Etiquetas de los resultados de búsqueda: clicables (buscan ese tema/app), como en la ficha */
 .srt .tg2{cursor:pointer}
 @media (hover:hover){.srt .tg2:hover{background:var(--tab);color:var(--tx)}}
+
+/* Bienvenida (escritorio): el nombre lleva al perfil */
+.wb h2 .wbn{color:inherit;cursor:pointer;text-decoration:none;border-bottom:2px solid transparent;transition:border-color .15s}
+.wb h2 .wbn:hover,.wb h2 .wbn:focus-visible{border-bottom-color:var(--g)}
