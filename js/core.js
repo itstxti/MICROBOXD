@@ -14,7 +14,7 @@ const rsqH=()=>RSQ.length?`<div class="rsqh"><span>BÚSQUEDAS RECIENTES</span><b
 document.addEventListener("click",e=>{if(tab==="search"&&q.trim()&&e.target.closest&&e.target.closest("#sr")&&!e.target.closest(".ptabs,.rsq,.rsqh"))rsqAdd()},true);
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="qi"){rsqAdd();e.target.blur()}});
 const seg={home:"series",act:"me",me:"perfil"};
-const SEGS={home:[["series","Series"],["rev","Reseñas"],["lst","Listas"],["jr","Diario"]],act:[["fr","Amigos"],["me","Tú"],["in","Entrantes"]],me:[["perfil","Perfil"],["diary","Diario"],["lst","Listas"],["pend","Watchlist"]]};
+const SEGS={home:[["series","Series"],["rev","Reseñas"],["lst","Listas"]],act:[["fr","Amigos"],["me","Tú"],["in","Entrantes"]],me:[["perfil","Perfil"],["diary","Diario"],["lst","Listas"],["pend","Watchlist"]]};
 let LEG=null;try{LEG={items:JSON.parse(localStorage.getItem(KEY)||"null")||[],lists:JSON.parse(localStorage.getItem("microboxd:lists")||"null")||[],prof:JSON.parse(localStorage.getItem("microboxd:prof")||"null")||{}}}catch(e){}
 const $=id=>document.getElementById(id);
 let rs=[],drafts={},tT=0;try{rs=JSON.parse(localStorage.getItem("microboxd:rs")||"[]");drafts=JSON.parse(localStorage.getItem("microboxd:drafts")||"{}")}catch(e){}
