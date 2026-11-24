@@ -1,6 +1,7 @@
-const V = "mbx-v92";
+const V = "mbx-v93";
+const IMG = "mbx-img";
 const CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
-const SHELL = ["/", "/css/app.css?b=1795361641", "/js/i18n.js?b=1795361641", "/js/core.js?b=1795361641", "/js/desktop.js?b=1795361641", "/js/shell.js?b=1795361641", "/js/filters.js?b=1795361641", "/js/settings.js?b=1795361641", "/js/detail.js?b=1795361641", "/js/log.js?b=1795361641", "/js/diary.js?b=1795361641", "/js/lists.js?b=1795361641", "/js/config.js?b=1795361641", "/js/data.js?b=1795361641", "/js/gestures.js?b=1795361641", "/js/reviews.js?b=1795361641", "/js/people.js?b=1795361641", "/js/form.js?b=1795361641", "/js/crop.js?b=1795361641", "/js/nav.js?b=1795361641", "/js/runtime.js?b=1795361641", "/js/anim-tabs.js?b=1795361641", "/js/anim-extra.js?b=1795361641", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+const SHELL = ["/", "/css/app.css?b=1795549183", "/js/i18n.js?b=1795549183", "/js/core.js?b=1795549183", "/js/desktop.js?b=1795549183", "/js/shell.js?b=1795549183", "/js/filters.js?b=1795549183", "/js/settings.js?b=1795549183", "/js/detail.js?b=1795549183", "/js/log.js?b=1795549183", "/js/diary.js?b=1795549183", "/js/lists.js?b=1795549183", "/js/config.js?b=1795549183", "/js/data.js?b=1795549183", "/js/gestures.js?b=1795549183", "/js/reviews.js?b=1795549183", "/js/people.js?b=1795549183", "/js/form.js?b=1795549183", "/js/crop.js?b=1795549183", "/js/nav.js?b=1795549183", "/js/runtime.js?b=1795549183", "/js/anim-tabs.js?b=1795549183", "/js/anim-extra.js?b=1795549183", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
@@ -13,7 +14,7 @@ self.addEventListener("install", e => {
 self.addEventListener("activate", e => {
   e.waitUntil(
     caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k))))
+      .then(ks => Promise.all(ks.filter(k => k !== V && k !== IMG).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -22,7 +23,17 @@ self.addEventListener("fetch", e => {
   const r = e.request;
   if (r.method !== "GET") return;
   const u = new URL(r.url);
-  // API, auth y Storage de Supabase: siempre red (nunca caché)
+  // Portadas públicas de Supabase Storage: caché primero (las rutas no se reutilizan al cambiar la imagen)
+  if (u.hostname.endsWith("supabase.co") && u.pathname.startsWith("/storage/v1/object/public/covers/")) {
+    e.respondWith(
+      caches.open(IMG).then(c => c.match(r.url).then(hit => hit || fetch(new Request(r.url, { mode: "cors" })).then(x => {
+        if (x.ok) { c.put(r.url, x.clone()); c.keys().then(ks => { if (ks.length > 400) c.delete(ks[0]); }); }
+        return x;
+      }).catch(() => fetch(r))))
+    );
+    return;
+  }
+  // API, auth y resto de Supabase: siempre red (nunca caché)
   if (u.hostname.endsWith("supabase.co")) return;
   // Comprobación de versión: siempre red
   if (u.searchParams.has("__v")) return;

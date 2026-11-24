@@ -33,7 +33,7 @@ function wbanner(){const f=[...items].filter(i=>i.cover).sort((a,b)=>b.rating-a.
   return `<div class="wb"><div class="bg" style="${bg}"></div><h2>${L2("Hola de nuevo, ","Welcome back, ")}<span class="wbn" role="link" tabindex="0" onclick="tab='me';setSeg('perfil')">${esc(uname())}</span>. ${L2("Esto es lo que se está viendo…","Here's what's being watched…")}</h2><p>${n?L2("Llevas "+n+(n===1?" serie vista":" series vistas")+". ¿Qué has visto hoy?","You've watched "+n+" series. What did you watch today?"):L2("Valora, reseña y sigue todas las micro-series que ves.","Rate, review and keep track of every micro-series you watch.")}</p><button class="dnb" onclick="openAdd()">${L2("REGISTRAR UNA SERIE","LOG A SERIES")}</button></div>`}
 function poster(i){
   const h=hue(i.title);
-  return `<div class="poster" onclick="show(${i.id})">${i.cover?`<img src="${i.cover}" alt="">`:
+  return `<div class="poster" onclick="show(${i.id})">${i.cover?`<img src="${i.cover}" alt="" loading="lazy" decoding="async">`:
   `<div class="fb" style="background:linear-gradient(160deg,hsl(${h},60%,38%),hsl(${(h+50)%360},65%,16%))"><small>${esc(i.app)}</small><b>${esc(short(i.title))}</b></div>`}</div>`;
 }
 const cell=i=>`<div>${poster(i)}<div class="ss">${S(i.rating)}</div></div>`;
