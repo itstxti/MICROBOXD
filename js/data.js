@@ -44,8 +44,8 @@ async function pull(){
   shadow={};items.forEach(i=>shadow[i.id]={st:iState(i),sid:i.sid});shadowL={};lists.forEach(l=>shadowL[l.id]={st:l.dx?"":listState(l),sid:l.sid});shadowP=profState();if(!P.display_name){prof.name=P.username.replace(/_[0-9a-f]{6}$/,"");sched()}
   if(items.length){const r=await sb.from("series_stats").select("*").in("series_id",items.map(i=>i.sid));if(!r.error)r.data.forEach(applyStat)}
 }
-async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+(i.cp?"-"+Date.now().toString(36):"")+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));i.cp=path;i.cover=cvr(path)}
-async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.cast[k];if(!c.ph||!c.ph.startsWith("data:"))continue;const bl=await (await fetch(c.ph)).blob(),path=uid+"/"+i.sid+"/c"+k+"-"+Math.random().toString(36).slice(2,7)+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg"}));c.pp=path;c.ph=cvr(path)}}
+async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+(i.cp?"-"+Date.now().toString(36):"")+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"}));i.cp=path;i.cover=cvr(path)}
+async function upCast(i,uid){for(let k=0;k<(i.cast||[]).length;k++){const c=i.cast[k];if(!c.ph||!c.ph.startsWith("data:"))continue;const bl=await (await fetch(c.ph)).blob(),path=uid+"/"+i.sid+"/c"+k+"-"+Math.random().toString(36).slice(2,7)+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"}));c.pp=path;c.ph=cvr(path)}}
 async function push(){
   if(!U)return;if(pushing){return}pushing=true;dirty=false;const uid=U.id;
   try{
