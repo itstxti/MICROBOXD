@@ -949,3 +949,21 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .mbx-gy,#det.fr .bars u,#sub .bars u,#lst .bars u{animation-duration:.3s}
  .mbx-gx,#mn .stb>u i,#lst .stb>u i,#sub .stb>u i{animation-duration:.35s}
 }
+/* Desktop "I watched…" modal: match the app's dark palette instead of the light slate/white fields */
+@media (min-width:1024px){
+ #lgs.lgd-on{background:var(--pan);border:1px solid rgba(255,255,255,.1);border-radius:14px}
+ .lgd-h{background:rgba(0,0,0,.18)}
+ .lgd-f{background:linear-gradient(rgba(0,0,0,.14),rgba(0,0,0,.14)),var(--pan)}
+ #lgs textarea.lgd-t{background:var(--bg);color:var(--tx);border:1px solid rgba(255,255,255,.1);border-radius:8px}
+ #lgs textarea.lgd-t::placeholder,.lgd .tgd input::placeholder,.lgd .tgph{color:var(--mute)}
+ .lgd .tgr{background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:8px}
+ .lgd .tgr .tgc{background:var(--tab)}
+ .lgd .tgd input{background:var(--bg);color:var(--tx);border:1px solid rgba(255,255,255,.1);border-radius:8px;box-shadow:none}
+ .lgd .tgd input:focus{border-color:var(--g);box-shadow:none}
+ #lgs textarea.lgd-t:focus{border-color:var(--g);outline:0}
+ .lgd .tgds{background:var(--pan);border:1px solid rgba(255,255,255,.12);border-radius:8px}
+ .lgd .tgds div{color:var(--tx)}.lgd .tgds div.on,.lgd .tgds div:hover{background:rgba(255,255,255,.08)}
+ .lgd .tgdc .tgc{background:var(--tab);color:#fff}.lgd .tgdc .tgc i{color:rgba(255,255,255,.7)}
+ .lgd-d input{background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:6px}
+ .lgd .sr .sx{color:rgba(255,255,255,.22)}
+}
