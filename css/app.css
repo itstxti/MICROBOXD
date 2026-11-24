@@ -1,7 +1,7 @@
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#14181c;--hd:#000;--pan:#2c3440;--tab:#445566;--tx:#fff;--mute:#9ab;--line:#2c3440;--g:#ff4d8d;--o:#ffb020;--b:#40bcf4;--st:#7b8b9b}
 @media (display-mode:standalone){:root{--H:100lvh}}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f2f4f5;--hd:#fff;--pan:#e4e8eb;--tab:#d3dae0;--tx:#14181c;--mute:#5b6773;--line:#d6dbe0;--g:#d6246e;--o:#c47a00;--b:#1b8fc4;--st:#7b8b9b}}
+:root{color-scheme:dark}
 html{height:var(--H,100%);overscroll-behavior:none}body{height:100%;overscroll-behavior:none}html,body{margin:0}
 *,*:before,*:after{box-sizing:inherit}
 body{background:var(--bg);color:var(--mute);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4;display:flex;flex-direction:column;overflow:hidden}
@@ -83,7 +83,7 @@ nav button.on svg{filter:none}.br span{color:var(--mute);font-size:13px}
 .wbb{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--tab);border:2px solid var(--bg);font-size:11px;font-weight:400;display:flex;align-items:center;justify-content:center;color:#fff}
 #lgs .w{display:flex;flex-direction:column;min-height:100%}#lgs .lh{padding-top:14px}
 .lt{padding:10px 16px;font-size:17px}.lt .ltp{width:32px;flex:none}.lt small{color:var(--mute);font-weight:400;font-size:13px;margin-top:2px}
-.ldt{position:relative;padding:14px 16px;cursor:pointer;gap:12px}.ldt .ldv{color:var(--mute);font-size:16px;text-align:right}#lgs .ldt input{position:absolute;right:16px;top:100%;width:1px;height:1px;opacity:0;pointer-events:none;margin:0;padding:0;border:0;color-scheme:dark}@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) #lgs .ldt input{color-scheme:light}}
+.ldt{position:relative;padding:14px 16px;cursor:pointer;gap:12px}.ldt .ldv{color:var(--mute);font-size:16px;text-align:right}#lgs .ldt input{position:absolute;right:16px;top:100%;width:1px;height:1px;opacity:0;pointer-events:none;margin:0;padding:0;border:0;color-scheme:dark}
 #lgs textarea{flex:1;min-height:150px}
 .tg{margin-top:auto;border-top:1px solid var(--line);padding:16px 8px calc(16px + env(safe-area-inset-bottom,0px))}.tg button{width:33%;text-align:center;font-size:12px;line-height:1.25}.tg button svg{opacity:.8}
 .lbl{font-size:12px;letter-spacing:2px;text-transform:uppercase;margin:18px 14px 0}
@@ -729,7 +729,6 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .lgd-r1 label{display:inline-flex;align-items:center;gap:9px;cursor:pointer}
  .lgd-r1 input[type=checkbox]{width:20px;height:20px;margin:0;accent-color:var(--g);cursor:pointer}
  .lgd-d input{background:rgba(0,0,0,.25);color:var(--tx);border:0;border-radius:3px;padding:6px 9px;font:inherit;font-size:15px;color-scheme:dark;width:auto;margin:0}
- @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .lgd-d input{color-scheme:light}}
  #lgs textarea.lgd-t{display:block;width:100%;box-sizing:border-box;height:150px;min-height:150px;flex:none;background:#c8d6e5;color:#14181c;border:0;border-radius:3px;padding:12px;font:inherit;font-size:16px;resize:vertical;margin:0}
  #lgs textarea.lgd-t::placeholder{color:#667788}
  .lgd-r2{display:flex;align-items:flex-start;gap:34px;margin-top:26px}
