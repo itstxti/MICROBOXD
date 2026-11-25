@@ -1013,6 +1013,7 @@ html[data-theme="light"] .rvs .seg.d button{color:var(--mute)}
 html[data-theme="light"] .rvs .seg.d button.on{color:#fff}
 @media (max-width:1023.98px){
 html[data-theme="light"] header,html[data-theme="light"] .lbar,html[data-theme="light"] .sbw,html[data-theme="light"] .sin,html[data-theme="light"] .top.sc,html[data-theme="light"] .rvhd,html[data-theme="light"] .upb,html[data-theme="light"] .ptabs{--tx:#fff;--mute:#b9ac9c}
+html[data-theme="light"] nav{background:var(--hd);--mute:#b9ac9c}
 }
 @media (min-width:1024px){
 html[data-theme="light"] #sr .brt{border-color:rgba(0,0,0,.06)}

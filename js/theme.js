@@ -6,7 +6,7 @@
     const m=get(),r=m==="system"?(mq.matches?"light":"dark"):m;
     document.documentElement.dataset.theme=r;
     const tc=document.querySelector('meta[name="theme-color"]'),cs=document.querySelector('meta[name="color-scheme"]');
-    if(tc)tc.content=r==="light"?"#14181c":"#000000";
+    if(tc)tc.content=r==="light"?"#2b2521":"#000000";
     if(cs)cs.content=r;
   }
   window.mbThemeMode=get;
