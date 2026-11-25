@@ -5,6 +5,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 
 ## [Unreleased]
 
+### Added
+- Light theme (opt-in) with a Theme setting: Dark (default), Light or System. One coherent warm palette; dark header, bottom bar and modal headers on mobile.
+- Desktop: keyboard shortcuts (`Esc`, `/`), browser Back closes layers, `#/s/<id>` deep links, review cards on Home and a card grid on Explore, filters and list editor as rounded floating modals, stacked Popular / Friends reviews on the series page, secondary screens.
+- Image cropper when uploading covers, cast photos and avatars; click a cover or cast photo to enlarge it.
+- Mobile Home community section; welcome message links to your profile; theme and platform chips on search results are clickable.
+
+### Changed
+- Cover images are cached by the service worker (cache-first), decoded lazily, and new uploads get a one-year cache header.
+- Faster desktop transitions.
+- The app now defaults to the dark theme regardless of the device setting.
+- Member profiles no longer repeat the reviews list below the Reviews row.
+
+### Fixed
+- Search is cleared when browsing from Explore; member search no longer flickers; desktop profile header alignment; image upload quality.
+- Website placeholder in Settings is now translated.
+
 ## [1.0.0] - 2026-11-19
 
 First public release.
