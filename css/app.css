@@ -967,10 +967,10 @@ html.insr header .sbw{will-change:transform;transform:translate3d(0,0,0);positio
  .lgd .sr .sx{color:rgba(255,255,255,.22)}
 }
 /* Light theme (opt-in via Settings; dark stays the default). Rules are scoped to html[data-theme="light"]. */
-html[data-theme="light"]{color-scheme:light;--bg:#f6f1ea;--hd:#14181c;--pan:#fffdf9;--tab:#e6dccd;--tx:#2a2320;--mute:#76695d;--line:#e2d8c9;--g:#e0236f;--o:#b86e00;--b:#1480b8;--st:#8a7c6f}
+html[data-theme="light"]{color-scheme:light;--bg:#f6f1ea;--hd:#2b2521;--pan:#fffdf9;--tab:#e6dccd;--tx:#2a2320;--mute:#76695d;--line:#e2d8c9;--g:#e0236f;--o:#b86e00;--b:#e0236f;--st:#8a7c6f}
 html[data-theme="light"] body{background:var(--bg)}
-html[data-theme="light"] #dn,html[data-theme="light"] #hd{--tx:#fff;--mute:#9aabbb;--pan2:#262e38;--bg:#262e38}
-html[data-theme="light"] #dn{background:#14181c!important}
+html[data-theme="light"] #dn,html[data-theme="light"] #hd{--tx:#fff;--mute:#b9ac9c;--pan2:#3d352f;--bg:#3d352f}
+html[data-theme="light"] #dn{background:#2b2521!important}
 html[data-theme="light"] .wb h2{color:#2a2320;text-shadow:none}
 html[data-theme="light"] .wb p{color:#5a4d42;text-shadow:none}
 html[data-theme="light"] .wb{background:var(--bg)}
@@ -990,13 +990,29 @@ html[data-theme="light"] .tmx,html[data-theme="light"] .tmdd div,html[data-theme
 html[data-theme="light"] .tgc{color:var(--tx)}
 html[data-theme="light"] .dpe,html[data-theme="light"] .dpm,html[data-theme="light"] .dpbt{color:var(--tx)}
 html[data-theme="light"] .wbb{background:#9a8c7d}
-html[data-theme="light"] .lh .sv,html[data-theme="light"] .gok,html[data-theme="light"] .leh .sv,html[data-theme="light"] .leh .bk,html[data-theme="light"] .tgac .sv,html[data-theme="light"] .tgli span.on,html[data-theme="light"] .dax-stats .e,html[data-theme="light"] .pst .e,html[data-theme="light"] .pn3 .kv.on{color:#1d8f43}
-html[data-theme="light"] .srow.so{color:#b86e00}
+html[data-theme="light"] .lh .sv,html[data-theme="light"] .gok,html[data-theme="light"] .leh .sv,html[data-theme="light"] .leh .bk,html[data-theme="light"] .tgac .sv,html[data-theme="light"] .tgli span.on,html[data-theme="light"] .dax-stats .e,html[data-theme="light"] .pst .e,html[data-theme="light"] .pn3 .kv.on{color:var(--g)}
+html[data-theme="light"] .srow.so,html[data-theme="light"] .fxhr{color:#c9822b}
 html[data-theme="light"] .ov:has(.pkh)>.card:first-child{background:var(--pan);border-color:var(--line)}
 html[data-theme="light"] .ov:has(.pkh) .oi:hover{background:rgba(0,0,0,.04)}
 html[data-theme="light"] .ov:has(.pkh) .pkc{border-color:#b5a898}
+html[data-theme="light"] .segi{background:#7a6b5d}
+html[data-theme="light"] .av,html[data-theme="light"] .av2{background:#a99a8a}
+html[data-theme="light"] .tile.g{background:#7c6a5a}
+html[data-theme="light"] .tile.m{background:#5c4e43}
+html[data-theme="light"] .tile.bl{background:#e0236f}
+html[data-theme="light"] .toast{background:#2a2320;color:#fff}
+html[data-theme="light"] .sv,html[data-theme="light"] .sv.off{color:var(--g)}
+html[data-theme="light"] .ptabs button.on,html[data-theme="light"] .ptabs .on{background:var(--g);color:#fff}
+html[data-theme="light"] .sw{background:#cfc4b5}
+html[data-theme="light"] .sbx{background:#b9ad9d}
+html[data-theme="light"] .rvhe,html[data-theme="light"] .rvsp,html[data-theme="light"] .fxhr{color:#c9822b}
+html[data-theme="light"] .seg button.on{background:#7a6b5d;color:#fff}
+html[data-theme="light"] .sx{color:rgba(110,92,78,.3)}
+html[data-theme="light"] .rvs .seg.d{background:#e9e0d2}
+html[data-theme="light"] .rvs .seg.d button{color:var(--mute)}
+html[data-theme="light"] .rvs .seg.d button.on{color:#fff}
 @media (max-width:1023.98px){
-html[data-theme="light"] header,html[data-theme="light"] .lbar,html[data-theme="light"] .sbw,html[data-theme="light"] .sin,html[data-theme="light"] .top.sc,html[data-theme="light"] .rvhd,html[data-theme="light"] .upb,html[data-theme="light"] .ptabs{--tx:#fff;--mute:#9aabbb}
+html[data-theme="light"] header,html[data-theme="light"] .lbar,html[data-theme="light"] .sbw,html[data-theme="light"] .sin,html[data-theme="light"] .top.sc,html[data-theme="light"] .rvhd,html[data-theme="light"] .upb,html[data-theme="light"] .ptabs{--tx:#fff;--mute:#b9ac9c}
 }
 @media (min-width:1024px){
 html[data-theme="light"] #sr .brt{border-color:rgba(0,0,0,.06)}
