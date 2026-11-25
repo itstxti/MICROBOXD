@@ -1016,6 +1016,7 @@ html[data-theme="light"] header,html[data-theme="light"] .lbar,html[data-theme="
 html[data-theme="light"] nav{background:var(--hd);--mute:#b9ac9c}
 html[data-theme="light"] body::after{background:var(--hd);z-index:1}
 html[data-theme="light"] #set .sin{background:var(--tab);--tx:#2a2320;--mute:#76695d}
+html[data-theme="light"] #set .leh,html[data-theme="light"] #le .leh,html[data-theme="light"] #fp .leh{background:var(--hd);--tx:#fff;--mute:#b9ac9c;border-bottom-color:transparent}
 }
 @media (min-width:1024px){
 html[data-theme="light"] #sr .brt{border-color:rgba(0,0,0,.06)}
