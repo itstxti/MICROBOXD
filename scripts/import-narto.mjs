@@ -21,7 +21,7 @@
 // page of ~24 series, not one per series. Polite: identified user agent, ~3 s between requests,
 // stops at the first 403/429. It avoids the paths robots.txt disallows (/search, ?q=, /e/, /go).
 // It remembers collected series in narto-seen.json so every run gives NEW ones. Metadata only.
-import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, basename, join, extname } from "node:path";
 let lastInfo = null;
 
@@ -82,6 +82,8 @@ function expandFiles(list) {
     if (a.includes("*")) {
       const d = dirname(a), re = new RegExp("^" + basename(a).replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$", "i");
       try { out.push(...readdirSync(d).filter((f) => re.test(f)).sort().map((f) => join(d, f))); } catch {}
+    } else if (existsSync(a) && statSync(a).isDirectory()) {
+      out.push(...readdirSync(a).filter((f) => /\.html?$/i.test(f)).sort().map((f) => join(a, f))); // a folder: every .html in it
     } else out.push(a);
   }
   return out;
@@ -113,7 +115,7 @@ async function main() {
   console.log(`${seen.size} series already collected in earlier runs (skipped).`);
   const out = [], got = new Set();
   if (files) {
-    if (!files.length) { console.error("No files found for --files."); process.exit(1); }
+    if (!files.length) { console.error("No .html files found for --files. Give a folder or a pattern such as \"C:\\folder\\*.html\"."); process.exit(1); }
     for (const f of files) {
       const h = readFileSync(f, "utf8");
       const cards = parseCards(h, app);
