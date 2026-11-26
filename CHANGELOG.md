@@ -6,6 +6,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 ## [Unreleased]
 
 ### Added
+- Profile privacy: Public / Private profiles with follow requests (Settings → Privacy). Private profiles show a lock to non-followers; requests appear in Activity → Incoming with Accept / Decline and a dot on the Activity icon. Two separate settings: count my ratings in the global averages, and appear in member search.
 - Light theme (opt-in) with a Theme setting: Dark (default), Light or System. One coherent warm palette; dark header, bottom bar and modal headers on mobile.
 - Desktop: keyboard shortcuts (`Esc`, `/`), browser Back closes layers, `#/s/<id>` deep links, review cards on Home and a card grid on Explore, filters and list editor as rounded floating modals, stacked Popular / Friends reviews on the series page, secondary screens.
 - Image cropper when uploading covers, cast photos and avatars; click a cover or cast photo to enlarge it.
@@ -18,8 +19,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 - Member profiles no longer repeat the reviews list below the Reviews row.
 
 ### Fixed
+- Toggle switches stayed beige when switched on in the light theme.
 - Search is cleared when browsing from Explore; member search no longer flickers; desktop profile header alignment; image upload quality.
 - Website placeholder in Settings is now translated.
+
+### Database
+- Migration `0017`: `profiles.visibility` / `count_in_stats` / `discoverable`, `follows.status`, `can_view()` and visibility-aware read policies; `series_stats` now aggregates without exposing per-member rows.
 
 ## [1.0.0] - 2026-11-19
 

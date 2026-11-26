@@ -18,19 +18,20 @@ async function openUser(uid){if(uid===U.id){$("sub").classList.remove("open");go
    const R=await Promise.all([sb.from("profiles").select("*").eq("id",uid).single(),cnt("follows","followee_id",uid),cnt("follows","follower_id",uid)]);
    R.forEach(r=>{if(r.error)throw r.error});const[p,fo,fg]=R,P=p.data,D=await uLoad(uid,P),I=D.items,nm=[pname(P),P.family_name].filter(Boolean).join(" "),seen=new Set(),act=[];
    D.rows.slice().sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).slice(0,40).forEach(x=>{if(!seen.has(x.series_id)){seen.add(x.series_id);act.push({it:sCache(x.series),r:+x.rating||0,rw:!!x.rewatch})}});UA[uid]=act;UN[uid]=nm;
-   const isF=FW.has(uid),fids=(P.favorites||[]).slice(0,4);let fv=[];if(fids.length){const q=await sb.from("series").select("*").in("id",fids);if(!q.error)fv=fids.map(id=>(q.data||[]).find(x=>x.id===id)).filter(Boolean).map(sCache)}
+   const isF=FW.has(uid),isP=PEND.has(uid),lock=P.visibility==="private"&&!isF;VIS[uid]=P.visibility;const fids=(P.favorites||[]).slice(0,4);let fv=[];if(fids.length){const q=await sb.from("series").select("*").in("id",fids);if(!q.error)fv=fids.map(id=>(q.data||[]).find(x=>x.id===id)).filter(Boolean).map(sCache)}
    const wu=webUrl(P.website),LINK='<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     rt=I.filter(x=>x.rating),hb=Array(10).fill(0);rt.forEach(x=>{const j=Math.round(x.rating*2)-1;if(j>=0&&j<10)hb[j]++});const hm=Math.max(1,...hb);
    const yr=new Date().getFullYear(),thisYr=a=>a.filter(i=>i.watchedOn&&new Date(i.watchedOn).getFullYear()===yr).length,dn=I.filter(i=>i.status==="done"),avg=rt.length?(rt.reduce((a,i)=>a+i.rating,0)/rt.length).toFixed(1):"–";
    const row=(l,n,a)=>`<div class="link r" onclick="${a}">${l}<span>${n} ›</span></div>`,tgn=new Set(I.flatMap(i=>i.rtags||[]).concat(D.lists.flatMap(l=>l.tags)).map(t=>t.toLowerCase())).size;
    subRe(U2(uid,bar(nm,`<button class="um" aria-label="Más" onclick="uMenu('${uid}')">•••</button>`)+
-   `<div class="uhd"><button class="ufl ${isF?"on":""}" id="fbtn" onclick="fbClick('${uid}')">${isF?"Siguiendo":"Seguir"}</button>${av2(nm,90,P.avatar_path)}<span></span></div>
+   `<div class="uhd"><button class="ufl ${isF||isP?"on":""}" id="fbtn" onclick="fbClick('${uid}')">${isF?"Siguiendo":isP?L2("Solicitado","Requested"):"Seguir"}</button>${av2(nm,90,P.avatar_path)}<span></span></div>
    <div class="uin">${P.location||wu?`<div class="ulk">${P.location?`<span>${svg(PIN,17)}${esc(P.location)}</span>`:""}${wu?`<a href="${esc(wu)}" target="_blank" rel="noopener noreferrer">${svg(LINK,17)}${esc(wu.replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""))}</a>`:""}</div>`:""}${P.bio?`<p class="pbio">${esc(P.bio)}</p>`:""}</div>
+   ${lock?`<div class="lockc"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><b>${L2("Esta cuenta es privada","This account is private")}</b><span>${isP?L2("Tu solicitud está pendiente. Verás sus series y reseñas cuando la acepte.","Your request is pending. You will see their series and reviews once they accept."):L2("Pide seguirla para ver sus series, reseñas y listas.","Request to follow to see their series, reviews and lists.")}</span></div>`:`
    <div class="stats"><div><b>${I.length}</b>Series</div><div><b>${I.reduce((a,i)=>a+(i.watched||0),0)}</b>Episodios</div><div><b>${avg}</b>Nota media</div></div>
    ${fv.length?`<div class="ulb">Favoritas</div><div class="uph">${fv.map(i=>`<div>${poster(i)}</div>`).join("")}</div>`:""}
    ${act.length?`<div class="ulb">Actividad reciente</div><div class="uph">${act.slice(0,4).map(uCell).join("")}</div><div class="umore" onclick="userAct('${uid}')"><span>Más actividad</span><span class="wbc">›</span></div>`:""}
    ${rt.length?`<div class="uh2"><span class="hs">★</span><div class="bars">${hb.map(n=>`<u title="${n}" style="height:${Math.max(4,n/hm*100)}%"></u>`).join("")}</div><span class="hs">★★★★★</span></div>`:""}
-   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(inWl).length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Siguiendo",fg.count||0,`openFol('${uid}','ing')`)}${row("Seguidores",`<span id="ufo">${fo.count||0}</span>`,`openFol('${uid}','ers')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>`))}
+   <div style="margin-top:14px">${row("Series",`${dn.length} / ${thisYr(dn)} este año`,`uPg('${uid}','all')`)}${row("Diario",`${I.filter(i=>i.watchedOn).length} / ${thisYr(I)} este año`,`uPg('${uid}','diary')`)}${row("Listas",D.lists.length,`uPg('${uid}','lst')`)}${row("Reseñas",D.rows.filter(x=>x.review).length,`uPg('${uid}','rev')`)}${row("Watchlist",I.filter(inWl).length,`uPg('${uid}','pend')`)}${row("Me gusta",I.filter(i=>i.liked).length,`uPg('${uid}','lk')`)}${row("Etiquetas",tgn,`uTags('${uid}')`)}${row("Siguiendo",fg.count||0,`openFol('${uid}','ing')`)}${row("Seguidores",`<span id="ufo">${fo.count||0}</span>`,`openFol('${uid}','ers')`)}${row("Estadísticas","",`openStats(UD['${uid}'].items,'${uid}')`)}</div>`}`))}
   catch(e){console.error(e);subRe(bar("")+EME("No se pudo cargar este perfil","Couldn't load this profile"))}}
 function uPg(uid,k){const D=UD[uid];if(!D)return;const I=D.items,nm=(UN[uid]||"").split(" ")[0];
   const T={all:["Series",()=>grid(I.filter(i=>i.status==="done"))],diary:["Diario",()=>diaryU(uid,I)],lst:["Listas",()=>uLv(uid)],rev:["Reseñas",()=>{const a=D.rows.filter(x=>x.review).map(x=>nrm(Object.assign({},x,{profiles:D.P})));return a.length?`<div style="padding:0 14px">${a.map(rvItem).join("")}</div>`:EMP("chat","Sin reseñas","Todavía no ha escrito ninguna reseña.")}],pend:["Watchlist",()=>{const w=I.filter(inWl);return w.length?grid(w):EMP("clock","Watchlist vacía","Todavía no ha añadido series a su watchlist.")}],lk:["Me gusta",()=>{const w=I.filter(i=>i.liked);return w.length?grid(w):EMP("heart","Sin me gusta","Todavía no ha marcado ninguna serie con me gusta.")}]}[k];
@@ -49,17 +50,21 @@ function uTag(uid,t){const D=UD[uid],st=UT[uid],k=t.toLowerCase(),L=st.tab==="l"
   if(L){const f=D.lists.map((l,i)=>[l,i]).filter(([l])=>l.tags.some(x=>x.toLowerCase()===k));subOpen(subBar(chip)+f.map(([l,i])=>`<div class="lst2" onclick="uList('${uid}',${i})"><div class="lh2"><b>${esc(l.name)}</b><span>${l.its.length} ${l.its.length===1?"serie":"series"}</span></div><div class="strip">${l.its.slice(0,7).map(nop).join("")}</div></div>`).join(""))}
   else subOpen(U2(uid,subBar(chip)+grid(D.items.filter(i=>(i.rtags||[]).some(x=>x.toLowerCase()===k)),"g3")))}
 function userAct(uid){const a=UA[uid]||[];subOpen(U2(uid,subBar("Actividad de "+esc((UN[uid]||"").split(" ")[0]))+`<div class="grid g3">${a.map(uCell).join("")}</div>`))}
-function fbClick(uid){FW.has(uid)?askUnfollow(uid):toggleFollow(uid)}
+function fbClick(uid){FW.has(uid)||PEND.has(uid)?askUnfollow(uid):toggleFollow(uid)}
 function askUnfollow(uid){const n=(UN[uid]||"").split(" ")[0];$("ov").style.setProperty("--bgi","none");
-  $("ov").innerHTML=`<div class="card"><button class="oi" style="border-top:0;font-size:17px;padding:18px;color:#ff453a" onclick="closeOv();toggleFollow('${uid}')">Dejar de seguir${n?" a "+esc(n):""}</button></div><button class="card" style="color:var(--b);font-size:17px" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
-function uMenu(uid){const f=FW.has(uid);$("ov").style.setProperty("--bgi","none");
+  $("ov").innerHTML=`<div class="card"><button class="oi" style="border-top:0;font-size:17px;padding:18px;color:#ff453a" onclick="closeOv();toggleFollow('${uid}')">${PEND.has(uid)?L2("Cancelar solicitud","Cancel request"):"Dejar de seguir"+(n?" a "+esc(n):"")}</button></div><button class="card" style="color:var(--b);font-size:17px" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
+function uMenu(uid){const f=FW.has(uid)||PEND.has(uid);$("ov").style.setProperty("--bgi","none");
   $("ov").innerHTML=`<div class="card"><button class="oi" style="border-top:0" onclick="closeOv();${f?`askUnfollow('${uid}')`:`toggleFollow('${uid}')`}">${f?"Dejar de seguir":"Seguir"}</button><button class="oi" onclick="closeOv();shU('${uid}')">Compartir perfil</button></div><button class="card" onclick="closeOv()">Hecho</button>`;$("ov").classList.add("open")}
 async function shU(uid){const t=`${UN[uid]||"Perfil"} en Microboxd`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast("Copiado al portapapeles")}}catch(e){}}
-async function toggleFollow(uid){const on=!FW.has(uid);on?FW.add(uid):FW.delete(uid);
-  const paint=v=>{mflPaint(uid,v);const b=$("fbtn");if(b){b.textContent=v?"Siguiendo":"Seguir";b.classList.toggle("on",v)}const c=$("ufo");if(c)c.textContent=Math.max(0,(+c.textContent||0)+(v?1:-1))};
-  paint(on);FEED=null;HR=null;WB={};WBt={};
-  try{if(on)await ck(sb.from("follows").insert({follower_id:U.id,followee_id:uid}));else await ck(sb.from("follows").delete().eq("follower_id",U.id).eq("followee_id",uid))}
-  catch(e){on?FW.delete(uid):FW.add(uid);paint(!on);toast("No se pudo actualizar")}}
+async function toggleFollow(uid){const wasF=FW.has(uid),on=!(wasF||PEND.has(uid)),priv=VIS[uid]==="private";
+  const put=p=>{FW.delete(uid);PEND.delete(uid);if(p==="f")FW.add(uid);else if(p==="p")PEND.add(uid)};
+  const paint=()=>{const f=FW.has(uid),q=PEND.has(uid);mflPaint(uid,f||q);const b=$("fbtn");if(b){b.textContent=f?"Siguiendo":q?L2("Solicitado","Requested"):"Seguir";b.classList.toggle("on",f||q)}};
+  const cnt=d=>{const c=$("ufo");if(c&&d)c.textContent=Math.max(0,(+c.textContent||0)+d)};
+  put(on?(priv?"p":"f"):"n");paint();if(on&&!priv)cnt(1);if(!on&&wasF)cnt(-1);FEED=null;HR=null;WB={};WBt={};
+  try{if(on){const r=await ck(sb.from("follows").insert({follower_id:U.id,followee_id:uid}).select("status").single()),real=r.data&&r.data.status==="pending"?"p":"f";
+      if((real==="p")!==priv){put(real);paint();cnt(real==="p"?-1:1)}}
+    else await ck(sb.from("follows").delete().eq("follower_id",U.id).eq("followee_id",uid))}
+  catch(e){put(wasF?"f":on?"n":"p");paint();if(on&&!priv)cnt(-1);if(!on&&wasF)cnt(1);toast("No se pudo actualizar")}}
 const meActLocal=()=>{let h="";const g=[];log.forEach(e=>{const l=g[g.length-1];if(l&&l.id===e.id&&Math.abs(l.ts-e.ts)<2500)l.es.push(e);else g.push({id:e.id,ts:e.ts,title:e.title,es:[e]})});
       h=g.length?g.map(o=>{const it=get(o.id),t=o.es.map(e=>e.t),r=(o.es.find(e=>e.t==="rate")||{}).r,v=[];
         if(t.includes("add")&&t.length===1)v.push("Añadiste");else{if(t.includes("done"))v.push("viste");if(it&&it.liked&&(t.includes("done")||t.includes("rate")))v.push("marcaste con me gusta");if(t.includes("rate"))v.push("puntuaste")}
@@ -70,7 +75,7 @@ let MYACT=null,MYACTs=0;
 async function loadMyAct(){MYACTs=0;
   try{const[e,f,l,w]=await Promise.all([
       sb.from("diary_entries").select(RSEL+",series(*)").eq("user_id",U.id).order("created_at",{ascending:false}).limit(40),
-      sb.from("follows").select("followee_id,created_at").eq("follower_id",U.id).order("created_at",{ascending:false}).limit(30),
+      sb.from("follows").select("followee_id,created_at").eq("follower_id",U.id).eq("status","accepted").order("created_at",{ascending:false}).limit(30),
       sb.from("review_likes").select("entry_id,created_at").eq("user_id",U.id).order("created_at",{ascending:false}).limit(30),
       sb.from("user_series").select("updated_at,series(*)").eq("user_id",U.id).eq("status","want").order("updated_at",{ascending:false}).limit(30)]);
     if(e.error)throw e.error;
@@ -134,17 +139,22 @@ const feedH=()=>{if(FEED===null){FEED=0;loadFeed()}if(FEED===0)return loadingH;
       return `<div class="act fa rich" onclick="openReview('${x.id}')" style="cursor:pointer">${A}<div><span class="fxnm">${esc(n)}</span> ${x.rewatch?L2("volvió a ver","rewatched"):L2("vio","watched")}<div class="fxft">${ti}${it.app?` <small>${esc(it.app)}</small>`:""}</div><div class="fxfs">${r.r?`<span class="fxst">${S(r.r)}</span>`:""}${r.hl?'<span class="fxhr">♥</span>':""}</div><div class="fxfb">${nop(it)}<p>${body}</p></div></div>${t}</div>`}
     return `<div class="act fa" onclick="openReview('${x.id}')" style="cursor:pointer">${A}<div><span class="fxnm">${esc(n)}</span> ${feedVerb(x)} <b>${ti}</b>${r.r?` <span class="fxst">${S(r.r)}</span>`:""} ${L2("el","on")} ${adt(x.watched_on,o.ts)}</div>${t}</div>`}).join("")};
 async function loadInc(){try{
-  const[f,m,ml]=await Promise.all([sb.from("follows").select("follower_id,created_at,profiles!follows_follower_id_fkey(username,display_name,avatar_path)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select(RSEL+",series(*)").eq("user_id",U.id).neq("review","").limit(100),sb.from("lists").select("id,name").eq("user_id",U.id).limit(200)]);
-  if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:"f",uid:x.follower_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>{nrm(x);tt[x.id]=x.series&&x.series.title});
+  const[f,m,ml]=await Promise.all([sb.from("follows").select("follower_id,status,created_at,profiles!follows_follower_id_fkey(username,display_name,avatar_path)").eq("followee_id",U.id).order("created_at",{ascending:false}).limit(30),sb.from("diary_entries").select(RSEL+",series(*)").eq("user_id",U.id).neq("review","").limit(100),sb.from("lists").select("id,name").eq("user_id",U.id).limit(200)]);
+  if(f.error)throw f.error;if(m.error)throw m.error;const out=f.data.map(x=>({k:x.status==="pending"?"fr":"f",uid:x.follower_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at)})),tt={};m.data.forEach(x=>{nrm(x);tt[x.id]=x.series&&x.series.title});
   const q=[];
   if(m.data.length)q.push(sb.from("review_likes").select("entry_id,user_id,created_at,profiles(username,display_name,avatar_path)").in("entry_id",m.data.map(x=>x.id)).order("created_at",{ascending:false}).limit(30).then(l=>{if(!l.error)l.data.forEach(x=>out.push({k:"l",uid:x.user_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at),t:tt[x.entry_id]||"",eid:x.entry_id}))}));
   if(!ml.error&&ml.data.length){const ln={};ml.data.forEach(x=>ln[x.id]=x.name);
     q.push(sb.from("list_likes").select("list_id,user_id,created_at,profiles(username,display_name,avatar_path)").in("list_id",ml.data.map(x=>x.id)).order("created_at",{ascending:false}).limit(30).then(l=>{if(!l.error)l.data.forEach(x=>out.push({k:"ll",uid:x.user_id,n:pname(x.profiles),ap:x.profiles&&x.profiles.avatar_path,ts:Date.parse(x.created_at),t:ln[x.list_id]||"",lid:x.list_id}))}))}
   await Promise.all(q);
-  INC=out.sort((a,b)=>b.ts-a.ts)}catch(e){console.error(e);INC=[]}if(tab==="act")render()}
+  REQN=out.filter(x=>x.k==="fr").length;nbDot();INC=out.sort((a,b)=>b.ts-a.ts)}catch(e){console.error(e);INC=[]}if(tab==="act")render()}
+const nbDot=()=>{const b=$("tb")&&$("tb").children[3];if(b)b.classList.toggle("hasreq",REQN>0)};
+async function reqAns(uid,ok){const o=INC&&INC.find(x=>x.k==="fr"&&x.uid===uid);if(!o)return;INC=INC.filter(x=>x!==o);REQN=Math.max(0,REQN-1);nbDot();MYFO=ok&&MYFO!==null?MYFO+1:MYFO;if(tab==="act")render();
+  try{await ck(ok?sb.from("follows").update({status:"accepted"}).eq("follower_id",uid).eq("followee_id",U.id):sb.from("follows").delete().eq("follower_id",uid).eq("followee_id",U.id))}
+  catch(e){INC=null;if(tab==="act")render();toast("No se pudo actualizar")}}
 const incGo=(k,id)=>{const l=lists.find(x=>x.sid===id);if(l)openList(l.id)};
 const incH=()=>{if(INC===null){INC=0;loadInc()}if(INC===0)return loadingH;if(!INC.length)return EMP("bell","Sin actividad entrante","Aquí verás quién te sigue y los me gusta a tus reseñas y listas.");
-  return INC.map(x=>{const go=x.k==="f"?`openUser('${x.uid}')`:x.k==="ll"?`incGo(0,'${x.lid}')`:`openReview('${x.eid}')`,
+  return INC.map(x=>{if(x.k==="fr")return `<div class="act fa req" data-u="${x.uid}"><span onclick="openUser('${x.uid}')" style="cursor:pointer">${av2(x.n,32,x.ap)}</span><div><span class="fxnm">${esc(x.n)}</span> ${L2("quiere seguirte","wants to follow you")}</div><span class="rqb"><button class="rqa" onclick="reqAns('${x.uid}',true)">${L2("Aceptar","Accept")}</button><button class="rqd" onclick="reqAns('${x.uid}',false)">${L2("Rechazar","Decline")}</button></span></div>`;
+    const go=x.k==="f"?`openUser('${x.uid}')`:x.k==="ll"?`incGo(0,'${x.lid}')`:`openReview('${x.eid}')`,
     txt=x.k==="f"?L2("empezó a seguirte","started following you"):x.k==="ll"?L2("dio like a tu lista ","liked your list ")+`<b>${esc(x.t)}</b>`:L2("dio like a tu reseña de ","liked your review of ")+`<b>${esc(short(x.t))}</b>`;
     return `<div class="act fa" onclick="${go}" style="cursor:pointer">${av2(x.n,32,x.ap)}<div><span class="fxnm">${esc(x.n)}</span> ${txt}</div><span class="t">${rel(x.ts)}</span></div>`}).join("")};
 async function loadHR(){try{const{data,error}=await sb.from("diary_entries").select(RSEL+",series(*)").neq("review","").order("created_at",{ascending:false}).limit(30);if(error)throw error;HR=data}catch(e){console.error(e);HR=[]}if(tab==="home"&&seg.home==="rev")render()}

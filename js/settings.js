@@ -8,7 +8,7 @@ function drawSetD(){
   const U1=prof.user||(U&&U.email?U.email.split("@")[0]:""),has=sd.avd||sd.av,
    F=(l,k,o)=>{o=o||{};return `<label class="sdf"><span>${l}</span><input type="${o.t||"text"}" maxlength="80" placeholder="${o.ph||""}" value="${esc(sd[k])}" oninput="sd.${k}=this.value"></label>`},
    slots=[0,1,2,3].map(k=>{const it=get(sd.fav[k]);return it?`<div class="fvp" data-k="${k}">${nop(it)}<button class="fvx" aria-label="Quitar" onclick="sdRm(${k})">×</button></div>`:`<div class="fvp fve" onclick="sdAdd()">＋</div>`}).join(""),
-   TB=[["p",L2("Perfil","Profile")],["a",L2("Acceso","Auth")],["av","Avatar"],["l",L2("Idioma","Language")],["t",L2("Tema","Theme")]],
+   TB=[["p",L2("Perfil","Profile")],["a",L2("Acceso","Auth")],["av","Avatar"],["l",L2("Idioma","Language")],["t",L2("Tema","Theme")],["pv",L2("Privacidad","Privacy")]],
    fh=t=>`<div class="sdh5"><span>${t}</span></div>`;
   let body="";
   if(sdT==="p")body=`<h2>${L2("Perfil","Profile")}</h2><div class="sdg"><div>
@@ -24,6 +24,9 @@ function drawSetD(){
     <label class="sdf"><span>${L2("Nueva contraseña (mín. 6 caracteres)","New password (min. 6 characters)")}</span><input id="pw-n" type="password" autocomplete="new-password"></label>
     <div class="sdb"><button class="sdsv" onclick="pwSave()">${L2("Guardar contraseña","Save password")}</button><a onclick="logout()">${L2("Cerrar sesión","Sign out")}</a></div></div></div>`;
   else if(sdT==="av")body=`<h2>${L2("Foto de perfil","Profile photo")}</h2><div class="sdav"><div class="av" style="width:150px;height:150px;font-size:58px${avs(has)}">${has?"":ini()}</div><div class="sdbc"><input type="file" id="av-f" accept="image/*" hidden onchange="sdAv(this)"><button class="sdsv" onclick="$('av-f').click()">${L2("Cambiar foto","Change photo")}</button>${has?`<a onclick="sd.av='';sd.avd='';drawSet()">${L2("Quitar foto","Remove photo")}</a>`:""}</div></div>`;
+  else if(sdT==="pv")body=`<h2>${L2("Privacidad","Privacy")}</h2><div class="sdlg">${PVV().map(([c,n])=>`<button class="${prof.vis===c?"on":""}" onclick="setPriv('vis','${c}')">${n}${prof.vis===c?" ✓":""}</button>`).join("")}</div><p class="shint" style="padding:12px 0">${prof.vis==="private"?PVD.private():PVD.public()}</p>
+    <label class="sdf" style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" ${prof.cs?"checked":""} onchange="setPriv('cs',this.checked)"><span>${L2("Contar mis notas en las medias globales","Count my ratings in the global averages")}</span></label>
+    <label class="sdf" style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" ${prof.dsc?"checked":""} onchange="setPriv('dsc',this.checked)"><span>${L2("Aparecer en la búsqueda de miembros","Appear in member search")}</span></label>`;
   else if(sdT==="t")body=`<h2>${L2("Tema","Theme")}</h2><div class="sdlg">${THM().map(([c,n])=>`<button class="${mbThemeMode()===c?"on":""}" onclick="mbTheme('${c}');drawSet()">${n}${mbThemeMode()===c?" ✓":""}</button>`).join("")}</div>`;
   else body=`<h2>${L2("Idioma","Language")}</h2><div class="sdlg">${[["en","English"],["es","Español"]].map(([c,n])=>`<button class="${LANG===c?"on":""}" onclick="mbLang('${c}')">${n}${LANG===c?" ✓":""}</button>`).join("")}</div>`;
   $("set").innerHTML=`<div class="sdw"><div class="sdh"><h1>${L2("Ajustes de la cuenta","Account Settings")}</h1><a onclick="logout()">${L2("Cerrar sesión","Sign out")}</a></div>
@@ -36,6 +39,7 @@ function drawSet(){const dk=DSK();$("set").classList.toggle("sd2",dk);if(dk){dra
   <div class="sin">Sesión iniciada como <b>${esc(prof.user||(U?U.email:"")||"")}</b></div>
   <div class="sgrp">${N("Contraseña y autenticación","","pwEd()")}<div class="srow so" onclick="logout()"><span>Cerrar sesión</span></div></div>
   <div class="sgrp">${N("Idioma",LANG==="es"?"Español":"English","mbLangPick()")}${N(L2("Tema","Theme"),THM().find(x=>x[0]===mbThemeMode())[1],"mbThemePick()")}</div>
+  <div class="slb">${L2("Privacidad","Privacy")}</div><div class="sgrp">${N(L2("Perfil","Profile"),PVV().find(x=>x[0]===prof.vis)[1],"mbVisPick()")}<div class="srow" onclick="setPriv('cs',!prof.cs)"><span>${L2("Contar mis notas en las medias","Count my ratings in averages")}</span><button class="sw ${prof.cs?"on":""}" aria-label="${L2("Contar mis notas en las medias","Count my ratings in averages")}"></button></div><div class="srow" onclick="setPriv('dsc',!prof.dsc)"><span>${L2("Aparecer en la búsqueda","Appear in member search")}</span><button class="sw ${prof.dsc?"on":""}" aria-label="${L2("Aparecer en la búsqueda","Appear in member search")}"></button></div></div><div class="shint">${prof.vis==="private"?PVD.private():PVD.public()}</div>
   <div class="slb">Perfil</div><div class="sgrp"><div class="srow" onclick="phOpt()"><span>Foto de perfil</span><div class="av" style="width:34px;height:34px;font-size:14px${avs(has)}"></div></div><input type="file" id="av-f" accept="image/*" hidden onchange="sdAv(this)">${R("Nombre","name")}${R("Apellidos","fam")}${R("Correo electrónico","email","","email")}${R("Ubicación","loc","Ciudad, país")}${R("Web","web",L2("tusitio.com","yoursite.com"),"url")}${N("Bio",esc((sd.bio||"").split("\n")[0].slice(0,30)),"bioEd()")}${N("Pronombres",esc(sd.pron||""),"pronEd()")}</div>
   <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Arrastra los pósters para reordenar.</div>${instH()}`}
 function phOpt(){if(!(sd.avd||sd.av)){$("av-f").click();return}$("ov").innerHTML=`<div class="card"><div class="ot"><b>Foto de perfil</b></div><button class="oi" onclick="closeOv();$('av-f').click()">Cambiar foto</button><button class="oi d" onclick="sd.av='';sd.avd='';closeOv();drawSet()">Quitar foto</button></div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
@@ -117,3 +121,13 @@ function dprof(){
 
 const THM=()=>[["dark",L2("Oscuro","Dark")],["light",L2("Claro","Light")],["system",L2("Sistema","System")]];
 function mbThemePick(){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${L2("Tema","Theme")}</b></div>${THM().map(([c,n])=>`<button class="oi" onclick="mbTheme('${c}');closeOv();drawSet()">${n}${mbThemeMode()===c?" ✓":""}</button>`).join("")}</div><button class="card" onclick="closeOv()">${L2("Cancelar","Cancel")}</button>`;$("ov").classList.add("open")}
+
+const PVV=()=>[["public",L2("Público","Public")],["private",L2("Privado","Private")]],
+ PVD={public:()=>L2("Cualquiera con cuenta puede ver tu diario, reseñas y listas.","Anyone with an account can see your diary, reviews and lists."),
+  private:()=>L2("Solo los seguidores que apruebes ven tu diario, reseñas y listas. Tu nombre, foto y bio siguen siendo visibles para que puedan pedirte seguirte.","Only followers you approve can see your diary, reviews and lists. Your name, photo and bio stay visible so people can ask to follow you.")};
+function mbVisPick(){$("ov").innerHTML=`<div class="card"><div class="ot"><b>${L2("Privacidad del perfil","Profile privacy")}</b></div>${PVV().map(([c,n])=>`<button class="oi" onclick="closeOv();setPriv('vis','${c}')">${n}${prof.vis===c?" ✓":""}<br><small style="color:var(--mute);font-weight:400">${PVD[c]()}</small></button>`).join("")}</div><button class="card" onclick="closeOv()">${L2("Cancelar","Cancel")}</button>`;$("ov").classList.add("open")}
+async function setPriv(k,v){const col={vis:"visibility",cs:"count_in_stats",dsc:"discoverable"}[k],old=prof[k];if(old===v)return;prof[k]=v;if(sd)sd[k]=v;drawSet();
+  try{await ck(sb.from("profiles").update({[col]:v}).eq("id",U.id));
+    if(k==="vis"){INC=null;REQN=0;nbDot();toast(v==="private"?L2("Perfil privado","Profile is now private"):L2("Perfil público","Profile is now public"))}
+    else{Object.keys(statAt).forEach(x=>delete statAt[x]);toast(L2("Guardado","Saved"))}}
+  catch(e){console.error(e);prof[k]=old;if(sd)sd[k]=old;drawSet();toast(L2("No se pudo guardar","Couldn't save"))}}
