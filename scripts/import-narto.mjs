@@ -14,6 +14,7 @@
 // stops at the first 403/429. It avoids the paths robots.txt disallows (/search, ?q=, /e/, /go).
 // It remembers collected series in narto-seen.json so every run gives NEW ones. Metadata only.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+let lastInfo = null;
 
 const BASE = process.env.NARTO_BASE || "https://narto-drama.com";
 const UA = "MicroboxdBot/0.1 (personal catalog helper; +https://github.com/itstxti/MICROBOXD)";
@@ -31,13 +32,15 @@ const clean = (s) => decode(s).replace(/\s+/g, " ").trim();
 async function page(path) {
   const r = await fetch(BASE + path, { headers: { "user-agent": UA, accept: "text/html" } });
   if (r.status === 403 || r.status === 429) throw new Blocked(`${r.status} on ${path}`);
-  return r.ok ? r.text() : null;
+  const text = r.ok ? await r.text() : null;
+  lastInfo = { status: r.status, type: r.headers.get("content-type"), finalUrl: r.url, text };
+  return text;
 }
 
 // One <article class="card" data-movie-id=... data-movie-title=...> per series.
 export function parseCards(html, app) {
   const out = [];
-  const re = /<article\s+class="card"([\s\S]*?)<\/article>/g;
+  const re = /<article\s+class="card(?:\s[^"]*)?"([\s\S]*?)<\/article>/g;
   let m;
   while ((m = re.exec(html))) {
     const b = m[0];
@@ -89,6 +92,13 @@ async function main() {
         if (!seen.has(c.source_id) && out.length < max) { out.push(c); seen.add(c.source_id); }
       }
       console.log(`${list} page ${p}: ${cards.length} cards, ${out.length} new so far`);
+      if (!cards.length && lastInfo) {
+        writeFileSync("narto-debug.html", h);
+        const t = (h.match(/<title>([^<]*)/) || [])[1];
+        console.log(`  DEBUG: HTTP ${lastInfo.status}, ${lastInfo.type}, ${h.length} bytes, title: ${t ? t.trim() : "(none)"}`);
+        console.log(`  DEBUG: final URL ${lastInfo.finalUrl}; <article> tags: ${(h.match(/<article/g) || []).length}; data-movie-id: ${(h.match(/data-movie-id/g) || []).length}`);
+        console.log("  Saved the page as narto-debug.html (send it to Claude if it is not obvious).");
+      }
       if (got.size === before) break; // nothing new on this page: no more pages
       await sleep(3000);
     }
