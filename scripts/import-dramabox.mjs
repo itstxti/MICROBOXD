@@ -1,112 +1,81 @@
-#!/usr/bin/env node
-// Collects series metadata from public DramaBox pages into a JSON file that the app can
-// import (Settings -> Import series). Run it on YOUR computer (Node 18+), not on a server:
-//
-//   node scripts/import-dramabox.mjs --list /browse/498 --pages 3 --max 40
-//   node scripts/import-dramabox.mjs --probe            # saves the raw page data for debugging
-//   node scripts/import-dramabox.mjs --reset            # forget which series were already collected
-//
-// It remembers collected series in dramabox-seen.json, so every run gives NEW ones.
-//
-// Polite by design: identified user agent, one request every ~3 s, a hard cap, and it
-// stops at the first 403/429 instead of trying to get around it. Metadata only (no covers).
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+(async () => {
+  const MAX = 20, APP = "NetShort";
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms + Math.random() * 800));
+  const abs = (u) => { try { return new URL(u, location.origin).href; } catch { return ""; } };
+  const imgSrc = (img) => [img?.dataset?.src, img?.dataset?.lazySrc, img?.currentSrc, img?.getAttribute("src")].find((v) => v && !v.startsWith("data:")) || "";
 
-const BASE = process.env.DRAMABOX_BASE || "https://www.dramaboxapp.com";
-const UA = "MicroboxdBot/0.1 (personal catalog helper; +https://github.com/itstxti/MICROBOXD)";
-const args = process.argv.slice(2);
-const opt = (k, d) => { const i = args.indexOf("--" + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith("--") ? args[i + 1] : true); };
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms + Math.random() * 800));
+  // 1) tarjetas = enlaces a /drama/... con imagen (sin repetir)
+  const seen = new Set(), cards = [];
+  for (const a of document.querySelectorAll("a[href*='/drama/']")) {
+    const href = abs(a.getAttribute("href"));
+    if (!href || /\/drama\/all-plots|\/drama\/?$/.test(href) || seen.has(href.split("?")[0])) continue;
+    const img = a.querySelector("img") || a.closest("div,li,article")?.querySelector("img");
+    if (!img) continue;
+    seen.add(href.split("?")[0]);
+    cards.push({ a, img, href });
+  }
+  console.log(cards.length + " tarjetas encontradas");
+  if (!cards.length) { console.log("Nada encontrado. Pásame el HTML de UNA tarjeta (clic derecho > Inspeccionar > Copy outerHTML)."); return; }
+  console.log("Ejemplo:", cards[0].a.outerHTML.slice(0, 600));
 
-class Blocked extends Error {}
-async function page(path) {
-  const r = await fetch(BASE + path, { headers: { "user-agent": UA, accept: "text/html" } });
-  if (r.status === 403 || r.status === 429) throw new Blocked(`${r.status} on ${path}`);
-  if (!r.ok) return null;
-  return r.text();
-}
-
-const decode = (s) => String(s || "").replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-const clean = (s) => decode(s).replace(/\s+/g, " ").trim();
-const nextData = (h) => { const m = h.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/); try { return m ? JSON.parse(m[1]) : null; } catch { return null; } };
-const filmIds = (h) => [...new Set((h.match(/\/film\/(\d{6,})/g) || []).map((x) => x.replace("/film/", "")))];
-
-// Walk the embedded JSON and find the object that looks like "this series": it has a name and an episode count.
-function findSeries(root) {
-  let best = null, bestScore = -1;
-  (function walk(o, d) {
-    if (!o || typeof o !== "object" || d > 14) return;
-    if (!Array.isArray(o)) {
-      const keys = Object.keys(o);
-      const name = keys.find((k) => /^(book_?name|drama_?name|title|name)$/i.test(k) && typeof o[k] === "string" && o[k].length > 1);
-      const eps = keys.find((k) => /(chapter|episode)s?_?(count|num|total)?$/i.test(k) && Number.isFinite(+o[k]) && +o[k] > 0);
-      if (name && eps) {
-        const score = keys.length + (keys.some((k) => /intro|synopsis|desc/i.test(k)) ? 20 : 0) + (keys.some((k) => /tag|label|type|genre/i.test(k)) ? 10 : 0);
-        if (score > bestScore) { best = { o, name, eps }; bestScore = score; }
-      }
+  const clean = (s) => String(s || "").replace(/\s+/g, " ").trim();
+  const getDetail = async (url) => {
+    for (let i = 1; i <= 3; i++) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw 0;
+        const html = await r.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        let syn = "", via = "";
+        // JSON-LD
+        for (const s of doc.querySelectorAll('script[type="application/ld+json"]')) {
+          try { const j = JSON.parse(s.textContent); const arr = Array.isArray(j) ? j : [j];
+            for (const o of arr) if (o?.description && clean(o.description).length > 30) { syn = clean(o.description); via = "ld+json"; } } catch {}
+          if (syn) break;
+        }
+        // __NEXT_DATA__
+        if (!syn) { try {
+          const nd = JSON.parse(doc.querySelector("#__NEXT_DATA__")?.textContent || "null");
+          const best = []; (function walk(o) { if (o && typeof o === "object") for (const k in o) {
+            if (/^(intro|synopsis|description|summary|introduction|desc)$/i.test(k) && typeof o[k] === "string" && o[k].length > 30) best.push(o[k]); else walk(o[k]); } })(nd);
+          if (best.length) { syn = clean(best.sort((a, b) => b.length - a.length)[0]); via = "next-data"; }
+        } catch {} }
+        if (!syn) { const v = doc.querySelector('meta[property="og:description"]')?.content; if (clean(v).length > 30) { syn = clean(v); via = "og"; } }
+        if (!syn) { const v = doc.querySelector('meta[name="description"]')?.content; if (clean(v).length > 30) { syn = clean(v); via = "meta"; } }
+        const title = clean(doc.querySelector('meta[property="og:title"]')?.content || doc.querySelector("h1")?.textContent);
+        const og = doc.querySelector('meta[property="og:image"]')?.content || "";
+        return { syn, via, title, og: abs(og) };
+      } catch { await sleep(4000); }
     }
-    for (const v of Object.values(o)) walk(v, d + 1);
-  })(root, 0);
-  return best;
-}
-const strList = (v) => (Array.isArray(v) ? v : []).map((x) => (typeof x === "string" ? x : x && (x.name || x.tagName || x.label || x.title))).filter((x) => typeof x === "string" && x.trim()).map(clean);
+    return { syn: "", via: "error", title: "", og: "" };
+  };
 
-function parseFilm(id, html) {
-  const url = `${BASE}/film/${id}`;
-  const nd = nextData(html), f = nd && findSeries(nd.props || nd);
-  let title, episodes, synopsis = "", tropes = [];
-  if (f) {
-    const o = f.o;
-    title = clean(o[f.name]); episodes = +o[f.eps];
-    const intro = Object.keys(o).filter((k) => /intro|synopsis|desc|summary/i.test(k) && typeof o[k] === "string").map((k) => o[k]).sort((a, b) => b.length - a.length)[0];
-    synopsis = clean(intro || "");
-    for (const k of Object.keys(o)) if (/tag|label|genre|categor|type/i.test(k)) tropes.push(...strList(o[k]));
-  }
-  // Fallbacks from the visible page when the embedded data has a different shape.
-  if (!title) { const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/); title = h1 ? clean(h1[1].replace(/<[^>]+>/g, " ")) : ""; }
-  if (!episodes) { const m = html.replace(/<[^>]+>/g, " ").match(/(\d+)\s+Episodes/i); episodes = m ? +m[1] : 0; }
-  if (!synopsis) { const m = html.match(/<meta name="description" content="([^"]*)"/); synopsis = clean(m ? m[1] : "").replace(new RegExp("^" + title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*(Movie\\s*)?", "i"), "").replace(/\.\.\.$/, ""); }
-  tropes = [...new Set(tropes)].slice(0, 12);
-  return title && episodes ? { source: "dramabox", source_id: id, url, title, app: "DramaBox", episodes, tropes, synopsis } : null;
-}
+  const toData = async (src) => {
+    if (!src) return "";
+    try {
+      const r = await fetch(src, { referrerPolicy: "no-referrer" });
+      const b = await r.blob();
+      if (!r.ok || b.size > 2e6 || !b.type.startsWith("image/")) return "";
+      return await new Promise((res) => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(b); });
+    } catch { return ""; }
+  };
 
-async function main() {
-  if (args.includes("--probe")) {
-    const html = await page("/film/41000119953");
-    const nd = html && nextData(html);
-    writeFileSync("dramabox-probe.json", JSON.stringify({ film: parseFilm("41000119953", html || ""), nextData: nd }, null, 1));
-    console.log("Saved dramabox-probe.json. Parsed:", parseFilm("41000119953", html || ""));
-    return;
-  }
-  const SEEN = "dramabox-seen.json";
-  const seen = new Set(!args.includes("--reset") && existsSync(SEEN) ? JSON.parse(readFileSync(SEEN, "utf8")) : []);
-  const lists = [].concat(opt("list", "/more/trending")), pages = +opt("pages", 8), max = +opt("max", 30);
-  const ids = [], fresh = () => ids.filter((i) => !seen.has(i));
-  console.log(`${seen.size} series already collected in earlier runs (skipped).`);
-  for (const l of lists) for (let p = 1; p <= pages && fresh().length < max; p++) {
-    const h = await page(p === 1 ? l : `${l}${l.includes("?") ? "&" : "?"}page=${p}`);
-    if (!h) break;
-    const before = ids.length;
-    for (const id of filmIds(h)) if (!ids.includes(id)) ids.push(id);
-    console.log(`${l} page ${p}: +${ids.length - before} series`);
-    if (ids.length === before) break; // no new series: no more pages
-    await sleep(3000);
-  }
   const out = [];
-  try {
-    for (const id of fresh().slice(0, max)) {
-      const h = await page("/film/" + id);
-      const it = h && parseFilm(id, h);
-      if (it) { out.push(it); seen.add(id); console.log(`  ${out.length}. ${it.title} (${it.episodes} ep, ${it.tropes.join("/") || "no tags"})`); }
-      else console.log("  skipped", id);
-      await sleep(3000);
-    }
-  } catch (e) {
-    if (e instanceof Blocked) console.log("\nThe site refused a request (" + e.message + "). Stopping; saving what was collected.");
-    else throw e;
+  for (const c of cards.slice(0, MAX)) {
+    const box = c.a.closest("div,li,article") || c.a;
+    const txt = clean(box.textContent);
+    const eps = +((txt.match(/(\d+)\s*(?:EP|Ep|ep|Episodes?|episodes?|集)/) || txt.match(/(?:EP|Ep|Episodes?)\.?\s*(\d+)/) || [0, 0])[1]);
+    const poster = abs(imgSrc(c.img));
+    const d = await getDetail(c.href.split("?")[0]);
+    const title = d.title?.replace(/\s*[|\-–].*NetShort.*$/i, "") || clean(c.img.alt) || clean(c.a.getAttribute("title")) || txt.slice(0, 80);
+    let cover = await toData(poster);
+    if (!cover && d.og) cover = await toData(d.og);
+    out.push({ source: "netshort", source_id: c.href.split("?")[0].split("/").pop(), url: c.href, title, app: APP, episodes: eps, tropes: [], synopsis: d.syn, cover, cover_url: cover ? "" : (poster || d.og) });
+    console.log(`${out.length}/${Math.min(MAX, cards.length)} ${title}: ${d.syn ? "sinopsis OK (" + d.via + ")" : "SIN sinopsis"}, ${eps ? eps + " ep" : "SIN episodios"}, ${cover ? "portada OK" : "SIN portada (cover_url)"}`);
+    await sleep(2500);
   }
-  writeFileSync("dramabox-import.json", JSON.stringify(out, null, 1));
-  writeFileSync(SEEN, JSON.stringify([...seen]));
-  console.log(`\nSaved ${out.length} NEW series to dramabox-import.json. Import it from the app: Settings -> Import series.`);
-}
-main().catch((e) => { console.error(e); process.exit(1); });
+  const l = document.createElement("a");
+  l.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
+  l.download = "netshort-import.json"; l.click();
+  console.log("Listo.");
+})();
