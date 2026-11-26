@@ -5,6 +5,14 @@
 //   node scripts/import-narto.mjs --max 40
 //   node scripts/import-narto.mjs --provider reelshort --max 40   # only that provider's series
 //   node scripts/import-narto.mjs --provider reelshort --max 20 --covers   # also download the posters
+//
+// The site checks that visitors are real browsers ("Checking your browser..."), which a script cannot
+// pass honestly. So the reliable way is to SAVE the listing pages from your browser and read those files:
+//   1. open narto-drama.com in your browser (pick a provider in its filter if you want one)
+//   2. Ctrl+S -> "Webpage, complete" for page 1, then for page 2, 3... (keep each in a folder)
+//   3. node scripts/import-narto.mjs --files "C:\\path\\to\\pages\\*.html" --app ReelShort --max 40 --covers
+// Covers are read from the saved "_files" folders when they are there.
+//
 //   node scripts/import-narto.mjs --providers                     # list the provider names
 //   node scripts/import-narto.mjs --list /tag/romance --max 40 --app DramaBox
 //   node scripts/import-narto.mjs --reset        # forget which series were already collected
@@ -13,7 +21,8 @@
 // page of ~24 series, not one per series. Polite: identified user agent, ~3 s between requests,
 // stops at the first 403/429. It avoids the paths robots.txt disallows (/search, ?q=, /e/, /go).
 // It remembers collected series in narto-seen.json so every run gives NEW ones. Metadata only.
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { dirname, basename, join, extname } from "node:path";
 let lastInfo = null;
 
 const BASE = process.env.NARTO_BASE || "https://narto-drama.com";
@@ -57,6 +66,26 @@ export function parseCards(html, app) {
 }
 
 // Downloads a poster and returns it as a data URL (the app converts it to JPEG on import). Skips big files.
+function localCover(it) {
+  if (!it._dir || !it.poster || /^(https?:)?\/\//.test(it.poster) || it.poster.startsWith("/")) return "";
+  try {
+    const f = join(it._dir, decodeURIComponent(it.poster.split("?")[0]));
+    const type = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif" }[extname(f).toLowerCase()];
+    if (!type || !existsSync(f)) return "";
+    const buf = readFileSync(f);
+    return buf.length <= 2_000_000 ? `data:${type};base64,${buf.toString("base64")}` : "";
+  } catch { return ""; }
+}
+function expandFiles(list) {
+  const out = [];
+  for (const a of list) {
+    if (a.includes("*")) {
+      const d = dirname(a), re = new RegExp("^" + basename(a).replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$", "i");
+      try { out.push(...readdirSync(d).filter((f) => re.test(f)).sort().map((f) => join(d, f))); } catch {}
+    } else out.push(a);
+  }
+  return out;
+}
 async function cover(src) {
   try {
     const r = await fetch(new URL(src, BASE), { headers: { "user-agent": UA, accept: "image/*" } });
@@ -72,6 +101,9 @@ async function main() {
   if (args.includes("--providers")) { console.log(Object.entries(PROVIDERS).map(([k, v]) => `${k.padEnd(14)} ${v}`).join("\n")); return; }
   const SEEN = "narto-seen.json";
   const seen = new Set(!args.includes("--reset") && existsSync(SEEN) ? JSON.parse(readFileSync(SEEN, "utf8")) : []);
+  const fi = args.indexOf("--files");
+  const fl = []; if (fi >= 0) for (const a of args.slice(fi + 1)) { if (a.startsWith("--")) break; fl.push(a); }
+  const files = fi < 0 ? null : expandFiles(fl);
   const prov = opt("provider", null);
   if (prov && !PROVIDERS[String(prov).toLowerCase()]) { console.error(`Unknown provider "${prov}". Run with --providers to see the list.`); process.exit(1); }
   const slug = prov && String(prov).toLowerCase();
@@ -80,7 +112,22 @@ async function main() {
   if (/^\/(search|e\/|go)|[?&]q=/.test(list)) { console.error("That path is disallowed by the site's robots.txt."); process.exit(1); }
   console.log(`${seen.size} series already collected in earlier runs (skipped).`);
   const out = [], got = new Set();
-  try {
+  if (files) {
+    if (!files.length) { console.error("No files found for --files."); process.exit(1); }
+    for (const f of files) {
+      const h = readFileSync(f, "utf8");
+      const cards = parseCards(h, app);
+      cards.forEach((c) => (c._dir = dirname(f)));
+      let added = 0;
+      for (const c of cards) {
+        if (got.has(c.source_id)) continue;
+        got.add(c.source_id);
+        if (!seen.has(c.source_id) && out.length < max) { out.push(c); seen.add(c.source_id); added++; }
+      }
+      console.log(`${basename(f)}: ${cards.length} cards, ${added} new`);
+      if (!cards.length) console.log("  (no series found; was this saved from the listing page, after the page finished loading?)");
+    }
+  } else try {
     for (let p = 1; p <= pages && out.length < max; p++) {
       const h = await page(p === 1 ? list : `${list}${list.includes("?") ? "&" : "?"}page=${p}`);
       if (!h) break;
@@ -109,14 +156,20 @@ async function main() {
   if (args.includes("--covers")) {
     try {
       let n = 0;
-      for (const it of out) { if (!it.poster) continue; it.cover = await cover(it.poster); if (it.cover) n++; await sleep(1000); }
+      for (const it of out) {
+        if (!it.poster) continue;
+        it.cover = localCover(it);
+        if (!it.cover && !files) { it.cover = await cover(it.poster); await sleep(1000); }
+        else if (!it.cover && files && /^https?:\/\//.test(it.poster)) { it.cover = await cover(it.poster); await sleep(1000); }
+        if (it.cover) n++;
+      }
       console.log(`Downloaded ${n} of ${out.length} covers.`);
     } catch (e) {
       if (e instanceof Blocked) console.log("\nThe image server refused a request (" + e.message + "). Keeping the covers downloaded so far.");
       else throw e;
     }
   }
-  out.forEach((it) => delete it.poster);
+  out.forEach((it) => { delete it.poster; delete it._dir; });
   writeFileSync("narto-import.json", JSON.stringify(out, null, 1));
   writeFileSync(SEEN, JSON.stringify([...seen]));
   console.log(`\nSaved ${out.length} NEW series to narto-import.json. Import it from the app: Settings -> Import series.`);
