@@ -152,6 +152,7 @@ function impDraw(first){const n=IMP.filter(x=>x.on).length,h=subBar(L2("Importar
 function impTog(i){IMP[i].on=!IMP[i].on;impDraw()}
 function impAll(v){IMP.forEach(x=>x.on=v);impDraw()}
 function impGo(){const sel=IMP.filter(x=>x.on);if(!sel.length)return;
+  const known=appsAll().map(x=>x.toLowerCase());new Set(sel.map(x=>x.app)).forEach(a=>{if(!known.includes(a.toLowerCase())){known.push(a.toLowerCase());PLT.push(a);if(sb&&U)sb.from("platforms").insert({name:a}).then(r=>{if(r.error)console.error(r.error)})}});
   sel.reverse().forEach(x=>{const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title:x.title,app:x.app,syn:x.syn,tropes:x.tropes,cast:[],castTxt:"",eps:x.eps,epm:null,watched:0,rating:0,review:"",status:"",cover:"",added:Date.now()};
     it._b=iState(it);cache[it.id]=it;pendS.push(it);CAT.unshift(it)});
   IMP=[];save();render();subX();toast(sel.length+" "+L2("series añadidas","series added"))}

@@ -3,6 +3,8 @@
 // JSON file the app can import (Settings -> Import series). Run it on YOUR computer (Node 18+).
 //
 //   node scripts/import-narto.mjs --max 40
+//   node scripts/import-narto.mjs --provider reelshort --max 40   # only that provider's series
+//   node scripts/import-narto.mjs --providers                     # list the provider names
 //   node scripts/import-narto.mjs --list /tag/romance --max 40 --app DramaBox
 //   node scripts/import-narto.mjs --reset        # forget which series were already collected
 //
@@ -18,6 +20,9 @@ const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf("--" + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith("--") ? args[i + 1] : true); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms + Math.random() * 800));
 class Blocked extends Error {}
+
+// Providers offered by the site's own filter (?tab-provider=<slug>) -> platform name used in the app.
+const PROVIDERS = { bibishort: "BibiShort", cubetv: "CubeTV", dramabite: "Dramabite", dramabox: "DramaBox", dramawave: "DramaWave", flickreels: "FlickReels", idrama: "iDrama", joyreels: "JoyReels", melolo: "Melolo", moviebox: "MovieBox", netshort: "NetShort", reelshort: "ReelShort", shortmax: "ShortMax", stardusttv: "StardustTV", storeel: "Storeel", vigloo: "Vigloo", anyreel: "AnyReel", bilitv: "BiliTV", candyjar: "CandyJar", cinerrashort: "CinerraShort", dotdrama: "DotDrama", dotdrama2: "DotDrama II", dramanova: "DramaNova", dramashine: "DramaShine", dramashorts: "DramaShorts", dramatv: "DramaTV", dreameshort: "DreameShort", flareflow: "FlareFlow", flextv: "FlexTV", freedrama: "FreeDrama", freereels: "FreeReels", fundrama: "Fun Drama", goodshort: "GoodShort", gorogoro: "GoroGoro", happyshort: "HappyShort", kalostv: "KalosTV", microdrama: "MicroDrama", minishorts: "MiniShorts", minutedrama: "MinuteDrama", moboreels: "MoboReels", mydrama: "My Drama", myrelle: "MyRelle", ohmytv: "OhMyTV", pinedrama: "PineDrama", playlet: "Playlet", rapidtv: "RapidTV", rapidtv2: "RapidTV II", raptdrama: "RaptDrama", reelala: "Reelala", reelbuzz: "ReelBuzz", reelife: "Reelife", sarostv: "SarosTV", serealplus: "SerealPlus", shortical: "Shortical", shortpeak: "ShortPeak", shortxdrama: "ShortXDrama", sixthshort: "SixthShort", solona: "Solona", starshort: "StarShort", storyreel: "StoryReel", topdrama: "TopDrama", velolo: "Velolo", vibeshort: "VibeShort", vidiodotcom: "VidioCom", vyntage: "Vyntage" };
 
 const decode = (s) => String(s || "").replace(/&quot;/g, '"').replace(/&#0?39;|&#x27;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 const clean = (s) => decode(s).replace(/\s+/g, " ").trim();
@@ -47,9 +52,14 @@ export function parseCards(html, app) {
 }
 
 async function main() {
+  if (args.includes("--providers")) { console.log(Object.entries(PROVIDERS).map(([k, v]) => `${k.padEnd(14)} ${v}`).join("\n")); return; }
   const SEEN = "narto-seen.json";
   const seen = new Set(!args.includes("--reset") && existsSync(SEEN) ? JSON.parse(readFileSync(SEEN, "utf8")) : []);
-  const list = String(opt("list", "/")), pages = +opt("pages", 8), max = +opt("max", 30), app = String(opt("app", "Otra"));
+  const prov = opt("provider", null);
+  if (prov && !PROVIDERS[String(prov).toLowerCase()]) { console.error(`Unknown provider "${prov}". Run with --providers to see the list.`); process.exit(1); }
+  const slug = prov && String(prov).toLowerCase();
+  const list = slug ? `/?tab-provider=${slug}` : String(opt("list", "/")), pages = +opt("pages", 8), max = +opt("max", 30);
+  const app = String(opt("app", slug ? PROVIDERS[slug] : "Desconocido"));
   if (/^\/(search|e\/|go)|[?&]q=/.test(list)) { console.error("That path is disallowed by the site's robots.txt."); process.exit(1); }
   console.log(`${seen.size} series already collected in earlier runs (skipped).`);
   const out = [], got = new Set();
