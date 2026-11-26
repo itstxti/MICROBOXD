@@ -154,3 +154,11 @@ group by s.id;
 
 revoke all on public.series_stats from anon;
 grant select on public.series_stats to authenticated;
+
+-- 6. Hardening ---------------------------------------------------------------------
+-- Trigger functions are not meant to be callable through the REST API.
+revoke all on function public.follows_set_status() from public, anon, authenticated;
+revoke all on function public.profile_visibility_changed() from public, anon, authenticated;
+
+-- Note: the Supabase linter flags series_stats as SECURITY DEFINER. That is
+-- intentional: it exposes aggregates only, so every viewer sees the same numbers.
