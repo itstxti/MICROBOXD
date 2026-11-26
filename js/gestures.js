@@ -22,7 +22,7 @@ const instH=()=>isSA()?"":IP?`<div class="slb">App</div><div class="sgrp"><butto
 async function instApp(){if(!IP)return;IP.prompt();try{await IP.userChoice}catch(e){}IP=null;drawSet()}
 if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 /* ===== Social: reseñas, perfiles, seguir ===== */
-let RV={},RVt={},RX={},FW=new Set(),rvTab="pop",rsTab="all",FEED=null,INC=null,HR=null,MEM=[],mq=0,memT=0,subH=[];
+let RV={},RVt={},RX={},FW=new Set(),PEND=new Set(),VIS={},REQN=0,rvTab="pop",rsTab="all",FEED=null,INC=null,HR=null,MEM=[],mq=0,memT=0,subH=[];
 const RSEL="id,user_id,series_id,watched_on,rating,liked,rewatch,review,spoilers,tags,created_at,profiles!diary_entries_user_id_fkey(username,display_name,avatar_path),review_likes(user_id)";
 const pname=p=>p?(p.display_name||p.username):"usuario";
 const nrm=x=>{const r={id:x.id,uid:x.user_id,sid:x.series_id,u:pname(x.profiles),ap:x.user_id===U.id?(prof.avd||prof.av||(x.profiles&&x.profiles.avatar_path)):(x.profiles&&x.profiles.avatar_path),r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers,g:x.tags||[],ts:Date.parse(x.created_at),wd:x.watched_on,lk:(x.review_likes||[]).length,me:(x.review_likes||[]).some(l=>l.user_id===U.id)};RX[r.id]=r;return r};

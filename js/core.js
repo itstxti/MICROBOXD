@@ -3,7 +3,7 @@ let PLT=[];
 const appsAll=()=>{const o=[...APPS0];PLT.forEach(a=>{if(!o.some(x=>x.toLowerCase()===a.toLowerCase()))o.push(a)});catAll().forEach(i=>{const a=(i.app||"").trim();if(a&&!o.some(x=>x.toLowerCase()===a.toLowerCase()))o.push(a)});return o};
 const KEY="microboxd:v1";
 let DEN=[];
-let prof={name:"",fam:"",email:"",loc:"",web:"",bio:"",pron:"",fav:[]},items=[],log=[],lists=[],sq="s",sf=0,adq="",tab="home",q="",cover="";
+let prof={name:"",fam:"",email:"",loc:"",web:"",bio:"",pron:"",fav:[],vis:"public",cs:true,dsc:true},items=[],log=[],lists=[],sq="s",sf=0,adq="",tab="home",q="",cover="";
 const SQL={s:"Series",r:"Reseñas",l:"Listas",m:"Miembros"};let RSQ=[];try{RSQ=JSON.parse(localStorage.getItem("microboxd:rsq")||"[]").filter(x=>x&&x.q&&SQL[x.k])}catch(e){}
 const rsqSave=()=>{try{localStorage.setItem("microboxd:rsq",JSON.stringify(RSQ))}catch(e){}};
 function rsqAdd(){const t=q.trim();if(!t)return;const k=RSQ.findIndex(x=>x.q.toLowerCase()===t.toLowerCase());if(k>=0)RSQ.splice(k,1);RSQ.unshift({q:t,k:sq});RSQ=RSQ.slice(0,12);rsqSave()}

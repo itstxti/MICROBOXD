@@ -28,20 +28,21 @@ async function pull(){
    sb.from("lists").select("*,list_items(*)").eq("user_id",uid).order("created_at",{ascending:false}),
    sb.from("profiles").select("*").eq("id",uid).single(),
    sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
-   sb.from("follows").select("followee_id").eq("follower_id",uid)]);
+   sb.from("follows").select("followee_id,status").eq("follower_id",uid)]);
   try{const pr=await sb.from("platforms").select("name");if(!pr.error)PLT=(pr.data||[]).map(x=>x.name)}catch(_){}
-  R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.map(x=>x.followee_id));const dc={};DEN=b.data.map(x=>({id:x.id,iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers}));b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
+  R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.filter(x=>x.status!=="pending").map(x=>x.followee_id));PEND=new Set(f.data.filter(x=>x.status==="pending").map(x=>x.followee_id));const dc={};DEN=b.data.map(x=>({id:x.id,iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers}));b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
   items=a.data.map(r=>{const i=mapS(r.series);Object.assign(i,{status:stIn(r),watched:r.watched_eps,rating:+r.rating||0,liked:r.liked,wl:!!r.watchlist,dcount:dc[r.series_id]||0});const x=de[r.series_id];if(x)Object.assign(i,{watchedOn:Date.parse(x.watched_on+"T12:00:00"),review:x.review,spoil:x.spoilers,rewatch:x.rewatch,rtags:x.tags,deid:x.id});return i});
   cache={};e.data.forEach(r=>{const id=idOf(r.id);if(!items.some(x=>x.id===id))cache[id]=mapS(r)});
   CAT=e.data.map(r=>items.find(x=>x.sid===r.id)||cache[idOf(r.id)]);pendS.forEach(x=>{if(!CAT.includes(x))CAT.unshift(x)});
   const need=new Set();c.data.forEach(l=>(l.list_items||[]).forEach(x=>need.add(x.series_id)));(d.data.favorites||[]).forEach(x=>need.add(x));
   const miss=[...need].filter(u=>!get(idOf(u)));if(miss.length){const r=await sb.from("series").select("*").in("id",miss);if(!r.error)r.data.forEach(x=>{cache[idOf(x.id)]=mapS(x)})}
   lists=c.data.map(l=>({id:idOf(l.id),sid:l.id,name:l.name,desc:l.description,rank:l.ranked,ids:(l.list_items||[]).sort((p,q)=>p.position-q.position).map(x=>idOf(x.series_id)),ts:Date.parse(l.created_at),...lxOf(l)}));
-  const P=d.data;prof={user:P.username,name:P.display_name,fam:P.family_name,email:U.email,loc:P.location,web:P.website,pron:P.pronouns,bio:P.bio,av:P.avatar_path||"",fav:(P.favorites||[]).map(idOf)};setMe();
+  const P=d.data;prof={user:P.username,name:P.display_name,fam:P.family_name,email:U.email,loc:P.location,web:P.website,pron:P.pronouns,bio:P.bio,av:P.avatar_path||"",fav:(P.favorites||[]).map(idOf),vis:P.visibility==="private"?"private":"public",cs:P.count_in_stats!==false,dsc:P.discoverable!==false};setMe();
   log=[];b.data.forEach(x=>{const i=get(idOf(x.series_id));if(!i)return;const ts=Date.parse(x.watched_on+"T12:00:00");log.push({t:"done",id:i.id,title:i.title,r:+x.rating||0,ts});if(x.rating)log.push({t:"rate",id:i.id,title:i.title,r:+x.rating,ts})});
   items.forEach(i=>{if(i.created_by===uid)log.push({t:"add",id:i.id,title:i.title,ts:i.added})});
   log.sort((p,q)=>q.ts-p.ts);log=log.slice(0,100);
   shadow={};items.forEach(i=>shadow[i.id]={st:iState(i),sid:i.sid});shadowL={};lists.forEach(l=>shadowL[l.id]={st:l.dx?"":listState(l),sid:l.sid});shadowP=profState();if(!P.display_name){prof.name=P.username.replace(/_[0-9a-f]{6}$/,"");sched()}
+  sb.from("follows").select("*",{count:"exact",head:true}).eq("followee_id",U.id).eq("status","pending").then(r=>{if(!r.error){REQN=r.count||0;if(typeof nbDot==="function")nbDot()}});
   if(items.length){const r=await sb.from("series_stats").select("*").in("series_id",items.map(i=>i.sid));if(!r.error)r.data.forEach(applyStat)}
 }
 async function up(i,uid){if(!i.cover||!i.cover.startsWith("data:"))return;const bl=await (await fetch(i.cover)).blob(),path=uid+"/"+i.sid+(i.cp?"-"+Date.now().toString(36):"")+".jpg";await ck(sb.storage.from("covers").upload(path,bl,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"}));i.cp=path;i.cover=cvr(path)}
