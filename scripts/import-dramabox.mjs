@@ -4,10 +4,13 @@
 //
 //   node scripts/import-dramabox.mjs --list /browse/498 --pages 3 --max 40
 //   node scripts/import-dramabox.mjs --probe            # saves the raw page data for debugging
+//   node scripts/import-dramabox.mjs --reset            # forget which series were already collected
+//
+// It remembers collected series in dramabox-seen.json, so every run gives NEW ones.
 //
 // Polite by design: identified user agent, one request every ~3 s, a hard cap, and it
 // stops at the first 403/429 instead of trying to get around it. Metadata only (no covers).
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const BASE = process.env.DRAMABOX_BASE || "https://www.dramaboxapp.com";
 const UA = "MicroboxdBot/0.1 (personal catalog helper; +https://github.com/itstxti/MICROBOXD)";
@@ -75,9 +78,12 @@ async function main() {
     console.log("Saved dramabox-probe.json. Parsed:", parseFilm("41000119953", html || ""));
     return;
   }
-  const lists = [].concat(opt("list", "/more/trending")), pages = +opt("pages", 1), max = +opt("max", 30);
-  const ids = [];
-  for (const l of lists) for (let p = 1; p <= pages; p++) {
+  const SEEN = "dramabox-seen.json";
+  const seen = new Set(!args.includes("--reset") && existsSync(SEEN) ? JSON.parse(readFileSync(SEEN, "utf8")) : []);
+  const lists = [].concat(opt("list", "/more/trending")), pages = +opt("pages", 8), max = +opt("max", 30);
+  const ids = [], fresh = () => ids.filter((i) => !seen.has(i));
+  console.log(`${seen.size} series already collected in earlier runs (skipped).`);
+  for (const l of lists) for (let p = 1; p <= pages && fresh().length < max; p++) {
     const h = await page(p === 1 ? l : `${l}${l.includes("?") ? "&" : "?"}page=${p}`);
     if (!h) break;
     const before = ids.length;
@@ -88,10 +94,10 @@ async function main() {
   }
   const out = [];
   try {
-    for (const id of ids.slice(0, max)) {
+    for (const id of fresh().slice(0, max)) {
       const h = await page("/film/" + id);
       const it = h && parseFilm(id, h);
-      if (it) { out.push(it); console.log(`  ${out.length}. ${it.title} (${it.episodes} ep, ${it.tropes.join("/") || "no tags"})`); }
+      if (it) { out.push(it); seen.add(id); console.log(`  ${out.length}. ${it.title} (${it.episodes} ep, ${it.tropes.join("/") || "no tags"})`); }
       else console.log("  skipped", id);
       await sleep(3000);
     }
@@ -100,6 +106,7 @@ async function main() {
     else throw e;
   }
   writeFileSync("dramabox-import.json", JSON.stringify(out, null, 1));
-  console.log(`\nSaved ${out.length} series to dramabox-import.json. Import it from the app: Settings -> Import series.`);
+  writeFileSync(SEEN, JSON.stringify([...seen]));
+  console.log(`\nSaved ${out.length} NEW series to dramabox-import.json. Import it from the app: Settings -> Import series.`);
 }
 main().catch((e) => { console.error(e); process.exit(1); });
