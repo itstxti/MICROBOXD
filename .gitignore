@@ -4,3 +4,4 @@ node_modules
 
 # local output of scripts/import-dramabox.mjs
 dramabox-*.json
+narto-*.json

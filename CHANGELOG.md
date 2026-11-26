@@ -6,7 +6,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 ## [Unreleased]
 
 ### Added
-- Import series from a JSON file (Settings → Import series): review the list, duplicates come unticked, add the rest. `scripts/import-dramabox.mjs` builds that file from public DramaBox pages (run it on your own computer; polite, stops at the first 403/429).
+- Import series from a JSON file (Settings → Import series): review the list, duplicates come unticked, add the rest. `scripts/import-dramabox.mjs` and `scripts/import-narto.mjs` build that file from public pages (run them on your own computer; polite, remember what they already collected, stop at the first 403/429).
 - Profile privacy: Public / Private profiles with follow requests (Settings → Privacy). Private profiles show a lock to non-followers; requests appear in Activity → Incoming with Accept / Decline and a dot on the Activity icon. Two separate settings: count my ratings in the global averages, and appear in member search.
 - Light theme (opt-in) with a Theme setting: Dark (default), Light or System. One coherent warm palette; dark header, bottom bar and modal headers on mobile.
 - Desktop: keyboard shortcuts (`Esc`, `/`), browser Back closes layers, `#/s/<id>` deep links, review cards on Home and a card grid on Explore, filters and list editor as rounded floating modals, stacked Popular / Friends reviews on the series page, secondary screens.
