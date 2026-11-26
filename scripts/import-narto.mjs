@@ -4,6 +4,7 @@
 //
 //   node scripts/import-narto.mjs --max 40
 //   node scripts/import-narto.mjs --provider reelshort --max 40   # only that provider's series
+//   node scripts/import-narto.mjs --provider reelshort --max 20 --covers   # also download the posters
 //   node scripts/import-narto.mjs --providers                     # list the provider names
 //   node scripts/import-narto.mjs --list /tag/romance --max 40 --app DramaBox
 //   node scripts/import-narto.mjs --reset        # forget which series were already collected
@@ -46,9 +47,22 @@ export function parseCards(html, app) {
     const eps = +((b.match(/episode-badge">\s*Ep:\s*(\d+)/i) || [])[1] || 0);
     const url = decode((b.match(/data-watch-url="([^"?]*)/) || [])[1] || "");
     const tropes = [...b.matchAll(/class="movie-tag[^"]*"[^>]*>\s*#?([^<]+?)\s*<\/a>/g)].map((x) => clean(x[1])).filter(Boolean);
-    if (id && title && eps) out.push({ source: "narto", source_id: id, url, title, app, episodes: eps, tropes: [...new Set(tropes)].slice(0, 12), synopsis: "" });
+    const poster = (b.match(/<img[^>]*class="poster"[^>]*\ssrc="([^"]+)"/) || b.match(/<img[^>]*\ssrc="([^"]+)"[^>]*class="poster"/) || [])[1];
+    if (id && title && eps) out.push({ source: "narto", source_id: id, url, title, app, episodes: eps, tropes: [...new Set(tropes)].slice(0, 12), synopsis: "", poster: poster ? decode(poster) : "" });
   }
   return out;
+}
+
+// Downloads a poster and returns it as a data URL (the app converts it to JPEG on import). Skips big files.
+async function cover(src) {
+  try {
+    const r = await fetch(new URL(src, BASE), { headers: { "user-agent": UA, accept: "image/*" } });
+    if (r.status === 403 || r.status === 429) throw new Blocked(`${r.status} on ${src}`);
+    const type = (r.headers.get("content-type") || "").split(";")[0];
+    if (!r.ok || !type.startsWith("image/")) return "";
+    const buf = Buffer.from(await r.arrayBuffer());
+    return buf.length <= 2_000_000 ? `data:${type};base64,${buf.toString("base64")}` : "";
+  } catch (e) { if (e instanceof Blocked) throw e; return ""; }
 }
 
 async function main() {
@@ -82,6 +96,17 @@ async function main() {
     if (e instanceof Blocked) console.log("\nThe site refused a request (" + e.message + "). Stopping; saving what was collected.");
     else throw e;
   }
+  if (args.includes("--covers")) {
+    try {
+      let n = 0;
+      for (const it of out) { if (!it.poster) continue; it.cover = await cover(it.poster); if (it.cover) n++; await sleep(1000); }
+      console.log(`Downloaded ${n} of ${out.length} covers.`);
+    } catch (e) {
+      if (e instanceof Blocked) console.log("\nThe image server refused a request (" + e.message + "). Keeping the covers downloaded so far.");
+      else throw e;
+    }
+  }
+  out.forEach((it) => delete it.poster);
   writeFileSync("narto-import.json", JSON.stringify(out, null, 1));
   writeFileSync(SEEN, JSON.stringify([...seen]));
   console.log(`\nSaved ${out.length} NEW series to narto-import.json. Import it from the app: Settings -> Import series.`);
