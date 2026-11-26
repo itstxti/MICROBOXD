@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { join, basename } from "node:path";
 
 const IN_DIR = "C:\\Users\\Usuario-\\Documents\\app\\MICROBOXD\\imports\\sin-cover";
-const OUT_DIR = "C:\\Users\\Usuario-\\Documents\\app\\MICROBOXD\\imports\\concover";
+const OUT_DIR = "C:\\Users\\Usuario-\\Documents\\app\\MICROBOXD\\imports\\con-cover";
 mkdirSync(IN_DIR, { recursive: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
