@@ -141,17 +141,21 @@ function impPick(){const f=document.createElement("input");f.type="file";f.accep
   f.onchange=async()=>{const file=f.files&&f.files[0];if(!file)return;try{impOpen(JSON.parse(await file.text()))}catch(e){console.error(e);toast(L2("Archivo no válido","Invalid file"))}};f.click()}
 function impOpen(a){const raw=Array.isArray(a)?a:(a&&a.items)||[],have=new Set(catAll().map(i=>impKey(i.title))),seen=new Set();
   IMP=raw.slice(0,300).map(x=>({title:String((x&&x.title)||"").trim().slice(0,160),app:String(x.app||"DramaBox").trim().slice(0,30)||"DramaBox",syn:String(x.synopsis||"").trim().slice(0,2000),
-    tropes:(Array.isArray(x.tropes)?x.tropes:[]).map(t=>String(t).trim()).filter(Boolean).slice(0,TM_MAX),eps:Math.min(2000,Math.max(1,parseInt(x.episodes)||1))}))
+    tropes:(Array.isArray(x.tropes)?x.tropes:[]).map(t=>String(t).trim()).filter(Boolean).slice(0,TM_MAX),eps:Math.min(2000,Math.max(1,parseInt(x.episodes)||1)),cover:/^data:image\/(jpeg|png|webp|gif);base64,/.test(x.cover||"")&&x.cover.length<4e6?x.cover:""}))
    .filter(x=>{const k=impKey(x.title);if(!k||seen.has(k))return false;seen.add(k);x.dup=have.has(k);x.on=!x.dup;return true});
   if(!IMP.length){toast(L2("No hay series en el archivo","No series in the file"));return}
   impDraw(true)}
 function impDraw(first){const n=IMP.filter(x=>x.on).length,h=subBar(L2("Importar series","Import series"))+`<div class="impt"><span>${n} / ${IMP.length} ${L2("seleccionadas","selected")}${IMP.some(x=>x.dup)?" · "+L2("las repetidas vienen sin marcar","duplicates are unticked"):""}</span><button class="impa" onclick="impAll(${n<IMP.length})">${n<IMP.length?L2("Todas","All"):L2("Ninguna","None")}</button></div>`
-   +IMP.map((x,i)=>`<div class="srow imp" onclick="impTog(${i})"><span class="ick ${x.on?"on":""}"></span><div class="imc"><b>${esc(x.title)}</b><small>${esc(x.app)} · ${x.eps} ${L2("ep.","ep.")}${x.dup?" · "+L2("ya existe","already in catalog"):""}${x.tropes.length?"<br>"+esc(x.tropes.join(", ")):""}</small></div></div>`).join("")
+   +IMP.map((x,i)=>`<div class="srow imp" onclick="impTog(${i})"><span class="ick ${x.on?"on":""}"></span>${x.cover?`<img class="impi" src="${x.cover}" alt="">`:""}<div class="imc"><b>${esc(x.title)}</b><small>${esc(x.app)} · ${x.eps} ${L2("ep.","ep.")}${x.dup?" · "+L2("ya existe","already in catalog"):""}${x.tropes.length?"<br>"+esc(x.tropes.join(", ")):""}</small></div></div>`).join("")
    +`<div style="padding:16px"><button class="impg" ${n?"":"disabled"} onclick="impGo()">${L2("Añadir","Add")} ${n} ${L2("series","series")}</button></div>`;
   const s=$("sub"),y=s.scrollTop;if(first)subOpen(h);else{s.innerHTML=h;s.scrollTop=y}}
 function impTog(i){IMP[i].on=!IMP[i].on;impDraw()}
 function impAll(v){IMP.forEach(x=>x.on=v);impDraw()}
-function impGo(){const sel=IMP.filter(x=>x.on);if(!sel.length)return;
-  sel.reverse().forEach(x=>{const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title:x.title,app:x.app,syn:x.syn,tropes:x.tropes,cast:[],castTxt:"",eps:x.eps,epm:null,watched:0,rating:0,review:"",status:"",cover:"",added:Date.now()};
+const impJpeg=u=>new Promise(res=>{const im=new Image();im.onload=()=>{const w=Math.min(600,im.naturalWidth),h=Math.round(w*im.naturalHeight/im.naturalWidth),c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);res(c.toDataURL("image/jpeg",.85))};im.onerror=()=>res("");im.src=u});
+async function impGo(){const sel=IMP.filter(x=>x.on);if(!sel.length)return;
+  const b=document.querySelector(".impg");if(b){b.disabled=true;if(sel.some(x=>x.cover))b.textContent=L2("Procesando portadas…","Processing covers…")}
+  for(const x of sel)if(x.cover)x.cover=await impJpeg(x.cover);
+  const known=appsAll().map(x=>x.toLowerCase());new Set(sel.map(x=>x.app)).forEach(a=>{if(!known.includes(a.toLowerCase())){known.push(a.toLowerCase());PLT.push(a);if(sb&&U)sb.from("platforms").insert({name:a}).then(r=>{if(r.error)console.error(r.error)})}});
+  sel.reverse().forEach(x=>{const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title:x.title,app:x.app,syn:x.syn,tropes:x.tropes,cast:[],castTxt:"",eps:x.eps,epm:null,watched:0,rating:0,review:"",status:"",cover:x.cover||"",added:Date.now()};
     it._b=iState(it);cache[it.id]=it;pendS.push(it);CAT.unshift(it)});
   IMP=[];save();render();subX();toast(sel.length+" "+L2("series añadidas","series added"))}
