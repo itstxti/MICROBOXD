@@ -8,7 +8,7 @@ function drawSetD(){
   const U1=prof.user||(U&&U.email?U.email.split("@")[0]:""),has=sd.avd||sd.av,
    F=(l,k,o)=>{o=o||{};return `<label class="sdf"><span>${l}</span><input type="${o.t||"text"}" maxlength="80" placeholder="${o.ph||""}" value="${esc(sd[k])}" oninput="sd.${k}=this.value"></label>`},
    slots=[0,1,2,3].map(k=>{const it=get(sd.fav[k]);return it?`<div class="fvp" data-k="${k}">${nop(it)}<button class="fvx" aria-label="Quitar" onclick="sdRm(${k})">×</button></div>`:`<div class="fvp fve" onclick="sdAdd()">＋</div>`}).join(""),
-   TB=[["p",L2("Perfil","Profile")],["a",L2("Acceso","Auth")],["av","Avatar"],["l",L2("Idioma","Language")],["t",L2("Tema","Theme")],["pv",L2("Privacidad","Privacy")]],
+   TB=[["p",L2("Perfil","Profile")],["a",L2("Acceso","Auth")],["av","Avatar"],["l",L2("Idioma","Language")],["t",L2("Tema","Theme")],["pv",L2("Privacidad","Privacy")],["im",L2("Importar","Import")]],
    fh=t=>`<div class="sdh5"><span>${t}</span></div>`;
   let body="";
   if(sdT==="p")body=`<h2>${L2("Perfil","Profile")}</h2><div class="sdg"><div>
@@ -24,6 +24,7 @@ function drawSetD(){
     <label class="sdf"><span>${L2("Nueva contraseña (mín. 6 caracteres)","New password (min. 6 characters)")}</span><input id="pw-n" type="password" autocomplete="new-password"></label>
     <div class="sdb"><button class="sdsv" onclick="pwSave()">${L2("Guardar contraseña","Save password")}</button><a onclick="logout()">${L2("Cerrar sesión","Sign out")}</a></div></div></div>`;
   else if(sdT==="av")body=`<h2>${L2("Foto de perfil","Profile photo")}</h2><div class="sdav"><div class="av" style="width:150px;height:150px;font-size:58px${avs(has)}">${has?"":ini()}</div><div class="sdbc"><input type="file" id="av-f" accept="image/*" hidden onchange="sdAv(this)"><button class="sdsv" onclick="$('av-f').click()">${L2("Cambiar foto","Change photo")}</button>${has?`<a onclick="sd.av='';sd.avd='';drawSet()">${L2("Quitar foto","Remove photo")}</a>`:""}</div></div>`;
+  else if(sdT==="im")body=`<h2>${L2("Importar series","Import series")}</h2><p class="shint" style="padding:0 0 14px">${L2("Sube el archivo JSON que genera scripts/import-dramabox.mjs. Podrás revisar la lista y elegir qué series añadir.","Upload the JSON file made by scripts/import-dramabox.mjs. You can review the list and choose which series to add.")}</p><div class="sdlg"><button onclick="impPick()">${L2("Elegir archivo…","Choose file…")}</button></div>`;
   else if(sdT==="pv")body=`<h2>${L2("Privacidad","Privacy")}</h2><div class="sdlg">${PVV().map(([c,n])=>`<button class="${prof.vis===c?"on":""}" onclick="setPriv('vis','${c}')">${n}${prof.vis===c?" ✓":""}</button>`).join("")}</div><p class="shint" style="padding:12px 0">${prof.vis==="private"?PVD.private():PVD.public()}</p>
     <label class="sdf" style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" ${prof.cs?"checked":""} onchange="setPriv('cs',this.checked)"><span>${L2("Contar mis notas en las medias globales","Count my ratings in the global averages")}</span></label>
     <label class="sdf" style="flex-direction:row;align-items:center;gap:10px"><input type="checkbox" ${prof.dsc?"checked":""} onchange="setPriv('dsc',this.checked)"><span>${L2("Aparecer en la búsqueda de miembros","Appear in member search")}</span></label>`;
@@ -40,6 +41,7 @@ function drawSet(){const dk=DSK();$("set").classList.toggle("sd2",dk);if(dk){dra
   <div class="sgrp">${N("Contraseña y autenticación","","pwEd()")}<div class="srow so" onclick="logout()"><span>Cerrar sesión</span></div></div>
   <div class="sgrp">${N("Idioma",LANG==="es"?"Español":"English","mbLangPick()")}${N(L2("Tema","Theme"),THM().find(x=>x[0]===mbThemeMode())[1],"mbThemePick()")}</div>
   <div class="slb">${L2("Privacidad","Privacy")}</div><div class="sgrp">${N(L2("Perfil","Profile"),PVV().find(x=>x[0]===prof.vis)[1],"mbVisPick()")}<div class="srow" onclick="setPriv('cs',!prof.cs)"><span>${L2("Contar mis notas en las medias","Count my ratings in averages")}</span><button class="sw ${prof.cs?"on":""}" aria-label="${L2("Contar mis notas en las medias","Count my ratings in averages")}"></button></div><div class="srow" onclick="setPriv('dsc',!prof.dsc)"><span>${L2("Aparecer en la búsqueda","Appear in member search")}</span><button class="sw ${prof.dsc?"on":""}" aria-label="${L2("Aparecer en la búsqueda","Appear in member search")}"></button></div></div><div class="shint">${prof.vis==="private"?PVD.private():PVD.public()}</div>
+  <div class="slb">${L2("Catálogo","Catalog")}</div><div class="sgrp">${N(L2("Importar series","Import series"),L2("Archivo JSON","JSON file"),"impPick()")}</div>
   <div class="slb">Perfil</div><div class="sgrp"><div class="srow" onclick="phOpt()"><span>Foto de perfil</span><div class="av" style="width:34px;height:34px;font-size:14px${avs(has)}"></div></div><input type="file" id="av-f" accept="image/*" hidden onchange="sdAv(this)">${R("Nombre","name")}${R("Apellidos","fam")}${R("Correo electrónico","email","","email")}${R("Ubicación","loc","Ciudad, país")}${R("Web","web",L2("tusitio.com","yoursite.com"),"url")}${N("Bio",esc((sd.bio||"").split("\n")[0].slice(0,30)),"bioEd()")}${N("Pronombres",esc(sd.pron||""),"pronEd()")}</div>
   <div class="slb">Series favoritas</div><div class="fvs" onpointerdown="fvDrag(event)">${slots}</div><div class="shint">Arrastra los pósters para reordenar.</div>${instH()}`}
 function phOpt(){if(!(sd.avd||sd.av)){$("av-f").click();return}$("ov").innerHTML=`<div class="card"><div class="ot"><b>Foto de perfil</b></div><button class="oi" onclick="closeOv();$('av-f').click()">Cambiar foto</button><button class="oi d" onclick="sd.av='';sd.avd='';closeOv();drawSet()">Quitar foto</button></div><button class="card" onclick="closeOv()">Cancelar</button>`;$("ov").classList.add("open")}
@@ -131,3 +133,25 @@ async function setPriv(k,v){const col={vis:"visibility",cs:"count_in_stats",dsc:
     if(k==="vis"){INC=null;REQN=0;nbDot();toast(v==="private"?L2("Perfil privado","Profile is now private"):L2("Perfil público","Profile is now public"))}
     else{Object.keys(statAt).forEach(x=>delete statAt[x]);toast(L2("Guardado","Saved"))}}
   catch(e){console.error(e);prof[k]=old;if(sd)sd[k]=old;drawSet();toast(L2("No se pudo guardar","Couldn't save"))}}
+
+// Import series from a JSON file (see scripts/import-dramabox.mjs): review, tick, add.
+let IMP=[];
+const impKey=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+function impPick(){const f=document.createElement("input");f.type="file";f.accept="application/json,.json";
+  f.onchange=async()=>{const file=f.files&&f.files[0];if(!file)return;try{impOpen(JSON.parse(await file.text()))}catch(e){console.error(e);toast(L2("Archivo no válido","Invalid file"))}};f.click()}
+function impOpen(a){const raw=Array.isArray(a)?a:(a&&a.items)||[],have=new Set(catAll().map(i=>impKey(i.title))),seen=new Set();
+  IMP=raw.slice(0,300).map(x=>({title:String((x&&x.title)||"").trim().slice(0,160),app:String(x.app||"DramaBox").trim().slice(0,30)||"DramaBox",syn:String(x.synopsis||"").trim().slice(0,2000),
+    tropes:(Array.isArray(x.tropes)?x.tropes:[]).map(t=>String(t).trim()).filter(Boolean).slice(0,TM_MAX),eps:Math.min(2000,Math.max(1,parseInt(x.episodes)||1))}))
+   .filter(x=>{const k=impKey(x.title);if(!k||seen.has(k))return false;seen.add(k);x.dup=have.has(k);x.on=!x.dup;return true});
+  if(!IMP.length){toast(L2("No hay series en el archivo","No series in the file"));return}
+  impDraw(true)}
+function impDraw(first){const n=IMP.filter(x=>x.on).length,h=subBar(L2("Importar series","Import series"))+`<div class="impt"><span>${n} / ${IMP.length} ${L2("seleccionadas","selected")}${IMP.some(x=>x.dup)?" · "+L2("las repetidas vienen sin marcar","duplicates are unticked"):""}</span><button class="impa" onclick="impAll(${n<IMP.length})">${n<IMP.length?L2("Todas","All"):L2("Ninguna","None")}</button></div>`
+   +IMP.map((x,i)=>`<div class="srow imp" onclick="impTog(${i})"><span class="ick ${x.on?"on":""}"></span><div class="imc"><b>${esc(x.title)}</b><small>${esc(x.app)} · ${x.eps} ${L2("ep.","ep.")}${x.dup?" · "+L2("ya existe","already in catalog"):""}${x.tropes.length?"<br>"+esc(x.tropes.join(", ")):""}</small></div></div>`).join("")
+   +`<div style="padding:16px"><button class="impg" ${n?"":"disabled"} onclick="impGo()">${L2("Añadir","Add")} ${n} ${L2("series","series")}</button></div>`;
+  const s=$("sub"),y=s.scrollTop;if(first)subOpen(h);else{s.innerHTML=h;s.scrollTop=y}}
+function impTog(i){IMP[i].on=!IMP[i].on;impDraw()}
+function impAll(v){IMP.forEach(x=>x.on=v);impDraw()}
+function impGo(){const sel=IMP.filter(x=>x.on);if(!sel.length)return;
+  sel.reverse().forEach(x=>{const sid=crypto.randomUUID(),it={id:idOf(sid),sid,fresh:true,title:x.title,app:x.app,syn:x.syn,tropes:x.tropes,cast:[],castTxt:"",eps:x.eps,epm:null,watched:0,rating:0,review:"",status:"",cover:"",added:Date.now()};
+    it._b=iState(it);cache[it.id]=it;pendS.push(it);CAT.unshift(it)});
+  IMP=[];save();render();subX();toast(sel.length+" "+L2("series añadidas","series added"))}
