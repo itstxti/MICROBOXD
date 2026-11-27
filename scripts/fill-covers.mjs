@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Fills "cover" (data URL) from "cover_url" for every JSON in imports\sin-cover
-// and writes the result to imports\concover (same file name).
+// and writes the result to imports\con-cover (same file name).
 //   node scripts/fill-covers.mjs                 -> all .json files in sin-cover
 //   node scripts/fill-covers.mjs netshort.json   -> only that file (name inside sin-cover)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
@@ -41,14 +41,18 @@ for (const file of files) {
     if (!it.cover_url) { failed.push(it.title + " (sin cover_url)"); continue; }
     try {
       const origin = new URL(it.url || it.cover_url).origin;
-      const r = await fetch(it.cover_url, { headers: { "user-agent": UA, accept: "image/*", referer: origin + "/" } });
+      const r = await fetch(it.cover_url, { headers: { "user-agent": UA, accept: "image/webp,image/jpeg,image/png,image/*;q=0.1", referer: origin + "/" } }); // CAMBIO: accept
       if (r.status === 403 || r.status === 429) {
         console.log(`El servidor de imágenes respondió ${r.status}. Paro aquí y guardo lo conseguido.`);
         stop = true;
         break;
       }
-      const type = (r.headers.get("content-type") || "").split(";")[0];
+      // CAMBIO: normaliza image/jpg -> image/jpeg
+      let type = (r.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+      if (type === "image/jpg" || type === "image/pjpeg") type = "image/jpeg";
       if (!r.ok || !type.startsWith("image/")) throw new Error(`HTTP ${r.status} ${type}`);
+      // CAMBIO: solo formatos que la app acepta
+      if (!/^image\/(jpeg|png|webp|gif)$/.test(type)) throw new Error(`formato no soportado: ${type}`);
       const buf = Buffer.from(await r.arrayBuffer());
       if (buf.length > 2_000_000) throw new Error("más de 2 MB");
       it.cover = `data:${type};base64,${buf.toString("base64")}`;
@@ -67,4 +71,4 @@ for (const file of files) {
   if (failed.length) console.log("Fallidas:\n - " + failed.join("\n - "));
   console.log(`Guardado en ${outPath}`);
 }
-console.log("\nListo. Importa los archivos de imports\\concover en Settings -> Import series.");
+console.log("\nListo. Importa los archivos de imports\\con-cover en Settings -> Import series.");
