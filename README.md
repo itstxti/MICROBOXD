@@ -63,7 +63,7 @@ npm run check   # same checks as CI
 See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: [SECURITY.md](SECURITY.md).
 
 ## Notes
-- The catalogue is loaded client-side (up to 1000 series). Past that, move search server-side (`pg_trgm` is enabled).
+- The whole catalogue is loaded client-side, in pages of 1000 (Supabase's per-request limit). It has no hard cap, but startup gets slower with many thousands of series; past that, move search server-side (`pg_trgm` is enabled).
 - Not affiliated with Letterboxd or any streaming platform. Demo data is fictional.
 
 ## License

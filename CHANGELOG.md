@@ -6,6 +6,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 ## [Unreleased]
 
 ### Added
+- Import several JSON files at once (Settings → Import series): each file shows its own status (reading / series found / invalid) with an overall progress bar, duplicates across files are skipped, and adding the selection shows cover-processing progress.
 - Import series from a JSON file (Settings → Import series): review the list, duplicates come unticked, add the rest. `scripts/import-dramabox.mjs` and `scripts/import-narto.mjs` build that file from public pages (run them on your own computer; polite, remember what they already collected, stop at the first 403/429). `import-narto.mjs --provider reelshort` takes only that provider's series; unknown platforms are added to the platform list on import. `import-narto.mjs --files "folder\\*.html"` reads listing pages you saved from your browser (the site checks for real browsers, so it cannot be fetched by a script), including covers from the saved `_files` folder. With `--covers` the collector also downloads the posters; the app converts them to JPEG on import and uploads them like any cover.
 - Profile privacy: Public / Private profiles with follow requests (Settings → Privacy). Private profiles show a lock to non-followers; requests appear in Activity → Incoming with Accept / Decline and a dot on the Activity icon. Two separate settings: count my ratings in the global averages, and appear in member search.
 - Light theme (opt-in) with a Theme setting: Dark (default), Light or System. One coherent warm palette; dark header, bottom bar and modal headers on mobile.
@@ -14,6 +15,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 - Mobile Home community section; welcome message links to your profile; theme and platform chips on search results are clickable.
 
 ### Changed
+- No more 1000-series cap: the catalogue, your series states and your diary are read in pages of 1000, and the multi-file import has no total limit.
 - Cover images are cached by the service worker (cache-first), decoded lazily, and new uploads get a one-year cache header.
 - Faster desktop transitions.
 - The app now defaults to the dark theme regardless of the device setting.

@@ -21,13 +21,15 @@ function adopt(){for(const k in cache){const i=cache[k];if(iState(i)!==i._b){ite
 function sched(){dirty=true;clearTimeout(pushT);pushT=setTimeout(push,500)}
 function applyStat(r){const v=[];(r.histogram||[]).forEach((n,j)=>{for(let k=0;k<Math.min(+n,200);k++)v.push((j+1)/2)});const i=get(idOf(r.series_id));if(!i)return false;const kk=key(i),o=JSON.stringify([com[kk],i._m,i._rv,i._ls]);com[kk]=v;i._m=+r.members;i._rv=+r.reviews;i._ls=+r.lists;return o!==JSON.stringify([com[kk],i._m,i._rv,i._ls])}
 async function loadStat(i){if(!sb||!i.sid||Date.now()-(statAt[i.sid]||0)<30000)return;statAt[i.sid]=Date.now();try{const{data}=await sb.from("series_stats").select("*").eq("series_id",i.sid).maybeSingle();if(data&&applyStat(data)&&curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){}}
+// Supabase returns at most 1000 rows per request (PostgREST max-rows), so big tables are read in pages. `mk` builds a fresh query each time; it must end in a unique order key for stable pages.
+async function pageAll(mk,n=1000){let out=[],from=0;for(;;){const r=await mk().range(from,from+n-1);if(r.error)return r;out=out.concat(r.data);if(r.data.length<n)return{data:out,error:null};from+=n}}
 async function pull(){
   const uid=U.id,R=await Promise.all([
-   sb.from("user_series").select("*,series(*)").eq("user_id",uid).order("updated_at",{ascending:false}),
-   sb.from("diary_entries").select("*").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}),
+   pageAll(()=>sb.from("user_series").select("*,series(*)").eq("user_id",uid).order("updated_at",{ascending:false}).order("series_id")),
+   pageAll(()=>sb.from("diary_entries").select("*").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).order("id")),
    sb.from("lists").select("*,list_items(*)").eq("user_id",uid).order("created_at",{ascending:false}),
    sb.from("profiles").select("*").eq("id",uid).single(),
-   sb.from("series").select("*").order("created_at",{ascending:false}).limit(1000),
+   pageAll(()=>sb.from("series").select("*").order("created_at",{ascending:false}).order("id")),
    sb.from("follows").select("followee_id,status").eq("follower_id",uid)]);
   try{const pr=await sb.from("platforms").select("name");if(!pr.error)PLT=(pr.data||[]).map(x=>x.name)}catch(_){}
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.filter(x=>x.status!=="pending").map(x=>x.followee_id));PEND=new Set(f.data.filter(x=>x.status==="pending").map(x=>x.followee_id));const dc={};DEN=b.data.map(x=>({id:x.id,iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers}));b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
