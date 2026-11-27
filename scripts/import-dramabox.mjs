@@ -11,7 +11,7 @@
   const CHUNK = 10;             // cada cuántas páginas se descarga un archivo
   const CONC = 2;               // peticiones a la vez (no subas esto)
   const PAUSE = 800;            // ms de pausa entre peticiones
-  const SKIP_DUBBED = false;    // true: omite las versiones "(DUBBED)"
+  const SKIP_DUBBED = true;    // true: omite las versiones "(DUBBED)"
   const MAX_FAILS = 6;          // fallos seguidos antes de parar
   const MAX_FILE = 300;         // la app ignora sin avisar lo que pase de 300 por archivo
   const APP = "DramaBox";
