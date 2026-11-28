@@ -24,6 +24,39 @@ for (const f of jsFiles) {
 const html = read("index.html");
 if (/<script(?![^>]*\bsrc=)[^>]*>\s*\S/.test(html)) bad("index.html contains inline <script> code; put it in js/");
 
+// 2b. Classic scripts share one global scope: a top-level let/const/class name declared twice
+// (even in different files) is a SyntaxError that silently breaks the second script.
+{
+  const names = (line) => { // names declared by one top-level `let|const|class` line, incl. `a=1,b=2`
+    const out = [], m = line.match(/^(?:let|const|class)\s+([A-Za-z_$][\w$]*)/);
+    if (!m) return out;
+    out.push(m[1]);
+    if (!/^(?:let|const)\b/.test(line)) return out;
+    let depth = 0, q = "";
+    for (let k = m[0].length; k < line.length; k++) {
+      const c = line[k];
+      if (q) { if (c === "\\") k++; else if (c === q) q = ""; continue; }
+      if (c === '"' || c === "'" || c === "`") q = c;
+      else if ("([{".includes(c)) depth++;
+      else if (")]}".includes(c)) depth--;
+      else if (c === "," && depth === 0) { const n = line.slice(k + 1).match(/^\s*([A-Za-z_$][\w$]*)\s*=/); if (n) out.push(n[1]); }
+      else if (c === "/" && line[k + 1] === "/") break;
+    }
+    return out;
+  };
+  const seen = new Map(); let dup = 0;
+  for (const f of jsFiles) {
+    const src = read("js/" + f);
+    const first = src.replace(/\/\*[\s\S]*?\*\//g, "").split("\n").find((l) => l.trim() && !l.trim().startsWith("//")) || "";
+    if (first.startsWith("(")) continue; // whole file wrapped in an IIFE: its names are private
+    for (const line of src.split("\n")) for (const n of names(line)) {
+      if (seen.has(n) && seen.get(n) !== f) { bad(`top-level "${n}" declared in both js/${seen.get(n)} and js/${f}`); dup++; }
+      else seen.set(n, f);
+    }
+  }
+  if (!dup) ok("no duplicate top-level names across scripts");
+}
+
 // 3. sw.js parses
 try { execFileSync(process.execPath, ["--check", new URL("../sw.js", import.meta.url).pathname], { stdio: "pipe" }); ok("sw.js parses"); }
 catch (e) { bad("sw.js: " + e.message); }

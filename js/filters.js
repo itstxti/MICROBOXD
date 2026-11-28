@@ -23,15 +23,15 @@ const bfGrid=l=>{const r=bfApply(l);if(!r.length)return bfN(BF)?EMF():EMH();
   const cl=i=>BF.fade&&bfW(i)?cell(i).replace("<div>",'<div class="fw">'):cell(i);
   // Big catalogues: paint a first batch and append the rest as the sentinel scrolls into view.
   // render() rebuilds the view (e.g. when closing a detail), so remember how many were already loaded for this exact list and repaint them all: the scroll position stays valid.
-  const sig=r.length+":"+r[0].id+":"+r[r.length-1].id,n0=r.length>GB?Math.min(r.length,Math.max(GB,GL.get(sig)||0)):r.length;
-  const id=n0<r.length?++gid:0;if(id){GM.set(id,{r,cl,n:n0,sig});for(const k of GM.keys()){if(GM.size<=6)break;GM.delete(k)}}
+  const sig=r.length+":"+r[0].id+":"+r[r.length-1].id,n0=r.length>BFB?Math.min(r.length,Math.max(BFB,BFL.get(sig)||0)):r.length;
+  const id=n0<r.length?++bfgid:0;if(id){BFM.set(id,{r,cl,n:n0,sig});for(const k of BFM.keys()){if(BFM.size<=6)break;BFM.delete(k)}}
   return `<div class="grid g3">${r.slice(0,n0).map(cl).join("")}${id?`<div class="gmore" data-g="${id}"></div>`:""}</div>`};
-const GB=60,GM=new Map(),GL=new Map();let gid=0;
+const BFB=60,BFM=new Map(),BFL=new Map();let bfgid=0;
 (()=>{if(typeof IntersectionObserver!=="function"||typeof MutationObserver!=="function")return;
-  const io=new IntersectionObserver(es=>{for(const e of es){if(!e.isIntersecting)continue;const el=e.target,g=GM.get(+el.dataset.g);io.unobserve(el);
+  const io=new IntersectionObserver(es=>{for(const e of es){if(!e.isIntersecting)continue;const el=e.target,g=BFM.get(+el.dataset.g);io.unobserve(el);
     if(!g){el.remove();continue}
-    const nx=g.r.slice(g.n,g.n+GB);g.n+=GB;GL.set(g.sig,g.n);if(GL.size>20)GL.delete(GL.keys().next().value);el.insertAdjacentHTML("beforebegin",nx.map(g.cl).join(""));
-    if(g.n>=g.r.length){GM.delete(+el.dataset.g);el.remove()}else io.observe(el)}},{rootMargin:"600px 0px"});
+    const nx=g.r.slice(g.n,g.n+BFB);g.n+=BFB;BFL.set(g.sig,g.n);if(BFL.size>20)BFL.delete(BFL.keys().next().value);el.insertAdjacentHTML("beforebegin",nx.map(g.cl).join(""));
+    if(g.n>=g.r.length){BFM.delete(+el.dataset.g);el.remove()}else io.observe(el)}},{rootMargin:"600px 0px"});
   const scan=()=>document.querySelectorAll(".gmore:not([data-o])").forEach(el=>{el.dataset.o=1;io.observe(el)});
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan()})();
 const bfBtn=(c,ns)=>`<button class="bfb${bfN(BF)?" on":""}${c?" "+c:""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen(${ns?"true":""})">${svg(BFIC,22)}</button>`;

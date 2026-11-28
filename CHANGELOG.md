@@ -24,6 +24,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 - Member profiles no longer repeat the reviews list below the Reviews row.
 
 ### Fixed
+- Fixed the home screen loading empty until you switched tabs: a variable added to the browse lists clashed with another script and stopped one of them from loading. `scripts/check.mjs` now fails when two scripts declare the same top-level name.
 - Browse lists: coming back from a series keeps the batches already loaded and the scroll position (the list used to reset to its first 60).
 - Toggle switches stayed beige when switched on in the light theme.
 - Search is cleared when browsing from Explore; member search no longer flickers; desktop profile header alignment; image upload quality.
