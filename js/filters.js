@@ -20,7 +20,18 @@ function bfApply(l){const f=BF,r=bfFilt(l);
    "eps+":(a,b)=>(b.eps||0)-(a.eps||0),"eps-":(a,b)=>(a.eps||0)-(b.eps||0),"dur+":(a,b)=>nv(a.epm,b.epm)||(b.epm||0)-(a.epm||0),"dur-":(a,b)=>nv(a.epm,b.epm)||(a.epm||0)-(b.epm||0)}[f.sort];
   return S?[...r].sort(S):r}
 const bfGrid=l=>{const r=bfApply(l);if(!r.length)return bfN(BF)?EMF():EMH();
-  return `<div class="grid g3">${r.map(i=>BF.fade&&bfW(i)?cell(i).replace("<div>",'<div class="fw">'):cell(i)).join("")}</div>`};
+  const cl=i=>BF.fade&&bfW(i)?cell(i).replace("<div>",'<div class="fw">'):cell(i);
+  // Big catalogues: paint a first batch and append the rest as the sentinel scrolls into view.
+  const id=r.length>GB?++gid:0;if(id){GM.set(id,{r,cl,n:GB});for(const k of GM.keys()){if(GM.size<=6)break;GM.delete(k)}}
+  return `<div class="grid g3">${r.slice(0,id?GB:r.length).map(cl).join("")}${id?`<div class="gmore" data-g="${id}"></div>`:""}</div>`};
+const GB=60,GM=new Map();let gid=0;
+(()=>{if(typeof IntersectionObserver!=="function"||typeof MutationObserver!=="function")return;
+  const io=new IntersectionObserver(es=>{for(const e of es){if(!e.isIntersecting)continue;const el=e.target,g=GM.get(+el.dataset.g);io.unobserve(el);
+    if(!g){el.remove();continue}
+    const nx=g.r.slice(g.n,g.n+GB);g.n+=GB;el.insertAdjacentHTML("beforebegin",nx.map(g.cl).join(""));
+    if(g.n>=g.r.length){GM.delete(+el.dataset.g);el.remove()}else io.observe(el)}},{rootMargin:"600px 0px"});
+  const scan=()=>document.querySelectorAll(".gmore:not([data-o])").forEach(el=>{el.dataset.o=1;io.observe(el)});
+  new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan()})();
 const bfBtn=(c,ns)=>`<button class="bfb${bfN(BF)?" on":""}${c?" "+c:""}" aria-label="${L2("Filtros","Filters")}" onclick="bfOpen(${ns?"true":""})">${svg(BFIC,22)}</button>`;
 const BFIC='<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>';
 let bfNS=false,bfCtx=null;
