@@ -15,6 +15,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 - Mobile Home community section; welcome message links to your profile; theme and platform chips on search results are clickable.
 
 ### Changed
+- Faster start with a big catalogue: the series list no longer downloads synopsis and cast for every series; they load when you open a series (or its edit form).
 - Browse grids (Explore, filters) now paint 60 series first and append more as you scroll, so large catalogues open fast.
 - No more 1000-series cap: the catalogue, your series states and your diary are read in pages of 1000, and the multi-file import has no total limit.
 - Cover images are cached by the service worker (cache-first), decoded lazily, and new uploads get a one-year cache header.
