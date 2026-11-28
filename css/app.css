@@ -1046,3 +1046,4 @@ html[data-theme="light"] #sr .b-pop,html[data-theme="light"] #sr .b-pop:hover{ba
 html[data-theme="light"] #sr .b-top,html[data-theme="light"] #sr .b-top:hover{background:linear-gradient(135deg,#f5e8cb,#ecd7a9)}
 html[data-theme="light"] #sr .b-recent,html[data-theme="light"] #sr .b-recent:hover{background:linear-gradient(135deg,#d5ede0,#c0e0ce)}
 }
+.gmore{grid-column:1/-1;height:1px}
