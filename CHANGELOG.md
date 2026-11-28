@@ -24,6 +24,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The app auto-u
 - Member profiles no longer repeat the reviews list below the Reviews row.
 
 ### Fixed
+- Browse lists: coming back from a series keeps the batches already loaded and the scroll position (the list used to reset to its first 60).
 - Toggle switches stayed beige when switched on in the light theme.
 - Search is cleared when browsing from Explore; member search no longer flickers; desktop profile header alignment; image upload quality.
 - Website placeholder in Settings is now translated.
