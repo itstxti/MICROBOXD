@@ -6,7 +6,11 @@ const sidOf=id=>{const i=get(id);return i&&i.sid};
 const stIn=r=>r.status==="none"?"":r.status;
 const iState=i=>JSON.stringify([i.status||"",i.watched||0,i.rating||0,!!i.liked,!!i.wl]);
 const cvr=p=>p?sb.storage.from("covers").getPublicUrl(p).data.publicUrl:"";
-const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app==="Otra"?"Desconocido":r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,epm:r.duration_minutes?+r.duration_minutes:null,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};i._b=iState(i);return i};
+const SLITE="id,title,app,tropes,episodes,duration_minutes,cover_path,created_by,created_at"; // catalogue without synopsis/cast; loaded on demand (ensureFull)
+const mapS=r=>{const i={id:idOf(r.id),sid:r.id,title:r.title,app:r.app==="Otra"?"Desconocido":r.app,syn:r.synopsis||"",tropes:r.tropes||[],castTxt:r.cast_text||"",cast:(r.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""})),eps:r.episodes,epm:r.duration_minutes?+r.duration_minutes:null,cp:r.cover_path||"",created_by:r.created_by,cover:cvr(r.cover_path),watched:0,rating:0,review:"",status:"",liked:false,added:Date.parse(r.created_at)};if(r.synopsis===undefined)i._lite=true;i._b=iState(i);return i};
+function ensureFull(i){if(!i||!i._lite||!sb||!i.sid)return Promise.resolve();if(i._ld)return i._ld;
+  return i._ld=(async()=>{try{const{data,error}=await sb.from("series").select("synopsis,cast_text,cast_members").eq("id",i.sid).single();if(error||!data)return;
+    i.syn=data.synopsis||"";i.castTxt=data.cast_text||"";i.cast=(data.cast_members||[]).map(c=>({a:c.name,p:c.role||"",ph:cvr(c.photo),pp:c.photo||""}));delete i._lite;if(curDet===i.id&&$("det").classList.contains("open"))show(i.id,true)}catch(e){console.error(e)}finally{delete i._ld}})()}
 function catAll(){const m=new Map();[...CAT,...items].forEach(i=>m.set(i.id,i));return [...m.values()]}
 const listState=l=>JSON.stringify([l.name,l.desc||"",!!l.rank,l.ids.map(sidOf),l.tags||[],l.rep||0,l.ids.map(id=>{const x=(l.nt||{})[id];return x?[x.n||"",!!x.s]:["",false]})]);
 const XC={on:true};
@@ -29,7 +33,7 @@ async function pull(){
    pageAll(()=>sb.from("diary_entries").select("*").eq("user_id",uid).order("watched_on",{ascending:false}).order("created_at",{ascending:false}).order("id")),
    sb.from("lists").select("*,list_items(*)").eq("user_id",uid).order("created_at",{ascending:false}),
    sb.from("profiles").select("*").eq("id",uid).single(),
-   pageAll(()=>sb.from("series").select("*").order("created_at",{ascending:false}).order("id")),
+   pageAll(()=>sb.from("series").select(SLITE).order("created_at",{ascending:false}).order("id")),
    sb.from("follows").select("followee_id,status").eq("follower_id",uid)]);
   try{const pr=await sb.from("platforms").select("name");if(!pr.error)PLT=(pr.data||[]).map(x=>x.name)}catch(_){}
   R.forEach(r=>{if(r.error)throw r.error});const[a,b,c,d,e,f]=R,de={};FW=new Set(f.data.filter(x=>x.status!=="pending").map(x=>x.followee_id));PEND=new Set(f.data.filter(x=>x.status==="pending").map(x=>x.followee_id));const dc={};DEN=b.data.map(x=>({id:x.id,iid:idOf(x.series_id),wd:x.watched_on,r:+x.rating||0,hl:!!x.liked,rw:!!x.rewatch,t:x.review||"",sp:!!x.spoilers}));b.data.forEach(x=>{dc[x.series_id]=(dc[x.series_id]||0)+1;if(!de[x.series_id])de[x.series_id]=x});
