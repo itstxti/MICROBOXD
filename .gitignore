@@ -4,6 +4,8 @@ node_modules
 
 # local output of scripts/import-dramabox.mjs
 dramabox-*.json
+flickreels-*.json
+netshort-*.json
 narto-*.json
 narto-*.html
 /imports
